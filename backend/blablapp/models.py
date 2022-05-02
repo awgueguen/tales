@@ -62,22 +62,20 @@ class Action(models.Model):
 #     characcters = models.ManyToManyField(Character)
 
 class MyUser(AbstractUser):
+    """remove almost all blanks later"""
     nickname = models.CharField(max_length=100)
-    unique_id = models.SlugField(unique=True)
+    unique_id = models.SlugField(blank=True, default=None)
     profile_pic = models.ImageField(
         default='uploads/profile_pics/default.jpg',
         upload_to='uploads/profile_pics')
     birthdate = models.DateField()
-    last_edit = models.DateTimeField(auto_now=True)
-    characters = models.ManyToManyField(Character)
+    last_edit = models.DateTimeField(auto_now=True, blank=True)
+    characters = models.ManyToManyField(Character, blank=True)
 
     def save(self, *args, **kwargs):
+        self.unique_id = slugify(self.nickname + '-' + ''.join([str(random.randint(0, 9))
+                                                                for i in range(3)]))
         super(MyUser, self).save(*args, **kwargs)
-        if self.unique_id is None:
-            self.unique_id = slugify(kwargs.get(
-                'nickname') + '-' + ''.join([str(random.randint(0, 9))
-                                             for i in range(3)]))
-            self.save()
 
 
 class Contact(models.Model):
@@ -196,6 +194,7 @@ class RoomParticipant(models.Model):
     active = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
+        # pylint: disable=E1101
         if self.nickname is None:
             self.nickname = self.userId.nickname
             super(RoomParticipant, self).save(*args, **kwargs)
