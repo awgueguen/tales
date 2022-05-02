@@ -1,5 +1,6 @@
-from email.mime import image
 from django.db import models
+from django.contrib.auth.models import AbstractUser
+from django.template.defaultfilters import slugify
 import random
 
 
@@ -13,6 +14,7 @@ class CharacterClass(models.Model):
     hp = models.IntegerField()
     atk = models.IntegerField()
     defense = models.IntegerField()
+    actions = models.ManyToManyField('blablapp.Action')
 
 
 class Character(models.Model):
@@ -37,35 +39,52 @@ class Action(models.Model):
 # USERS INFORMATIONS                                                          #
 # --------------------------------------------------------------------------- #
 
-class User(models.Model):
-    # TODO: ABSTRACT USER
-    # TODO: PROXY + SLUG
-    def id_by_default(self):
-        number = ''.join([str(random.randint(0, 9)) for i in range(3)])
-        return '{}#{}'.format(self.login, number)
+# class User(models.Model):
+#     def id_by_default(self):
+#         number = ''.join([str(random.randint(0, 9)) for i in range(3)])
+#         return '{}#{}'.format(self.login, number)
 
-    firstName = models.CharField(max_length=100)
-    lastName = models.CharField(max_length=100, blank=True)
-    login = models.CharField(max_length=100)
-    password = models.CharField(max_length=100)
-    mail = models.EmailField(max_length=100)
-    defaultId = models.IntegerField(unique=True, default=id_by_default)
-    birthdate = models.DateField(blank=True)
-    nickname = models.EmailField(max_length=100)
-    profilePic = models.ImageField(
+#     firstName = models.CharField(max_length=100)
+#     lastName = models.CharField(max_length=100, blank=True)
+#     login = models.CharField(max_length=100)
+#     password = models.CharField(max_length=100)
+#     mail = models.EmailField(max_length=100)
+#     defaultId = models.IntegerField(unique=True, default=id_by_default)
+#     birthdate = models.DateField(blank=True)
+#     nickname = models.EmailField(max_length=100)
+#     profilePic = models.ImageField(
+#         default='uploads/profile_pics/default.jpg',
+#         upload_to='uploads/profile_pics')
+#     # lastLogin = models.DateField(blank=True)
+#     # isActive = models.BooleanField()
+#     createdAt = models.DateTimeField(auto_now_add=True)
+#     editedAt = models.DateTimeField(auto_now=True)
+#     characcters = models.ManyToManyField(Character)
+
+class MyUser(AbstractUser):
+    nickname = models.CharField(max_length=100)
+    unique_id = models.SlugField(unique=True)
+    profile_pic = models.ImageField(
         default='uploads/profile_pics/default.jpg',
         upload_to='uploads/profile_pics')
-    # lastLogin = models.DateField(blank=True)
-    # isActive = models.BooleanField()
-    createdAt = models.DateTimeField(auto_now_add=True)
-    editedAt = models.DateTimeField(auto_now=True)
+    birthdate = models.DateField()
+    last_edit = models.DateTimeField(auto_now=True)
+    characters = models.ManyToManyField(Character)
+
+    def save(self, *args, **kwargs):
+        super(MyUser, self).save(*args, **kwargs)
+        if self.unique_id is None:
+            self.unique_id = slugify(kwargs.get(
+                'nickname') + '-' + ''.join([str(random.randint(0, 9))
+                                             for i in range(3)]))
+            self.save()
 
 
 class Contact(models.Model):
     senderId = models.ForeignKey(
-        User, related_name="ContactSender", on_delete=models.CASCADE)
+        MyUser, related_name="ContactSender", on_delete=models.CASCADE)
     recieverId = models.ForeignKey(
-        User, related_name="ContactReceiver", on_delete=models.CASCADE)
+        MyUser, related_name="ContactReceiver", on_delete=models.CASCADE)
     approved = models.BooleanField(default=False)
     sentAt = models.DateTimeField(auto_now_add=True)
     approvedAt = models.DateTimeField(blank=True)
@@ -76,7 +95,7 @@ class Tickbox(models.Model):
     createdAt = models.DateTimeField(auto_now_add=True)
     editAt = models.DateTimeField(auto_now=True, blank=True)
     checked = models.BooleanField(default=False)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    userId = models.ForeignKey(MyUser, on_delete=models.CASCADE)
 
 
 # --------------------------------------------------------------------------- #
@@ -94,7 +113,6 @@ class Entity(models.Model):
 
 
 # class EntityInstance(models.Model):
-#     # TODO: EXTENDS ENTITY + __init__
 #     entityId = models.ForeignKey(Entity, on_delete=models.CASCADE)
 #     roomId = models.ForeignKey('leads.Room', on_delete=models.CASCADE)
 #     hp = models.IntegerField()
@@ -165,9 +183,11 @@ class Room(models.Model):
 
 class RoomParticipant(models.Model):
     roomId = models.ForeignKey(Room, on_delete=models.CASCADE)
-    userId = models.ForeignKey(User, on_delete=models.CASCADE)
+    userId = models.ForeignKey(MyUser, on_delete=models.CASCADE)
     isAdmin = models.BooleanField(default=False)
     nickname = models.TextField(max_length=30, blank=True)
+    characterId = models.ForeignKey(
+        Character, blank=True, on_delete=models.RESTRICT)
     hit = models.IntegerField(default=0)
     joinedAt = models.DateTimeField(auto_now_add=True)
     updatedAt = models.DateTimeField(auto_now=True, blank=True)
@@ -185,9 +205,8 @@ class RoomParticipant(models.Model):
 
 class Message(models.Model):
     roomId = models.ForeignKey(Room, on_delete=models.CASCADE)
-    senderId = models.ForeignKey(User, on_delete=models.CASCADE)
+    senderId = models.ForeignKey(MyUser, on_delete=models.CASCADE)
     messageContent = models.TextField(max_length=500)
-    # TODO: ImageField pour backend
     image = models.ImageField(upload_to='uploads/messages', blank=True)
     createdAt = models.DateTimeField(auto_now_add=True)
     editedAt = models.DateTimeField(auto_now=True, blank=True)
@@ -203,9 +222,9 @@ class Message(models.Model):
 class Whisper(models.Model):
     messageId = models.OneToOneField(Message, on_delete=models.CASCADE)
     senderId = models.ForeignKey(
-        User, related_name="WhisperSender", on_delete=models.CASCADE)
+        MyUser, related_name="WhisperSender", on_delete=models.CASCADE)
     receiverId = models.ForeignKey(
-        User,  related_name="WhisperReceiver", on_delete=models.CASCADE)
+        MyUser,  related_name="WhisperReceiver", on_delete=models.CASCADE)
 
 
 class Quote(models.Model):
