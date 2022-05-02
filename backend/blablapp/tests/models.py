@@ -37,32 +37,32 @@ class TestModels(TestCase):
         quote = baker.make(Quote)
 
         # Whisper ----------------------------------------------------------- #
-        # pprint(whisper.__dict__)
+        pprint(whisper.__dict__)
         # Quote ------------------------------------------------------------- #
-        # pprint(quote.__dict__)
+        pprint(quote.__dict__)
         # Message ----------------------------------------------------------- #
-        # pprint(message.__dict__)
+        pprint(message.__dict__)
         # Room -------------------------------------------------------------- #
-        # pprint(room.__dict__)
+        pprint(room.__dict__)
         # Room Participant -------------------------------------------------- #
-        # pprint(room_participant.__dict__)
+        pprint(room_participant.__dict__)
         # Story ------------------------------------------------------------- #
-        # pprint(story.__dict__)
+        pprint(story.__dict__)
         # Event ------------------------------------------------------------- #
-        # pprint(event.__dict__)
+        pprint(event.__dict__)
         # Entity Instance --------------------------------------------------- #
-        # pprint(entity_instance.__dict__)
+        pprint(entity_instance.__dict__)
         # Entity ------------------------------------------------------------ #
-        # pprint(entity.__dict__)
+        pprint(entity.__dict__)
         # Tickbox ----------------------------------------------------------- #
-        # pprint(tickbox.__dict__)
+        pprint(tickbox.__dict__)
         # Contact ----------------------------------------------------------- #
-        # pprint(contact.__dict__)
+        pprint(contact.__dict__)
         # User -------------------------------------------------------------- #
-        # pprint(user.__dict__)
+        pprint(user.__dict__)
         # Action ------------------------------------------------------------ #
-        # pprint(action.__dict__)
+        pprint(action.__dict__)
         # Character --------------------------------------------------------- #
-        # pprint(character.__dict__)
+        pprint(character.__dict__)
         # Character Class --------------------------------------------------- #
-        # pprint(character_class.__dict__)
+        pprint(character_class.__dict__)
