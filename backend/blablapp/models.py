@@ -73,8 +73,9 @@ class MyUser(AbstractUser):
     characters = models.ManyToManyField(Character, blank=True)
 
     def save(self, *args, **kwargs):
-        self.unique_id = slugify(self.nickname + '-' + ''.join([str(random.randint(0, 9))
-                                                                for i in range(3)]))
+        self.unique_id = slugify(
+            (f'{self.nickname}-' + ''.join([str(random.randint(0, 9)) for _ in range(3)])))
+
         super(MyUser, self).save(*args, **kwargs)
 
 
@@ -194,7 +195,6 @@ class RoomParticipant(models.Model):
     active = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
-        # pylint: disable=E1101
         if self.nickname is None:
             self.nickname = self.userId.nickname
             super(RoomParticipant, self).save(*args, **kwargs)
