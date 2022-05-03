@@ -11,17 +11,17 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-MEDIA_ROOT = ''
-MEDIA_URL = ''
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-5=&g$z5p&tbekg86dc5vestupeyzu+eu*91z#gay!$y5rcu*b^'  # noqa: 501
+SECRET_KEY = 'django-insecure-5=&g$z5p&tbekg86dc5vestupeyzu+eu*91z#gay!$y5rcu*b^'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -94,16 +94,16 @@ AUTH_USER_MODEL = 'blablapp.MyUser'
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',  # noqa: 501
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',  # noqa: 501
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',  # noqa: 501
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',  # noqa: 501
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
 
@@ -122,8 +122,13 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
+ROOT_DIR = Path(__file__).resolve().parent.parent.parent
+
 
 STATIC_URL = 'static/'
+MEDIA_URL = '/media/'
+
+MEDIA_ROOT = os.path.join(ROOT_DIR, 'frontend', 'media')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
