@@ -16,6 +16,8 @@ class CharacterClass(models.Model):
     defense = models.PositiveIntegerField(help_text="Maximum 20")
     actions = models.ManyToManyField('blablapp.Action')
 
+    # TODO: add default basic actions
+
     class Meta:
         verbose_name = 'Character Class'
         verbose_name_plural = 'Character Classes'
@@ -24,6 +26,7 @@ class CharacterClass(models.Model):
 class Character(models.Model):
     characterClassId = models.ForeignKey(
         CharacterClass, on_delete=models.RESTRICT)
+    userId = models.ForeignKey("blablapp.MyUser", on_delete=models.CASCADE)
     name = models.CharField(max_length=30)
     background = models.TextField(help_text="Not Required", blank=True)
     image = models.ImageField(
@@ -64,7 +67,7 @@ class MyUser(AbstractUser):
         upload_to='profile_pics')
     birthdate = models.DateField()
     last_edit = models.DateTimeField(auto_now=True, blank=True)
-    characters = models.ManyToManyField(Character, blank=True)
+    # characters = models.ManyToManyField(Character, blank=True)
 
     def save(self, *args, **kwargs):
         self.unique_id = slugify(
@@ -78,7 +81,7 @@ class MyUser(AbstractUser):
 class Contact(models.Model):
     senderId = models.ForeignKey(
         MyUser, related_name="ContactSender", on_delete=models.CASCADE)
-    recieverId = models.ForeignKey(
+    receiverId = models.ForeignKey(
         MyUser, related_name="ContactReceiver", on_delete=models.CASCADE)
     approved = models.BooleanField(default=False)
     sentAt = models.DateTimeField(auto_now_add=True, editable=False)
@@ -244,6 +247,7 @@ class Message(models.Model):
         help_text="Is the message a whisper?", default=False)
     edited = models.BooleanField(default=False)
     deleted = models.BooleanField(default=False)
+    isTriggered = models.BooleanField(default=False)
 
     class Meta:
         ordering = ["roomId", "createdAt"]
