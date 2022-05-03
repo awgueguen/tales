@@ -122,7 +122,8 @@ class Entity(models.Model):
 
 
 class EntityInstance(Entity):
-    roomId = models.ForeignKey("blablapp.Room", on_delete=models.CASCADE)
+    roomId = models.ForeignKey(
+        "blablapp.Room", on_delete=models.CASCADE, null=True)
     currentHP = models.PositiveIntegerField(
         help_text="Not Required", null=True)
     currentATK = models.PositiveIntegerField(
@@ -149,6 +150,10 @@ class Event(models.Model):
     # chronology = models.IntegerField(help_text="Event order in a Story")
     trigger = models.CharField(max_length=10, unique=True)
 
+    class Meta:
+        verbose_name = "Event"
+        verbose_name_plural = "Events"
+
 
 class Story(models.Model):
     title = models.CharField(max_length=100)
@@ -165,6 +170,10 @@ class Story(models.Model):
     # triggerCount = models.IntegerField(blank=True)
     events = models.ManyToManyField(Event)
     entities = models.ManyToManyField(Entity)
+
+    class Meta:
+        verbose_name = "Story"
+        verbose_name_plural = "Stories"
 
 
 # --------------------------------------------------------------------------- #
@@ -183,6 +192,11 @@ class Room(models.Model):
         verbose_name="Maximum Participants")
     isPublic = models.BooleanField(
         verbose_name="Room visibility", help_text="Change room visibility", default=False)
+
+    class Meta:
+        ordering = ["createdAt", "isPublic"]
+        verbose_name = "Room"
+        verbose_name_plural = "Rooms"
 
 
 class RoomParticipant(models.Model):
@@ -207,6 +221,10 @@ class RoomParticipant(models.Model):
             self.nickname = self.userId.nickname
             super(RoomParticipant, self).save(*args, **kwargs)
 
+    class Meta:
+        verbose_name = "Room Participant"
+        verbose_name_plural = "Room Participants"
+
 
 # messages ------------------------------------------------------------------ #
 
@@ -226,6 +244,11 @@ class Message(models.Model):
         help_text="Is the message a whisper?", default=False)
     edited = models.BooleanField(default=False)
     deleted = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ["roomId", "createdAt"]
+        verbose_name = "Message"
+        verbose_name_plural = "Messages"
 
 
 # message mechanism --------------------------------------------------------- #

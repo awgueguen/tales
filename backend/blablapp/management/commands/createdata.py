@@ -9,4 +9,4 @@ class Command(BaseCommand):
 
         fake = Faker(["fr_FR"])
 
-        print(fake.name())
+        print(fake.address())
