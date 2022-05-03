@@ -27,7 +27,7 @@ class Character(models.Model):
     name = models.CharField(max_length=30)
     background = models.TextField(help_text="Not Required", blank=True)
     image = models.ImageField(
-        help_text="Upload a character image", upload_to="characters", blank=True)
+        help_text="Upload a character image", upload_to="characters")
 
     class Meta:
         verbose_name = 'Character'
