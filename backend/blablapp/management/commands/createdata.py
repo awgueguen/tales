@@ -1,19 +1,39 @@
 from django.core.management.base import BaseCommand
 from blablapp.models import *
+# import faker.providers
 from faker import Faker
 import random
 
+ACTIONS = ["Attack", "Hide", "Search", "Use", "Talk", "Charm", "Trap"]
+
+
+def loadbar(iteration, total, decimals=1, length=100, fill='█'):
+    percent = ('{0:.' + str(decimals) +
+               'f}').format(100 * iteration/float(total))
+    filledLen = int(length * iteration // total)
+    bar = fill * filledLen + '-' * (length - filledLen)
+    print(f'\rProgress: |{bar}| {percent}% Complete', end='\r')
+    if iteration == total:
+        print()
+
+
+# class Provider(faker.providers.BaseProvider):
+#     def actions_type(self):
+#         return self.random_element(ACTIONS)
+
 
 class Command(BaseCommand):
-    help = "Command information"
-    Faker.seed(0)
+
+    # Faker.seed(0)
 
     def handle(self, *args, **kwargs):
 
         fake = Faker(["en_US"])
+        # fake.add_provider(Provider)
 
         cl_input = int(input(">>> how many classes: "))
-        for _ in range(cl_input):
+        loadbar(0, cl_input)
+        for i in range(cl_input):
             flag = True
             while flag:
                 n = fake.unique.job()
@@ -27,30 +47,40 @@ class Command(BaseCommand):
                 atk=random.randint(1, 20),
                 defense=random.randint(1, 20),
             )
+            loadbar(i + 1, cl_input)
 
         check_classes = CharacterClass.objects.all().count()
         self.stdout.write(self.style.SUCCESS(
-            f'Number of Classes: {check_classes}'))
+            f'Number of Classes: {check_classes}\n'))
 
-        for _ in range(cl_input // 2):
+        loadbar(0, len(ACTIONS))
+        for i in range(len(ACTIONS)):
+            Action.objects.create(
+                title=ACTIONS[i],
+                description=fake.sentence(nb_words=10),
+                trigger=f'{ACTIONS[i][:3]}{fake.hex_color()}'
+            )
+            loadbar(i + 1, len(ACTIONS))
+
+        check_actions = Action.objects.all().count()
+        self.stdout.write(self.style.SUCCESS(
+            f'Number of Actions: {check_actions}\n'))
+
+        loadbar(0, cl_input)
+        for i in range(cl_input):
+            clid = CharacterClass.objects.order_by("?").first()
+            acid = Action.objects.order_by("?").first()
+
             Character.objects.create(
-                characterClassId=CharacterClass.objects.order_by("?").first(),
+                characterClassId=clid,
                 name=fake.name(),
                 background=fake.text(max_nb_chars=400),
                 image=fake.image_url(),
             )
 
-        check_charac = Character.objects.all().count()
+            clid.actions.set([acid.pk])
+            loadbar(i + 1, cl_input)
+
+        check_characters = Character.objects.all().count()
         self.stdout.write(self.style.SUCCESS(
-            f'Number of Character: {check_charac}'))
-
-        a_input = input(">>> how many actions:")
-
-# class Action(models.Model):
-#     title = models.CharField(max_length=30)
-#     description = models.TextField(help_text="Not Required", blank=True)
-#     trigger = models.CharField(max_length=10, unique=True)
-
-#     class Meta:
-#         verbose_name = 'Action'
-#         verbose_name_plural = 'Actions'
+            f'Number of Characters: {check_characters}\n'))
