@@ -57,6 +57,8 @@ class MyUser(AbstractUser):
 
         super(MyUser, self).save(*args, **kwargs)
 
+    REQUIRED_FIELDS = ["nickname", "birthdate"]
+
 
 class Contact(models.Model):
     senderId = models.ForeignKey(
@@ -92,6 +94,7 @@ class Entity(models.Model):
 
 
 class EntityInstance(Entity):
+    roomId = models.ForeignKey("blablapp.Room", on_delete=models.CASCADE)
     currentHP = models.PositiveIntegerField(null=True)
     currentATK = models.PositiveIntegerField(null=True)
     currentDEF = models.PositiveIntegerField(null=True)
