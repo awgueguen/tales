@@ -237,6 +237,16 @@ class Command(BaseCommand):
                     characterId=character,
                 )
 
+            # entity intances ----------------------------------------------- #
+            for _ in range(3):
+                instance = Entity.objects.order_by("?").first()
+                instance_e = EntityInstance(
+                    # entityId=instance,
+                    roomId=room
+                )
+                instance_e.__dict__.update(instance.__dict__)
+                instance_e.save()
+
             # messages ------------------------------------------------------ #
             for _ in range(30):
                 all_user = MyUser.objects.order_by("?")
@@ -273,19 +283,11 @@ class Command(BaseCommand):
                         quotedId=quote
                     )
 
-                    # TODO FIX => ENITY INSTANCE
-
-                    # for _ in range(3):
-                    #     entity = Entity.objects.order_by("?").first()
-                    #     EntityInstance.objects.create(
-                    #         entity_ptr_id=entity.pk,
-                    #         roomId=room
-                    #     )
-
             loadbar(i + 1, room_input)
 
         check_rooms = Room.objects.all().count()
         check_participants = RoomParticipant.objects.all().count()
+        check_instances = EntityInstance.objects.all().count()
         check_messages = Message.objects.all().count()
         check_whispers = Whisper.objects.all().count()
         check_quotes = Quote.objects.all().count()
@@ -294,6 +296,8 @@ class Command(BaseCommand):
             f'# Number of Rooms: {check_rooms}'))
         self.stdout.write(self.style.SUCCESS(
             f'# Number of Participants: {check_participants}'))
+        self.stdout.write(self.style.SUCCESS(
+            f'# Number of Instances from multiple entities: {check_instances}'))
         self.stdout.write(self.style.SUCCESS(
             f'# Number of Messages: {check_messages}'))
         self.stdout.write(self.style.SUCCESS(

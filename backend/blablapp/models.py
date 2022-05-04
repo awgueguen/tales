@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+
 from django.template.defaultfilters import slugify
 import random
 
@@ -110,21 +111,26 @@ class Tickbox(models.Model):
 # --------------------------------------------------------------------------- #
 
 
-class Entity(models.Model):
+class AbstractEntity(models.Model):
     name = models.CharField(max_length=30)
     image = models.ImageField(
         help_text="Upload a Creature / NPC picture", upload_to="entities", blank=True)
     hp = models.PositiveIntegerField(help_text="Maximum 20")
     atk = models.PositiveIntegerField(help_text="Maximum 20")
     defense = models.PositiveIntegerField(help_text="Maximum 20")
-    trigger = models.CharField(max_length=10, unique=True)
 
     class Meta:
         verbose_name = "Entity"
         verbose_name_plural = "Entities"
+        abstract = True
 
 
-class EntityInstance(Entity):
+class Entity(AbstractEntity):
+    trigger = models.CharField(max_length=10, unique=True)
+
+
+class EntityInstance(AbstractEntity):
+    instance_id = models.AutoField(primary_key=True)
     roomId = models.ForeignKey(
         "blablapp.Room", on_delete=models.CASCADE, null=True)
     currentHP = models.PositiveIntegerField(
@@ -134,14 +140,30 @@ class EntityInstance(Entity):
     currentDEF = models.PositiveIntegerField(
         help_text="Not Required", null=True)
 
-    def __init__(self, *args, **kwargs):
-        super(EntityInstance, self).__init__(*args, **kwargs)
-        if self.currentHP is None:
-            self.currentHP = kwargs.get('hp')
-        if self.currentATK is None:
-            self.currentATK = kwargs.get('atk')
-        if self.currentDEF is None:
-            self.currentDEF = kwargs.get('defense')
+    trigger = models.CharField(max_length=10)
+
+    def save(self, *args, **kwargs):
+        """
+        Set the currentHP according to whats injected
+        **kwargs = if the items is called EntityInstance(currentHP=<number>)
+        It will cover three basic scenarios: set new value, default, and modification
+        """
+        if kwargs.get('currentHP'):
+            self.currentHP = kwargs.get('currentHP')
+        elif not self.currentHP:
+            self.currentHP = self.hp
+
+        if kwargs.get('currentATK'):
+            self.currentATK = kwargs.get('currentATK')
+        elif not self.currentATK:
+            self.currentATK = self.atk
+
+        if kwargs.get('currentDEF'):
+            self.currentDEF = kwargs.get('currentDEF')
+        elif not self.currentDEF:
+            self.currentDEF = self.defense
+
+        super(EntityInstance, self).save(*args, **kwargs)
 
 
 class Event(models.Model):
@@ -222,7 +244,7 @@ class RoomParticipant(models.Model):
     def save(self, *args, **kwargs):
         if self.nickname is None:
             self.nickname = self.userId.nickname
-            super(RoomParticipant, self).save(*args, **kwargs)
+        super(RoomParticipant, self).save(*args, **kwargs)
 
     class Meta:
         verbose_name = "Room Participant"

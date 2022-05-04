@@ -17,7 +17,7 @@ class EntityInstanceAdmin(admin.ModelAdmin):
 
 
 admin.site.register(MyUser, MyUserAdmin)
-admin.site.register(Entity, EntityAdmin)
+# admin.site.register(Entity, EntityAdmin)
 admin.site.register(EntityInstance, EntityInstanceAdmin)
 
 # end ----------------------------------------------------------------------- #
