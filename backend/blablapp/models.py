@@ -25,9 +25,10 @@ class CharacterClass(models.Model):
 
 
 class Character(models.Model):
-    characterClassId = models.ForeignKey(
-        CharacterClass, on_delete=models.RESTRICT)
-    userId = models.ForeignKey("blablapp.MyUser", on_delete=models.CASCADE)
+    characterClass = models.ForeignKey(
+        CharacterClass, on_delete=models.RESTRICT, related_name="characters")
+    user = models.ForeignKey(
+        "blablapp.MyUser", on_delete=models.CASCADE, related_name="characters")
     name = models.CharField(max_length=30)
     background = models.TextField(help_text="Not Required", blank=True)
     image = models.ImageField(
@@ -80,10 +81,10 @@ class MyUser(AbstractUser):
 
 
 class Contact(models.Model):
-    senderId = models.ForeignKey(
-        MyUser, related_name="ContactSender", on_delete=models.CASCADE)
-    receiverId = models.ForeignKey(
-        MyUser, related_name="ContactReceiver", on_delete=models.CASCADE)
+    sender = models.ForeignKey(
+        MyUser, on_delete=models.CASCADE)
+    receiver = models.ForeignKey(
+        MyUser, on_delete=models.CASCADE, related_name="contacts")
     approved = models.BooleanField(default=False)
     sentAt = models.DateTimeField(auto_now_add=True, editable=False)
     approvedAt = models.DateTimeField(null=True)
@@ -98,8 +99,8 @@ class Tickbox(models.Model):
     createdAt = models.DateTimeField(auto_now_add=True, editable=False)
     editAt = models.DateTimeField(auto_now=True, blank=True)
     checked = models.BooleanField(default=False)
-    userId = models.OneToOneField(
-        MyUser, on_delete=models.CASCADE, primary_key=True)
+    user = models.OneToOneField(
+        MyUser, on_delete=models.CASCADE, primary_key=True, related_name="tickboxes")
 
     class Meta:
         verbose_name = "Tickbox"
@@ -130,9 +131,11 @@ class Entity(AbstractEntity):
 
 
 class EntityInstance(AbstractEntity):
-    instance_id = models.AutoField(primary_key=True)
-    roomId = models.ForeignKey(
-        "blablapp.Room", on_delete=models.CASCADE, null=True)
+    instance = models.AutoField(primary_key=True)
+    entity = models.ForeignKey(
+        Entity, on_delete=models.CASCADE, related_name="instances")
+    room = models.ForeignKey(
+        "blablapp.Room", on_delete=models.CASCADE, null=True, related_name="instances")
     currentHP = models.PositiveIntegerField(
         help_text="Not Required", null=True)
     currentATK = models.PositiveIntegerField(
@@ -209,7 +212,8 @@ class Story(models.Model):
 # room ---------------------------------------------------------------------- #
 
 class Room(models.Model):
-    storyId = models.ForeignKey(Story, on_delete=models.RESTRICT)
+    story = models.ForeignKey(
+        Story, on_delete=models.RESTRICT, related_name="room")
     title = models.CharField(max_length=30)
     createdAt = models.DateTimeField(auto_now_add=True, editable=False)
     editedAt = models.DateTimeField(auto_now=True)
@@ -225,14 +229,16 @@ class Room(models.Model):
 
 
 class RoomParticipant(models.Model):
-    roomId = models.ForeignKey(Room, on_delete=models.CASCADE)
-    userId = models.ForeignKey(MyUser, on_delete=models.CASCADE)
+    room = models.ForeignKey(
+        Room, on_delete=models.CASCADE, related_name="participants")
+    user = models.ForeignKey(
+        MyUser, on_delete=models.CASCADE, related_name="rooms")
     isAdmin = models.BooleanField(
         verbose_name="Is DM", help_text="Determine if the participant is the DM", default=False)
     nickname = models.CharField(
         help_text="By default the user nickname", max_length=35, null=True)
-    characterId = models.ForeignKey(Character, verbose_name="Character", help_text="Choose your player",
-                                    on_delete=models.RESTRICT)
+    character = models.ForeignKey(Character, verbose_name="Character", help_text="Choose your player",
+                                  on_delete=models.RESTRICT, related_name="rooms")
     hit = models.IntegerField(
         verbose_name="Hit Point", help_text="Hit points taken by the participant", default=0)
     joinedAt = models.DateTimeField(auto_now_add=True, editable=False)
@@ -243,7 +249,7 @@ class RoomParticipant(models.Model):
 
     def save(self, *args, **kwargs):
         if self.nickname is None:
-            self.nickname = self.userId.nickname
+            self.nickname = self.user.nickname
         super(RoomParticipant, self).save(*args, **kwargs)
 
     class Meta:
@@ -254,8 +260,10 @@ class RoomParticipant(models.Model):
 # messages ------------------------------------------------------------------ #
 
 class Message(models.Model):
-    roomId = models.ForeignKey(Room, on_delete=models.CASCADE)
-    senderId = models.ForeignKey(MyUser, on_delete=models.CASCADE)
+    room = models.ForeignKey(
+        Room, on_delete=models.CASCADE, related_name="messages")
+    sender = models.ForeignKey(
+        MyUser, on_delete=models.CASCADE, related_name="messages")
     messageContent = models.TextField(
         verbose_name="Message Content")
     image = models.ImageField(
@@ -272,7 +280,7 @@ class Message(models.Model):
     isTriggered = models.BooleanField(default=False)
 
     class Meta:
-        ordering = ["roomId", "createdAt"]
+        ordering = ["room", "createdAt"]
         verbose_name = "Message"
         verbose_name_plural = "Messages"
 
@@ -281,17 +289,17 @@ class Message(models.Model):
 
 
 class Whisper(models.Model):
-    messageId = models.OneToOneField(
-        Message, on_delete=models.CASCADE, primary_key=True)
-    senderId = models.ForeignKey(
-        MyUser, related_name="WhisperSender", on_delete=models.CASCADE)
-    receiverId = models.ForeignKey(
-        MyUser,  related_name="WhisperReceiver", on_delete=models.CASCADE)
+    message = models.OneToOneField(
+        Message, on_delete=models.CASCADE, primary_key=True, related_name="whisper")
+    sender = models.ForeignKey(
+        MyUser, on_delete=models.CASCADE, related_name="whispers")
+    receiver = models.ForeignKey(
+        MyUser, on_delete=models.CASCADE, related_name="received_whispers")
 
 
 class Quote(models.Model):
-    messageId = models.OneToOneField(
-        Message, related_name="QuoteSender", on_delete=models.CASCADE, primary_key=True)
-    quotedId = models.ForeignKey(
-        Message, related_name="QuoteReceiver", null=True,
-        on_delete=models.SET_NULL)
+    message = models.OneToOneField(
+        Message, on_delete=models.CASCADE, primary_key=True, related_name="quotes")
+    quoted = models.ForeignKey(
+        Message, null=True,
+        on_delete=models.SET_NULL, related_name="messages_quoted")

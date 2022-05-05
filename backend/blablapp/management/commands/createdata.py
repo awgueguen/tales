@@ -3,6 +3,7 @@ from blablapp.models import *
 import faker.providers
 from faker import Faker
 import random
+import os
 
 ACTIONS = ["Attack", "Hide", "Search", "Use", "Talk", "Charm", "Trap"]
 
@@ -27,6 +28,10 @@ class Command(BaseCommand):
     # Faker.seed(0)
 
     def handle(self, *args, **kwargs):  # sourcery no-metrics
+
+        print(">>> reset db")
+        os.system('python manage.py flush --noinput')
+        print(">>> db flushed\n")
 
         fake = Faker(["en_US"])
         fancyfake = Faker(["nl_NL"])
@@ -80,7 +85,7 @@ class Command(BaseCommand):
         # USER RELATED                                                        #
         # ------------------------------------------------------------------- #
 
-        user_input = int(input(">>> How many users: "))
+        user_input = int(input(">>> How many users: ") or "10")
         # user & tickbox ---------------------------------------------------- #
         loadbar(0, user_input)
         for i in range(user_input):
@@ -101,7 +106,7 @@ class Command(BaseCommand):
             # tickbox ------------------------------------------------------- #
             Tickbox.objects.create(
                 checked=True,
-                userId=user
+                user=user
             )
 
             # characters ---------------------------------------------------- #
@@ -110,8 +115,8 @@ class Command(BaseCommand):
                 class_id = CharacterClass.objects.order_by("?").first()
 
                 Character.objects.create(
-                    characterClassId=class_id,
-                    userId=user_id,
+                    characterClass=class_id,
+                    user=user_id,
                     name=fake.name(),
                     background=fake.text(max_nb_chars=400),
                     image=fake.image_url(),
@@ -133,8 +138,8 @@ class Command(BaseCommand):
         for i in range(user_input // 2):
             user_list = MyUser.objects.order_by("?")
             Contact.objects.create(
-                senderId=user_list.first(),
-                receiverId=user_list.last(),
+                sender=user_list.first(),
+                receiver=user_list.last(),
                 approved=fake.boolean(chance_of_getting_true=75),
             )
             loadbar(i + 1, user_input // 2)
@@ -206,7 +211,7 @@ class Command(BaseCommand):
         # ROOM RELATED                                                        #
         # ------------------------------------------------------------------- #
 
-        room_input = int(input(">>> How many rooms: "))
+        room_input = int(input(">>> How many rooms: ") or "10")
         # room -------------------------------------------------------------- #
         loadbar(0, room_input)
         for i in range(room_input):
@@ -214,37 +219,37 @@ class Command(BaseCommand):
             max_players = random.randint(1, 5)
 
             room = Room.objects.create(
-                storyId=story_id,
+                story=story_id,
                 title=fake.sentence(nb_words=3, variable_nb_words=False),
                 maxParticipants=max_players,
                 isPublic=fake.boolean(chance_of_getting_true=25)
             )
 
             user_id = MyUser.objects.order_by("?").values(
-                'id', 'character')[:max_players]
+                'id', 'characters')[:max_players]
 
             # participants -------------------------------------------------- #
-            for j in range(len(user_id)):
-                user = MyUser.objects.get(id__exact=user_id[j]["id"])
+            for index, value in enumerate(user_id):
+                user = MyUser.objects.get(id__exact=value["id"])
                 character = Character.objects.get(
-                    id__exact=user_id[j]["character"])
+                    id__exact=value["characters"])
 
-                admin = j == 0
+                admin = index == 0
                 RoomParticipant.objects.create(
-                    roomId=room,
-                    userId=user,
+                    room=room,
+                    user=user,
                     isAdmin=admin,
-                    characterId=character,
+                    character=character,
                 )
 
-            # entity intances ----------------------------------------------- #
+            # entities instances -------------------------------------------- #
             for _ in range(3):
-                instance = Entity.objects.order_by("?").first()
+                entity = Entity.objects.order_by("?").first()
                 instance_e = EntityInstance(
-                    # entityId=instance,
-                    roomId=room
+                    entity=entity,
+                    room=room
                 )
-                instance_e.__dict__.update(instance.__dict__)
+                instance_e.__dict__.update(entity.__dict__)
                 instance_e.save()
 
             # messages ------------------------------------------------------ #
@@ -259,8 +264,8 @@ class Command(BaseCommand):
                     chance_of_getting_true=20)
 
                 message = Message.objects.create(
-                    roomId=room,
-                    senderId=sender,
+                    room=room,
+                    sender=sender,
                     messageContent=fake.sentence(nb_words=10),
                     quoted=quote,
                     whispered=whisper,
@@ -270,17 +275,17 @@ class Command(BaseCommand):
                 # whisper --------------------------------------------------- #
                 if whisper:
                     Whisper.objects.create(
-                        messageId=message,
-                        senderId=sender,
-                        receiverId=receiver
+                        message=message,
+                        sender=sender,
+                        receiver=receiver
                     )
 
                 # quote ----------------------------------------------------- #
                 elif quote:
                     quote = Message.objects.all().first()
                     Quote.objects.create(
-                        messageId=message,
-                        quotedId=quote
+                        message=message,
+                        quoted=quote
                     )
 
             loadbar(i + 1, room_input)
