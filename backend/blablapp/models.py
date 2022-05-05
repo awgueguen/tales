@@ -15,13 +15,17 @@ class CharacterClass(models.Model):
     hp = models.PositiveIntegerField(help_text="Maximum 20")
     atk = models.PositiveIntegerField(help_text="Maximum 20")
     defense = models.PositiveIntegerField(help_text="Maximum 20")
-    actions = models.ManyToManyField('blablapp.Action')
+    actions = models.ManyToManyField('blablapp.Action', related_name='classes')
 
     # TODO: add default basic actions
 
     class Meta:
+        ordering = ["name"]
         verbose_name = 'Character Class'
         verbose_name_plural = 'Character Classes'
+
+    def __str__(self):
+        return self.name
 
 
 class Character(models.Model):
@@ -35,8 +39,13 @@ class Character(models.Model):
         help_text="Upload a character image", upload_to="characters")
 
     class Meta:
+        ordering = ['user', 'characterClass']
         verbose_name = 'Character'
         verbose_name_plural = 'Characters'
+
+    def __str__(self):
+        return self.name
+
 
 # --------------------------------------------------------------------------- #
 # ACTIONS INFORMATIONS                                                        #
@@ -49,8 +58,13 @@ class Action(models.Model):
     trigger = models.CharField(max_length=10, unique=True)
 
     class Meta:
+        ordering = ['title']
         verbose_name = 'Action'
         verbose_name_plural = 'Actions'
+
+    def __str__(self):
+        return self.title
+
 
 # --------------------------------------------------------------------------- #
 # USERS INFORMATIONS                                                          #
@@ -77,7 +91,15 @@ class MyUser(AbstractUser):
 
         super(MyUser, self).save(*args, **kwargs)
 
+    class Meta:
+        ordering = ['-date_joined']
+        verbose_name = 'User'
+        verbose_name_plural = 'Users'
+
     REQUIRED_FIELDS = ["nickname", "birthdate"]
+
+    def __str__(self):
+        return self.username
 
 
 class Contact(models.Model):
@@ -91,6 +113,7 @@ class Contact(models.Model):
     refusedAt = models.DateTimeField(null=True)
 
     class Meta:
+        ordering = ['sender', "approved"]
         verbose_name = "Contact"
         verbose_name_plural = "Contacts"
 
@@ -103,6 +126,7 @@ class Tickbox(models.Model):
         MyUser, on_delete=models.CASCADE, primary_key=True, related_name="tickboxes")
 
     class Meta:
+        ordering = ["createdAt"]
         verbose_name = "Tickbox"
         verbose_name_plural = "Tickboxes"
 
@@ -121,13 +145,18 @@ class AbstractEntity(models.Model):
     defense = models.PositiveIntegerField(help_text="Maximum 20")
 
     class Meta:
-        verbose_name = "Entity"
-        verbose_name_plural = "Entities"
         abstract = True
+
+    def __str__(self):
+        return self.name
 
 
 class Entity(AbstractEntity):
     trigger = models.CharField(max_length=10, unique=True)
+
+    class Meta:
+        verbose_name = "Entity"
+        verbose_name_plural = "Entities"
 
 
 class EntityInstance(AbstractEntity):
@@ -168,6 +197,10 @@ class EntityInstance(AbstractEntity):
 
         super(EntityInstance, self).save(*args, **kwargs)
 
+    class Meta:
+        verbose_name = "Entity Instance"
+        verbose_name_plural = "Entity Instances"
+
 
 class Event(models.Model):
     title = models.CharField(max_length=100)
@@ -177,10 +210,15 @@ class Event(models.Model):
         help_text="Upload a picture for your Event", upload_to="events", blank=True)
     # chronology = models.IntegerField(help_text="Event order in a Story")
     trigger = models.CharField(max_length=10, unique=True)
+    # stories = models.ManyToManyField("blablapp.Story", related_name="events")
 
     class Meta:
+        ordering = ['title']
         verbose_name = "Event"
         verbose_name_plural = "Events"
+
+    def __str__(self):
+        return self.title
 
 
 class Story(models.Model):
@@ -196,12 +234,16 @@ class Story(models.Model):
     deleted = models.BooleanField(default=False)
     trigger = models.CharField(max_length=10, unique=True)
     # triggerCount = models.IntegerField(blank=True)
-    events = models.ManyToManyField(Event)
-    entities = models.ManyToManyField(Entity)
+    events = models.ManyToManyField(Event, related_name="stories")
+    entities = models.ManyToManyField(Entity, related_name="stories")
 
     class Meta:
+        ordering = ['title']
         verbose_name = "Story"
         verbose_name_plural = "Stories"
+
+    def __str__(self):
+        return self.title
 
 
 # --------------------------------------------------------------------------- #
@@ -223,9 +265,12 @@ class Room(models.Model):
         verbose_name="Room visibility", help_text="Change room visibility", default=False)
 
     class Meta:
-        ordering = ["createdAt", "isPublic"]
+        ordering = ["-isPublic", "createdAt"]
         verbose_name = "Room"
         verbose_name_plural = "Rooms"
+
+    def __str__(self):
+        return self.title
 
 
 class RoomParticipant(models.Model):
@@ -255,6 +300,9 @@ class RoomParticipant(models.Model):
     class Meta:
         verbose_name = "Room Participant"
         verbose_name_plural = "Room Participants"
+
+    def __str__(self):
+        return self.nickname
 
 
 # messages ------------------------------------------------------------------ #
