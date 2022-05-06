@@ -1,9 +1,10 @@
-from django.core.management.base import BaseCommand
-from blablapp.models import *
-import faker.providers
-from faker import Faker
-import random
 import os
+import random
+from django.core.management.base import BaseCommand
+from faker import Faker
+import faker.providers
+from blablapp.models import CharacterClass, Character, Action, MyUser, Contact, Tickbox, Entity, EntityInstance, Event, Story, Room, RoomParticipant, Message, Whisper, Quote
+
 
 ACTIONS = ["Attack", "Hide", "Search", "Use", "Talk", "Charm", "Trap"]
 
