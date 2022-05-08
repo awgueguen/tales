@@ -1,8 +1,19 @@
-from django.urls import path
+from django.urls import path, include
 from blablapp import views
 
+# test ---------------------------------------------------------------------- #
+from rest_framework.routers import DefaultRouter
+
+router = DefaultRouter()
+router.register(r'classes', views.ClassesViewSet, basename='Classes')
 
 urlpatterns = [
+    path(r'', include(router.urls)),
+]
+# r'string' is of explcit declaration of rawdata
+# caret => ^ means the start of the URL string and $ is the end of the URL.
+
+""" urlpatterns = [
     # room ------------------------------------------------------------------ #
     path('room-<int:room_id>', views.get_room),
     # afficher une room & tout ce qui en découle
@@ -53,4 +64,4 @@ urlpatterns = [
     # gestion des contacts utilisateurs
     path('user/<int:user_id>/tickbox', views.tick_api),
     # gestion de la tickbox utilisateur
-]
+] """

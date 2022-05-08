@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
 from pathlib import Path
+from datetime import timedelta
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -29,18 +30,6 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 
-# Check basic auth vs JWT
-REST_FRAMEWORK = {
-    'DEFAULT_FILTER_BACKENDS': [
-        'django_filters.rest_framework.DjangoFilterBackend',
-    ],
-
-    'DEFAULT_AUTHENTIFICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ]
-}
-# Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -50,18 +39,25 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'blablapp.apps.BlablappConfig',
-    "rest_framework"
+    "rest_framework",
+    "corsheaders",
+    'rest_framework_simplejwt',
 ]
 
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+
+    'corsheaders.middleware.CorsMiddleware',  # cors middleware
+
+
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -146,3 +142,36 @@ MEDIA_ROOT = os.path.join(ROOT_DIR, 'frontend', 'media')
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# REST SETTINGS ------------------------------------------------------------- #
+
+REST_FRAMEWORK = {
+
+    'DEFAULT_AUTHENTIFICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+
+    ]
+}
+
+
+# CORS SETTINGS ------------------------------------------------------------- #
+CORS_ALLOWED_ORIGINS = [
+    # A list of origins that are authorized to make cross-site HTTP requests.
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    # A list of hosts which are trusted origins for unsafe requests.
+    # subdomain.safesite.com
+]
+
+CORS_ALLOW_CREDENTIALS = True
+# If True, cookies will be allowed to be included in cross-site HTTP requests.
+
+# REST ---------------------------------------------------------------------- #
+
+# JWT SETTINGS -------------------------------------------------------------- #
+
+SIMPLE_JWT = {
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=15),
+    'ROTATE_REFRESH_TOKENS': True,
+}

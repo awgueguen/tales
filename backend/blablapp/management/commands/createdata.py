@@ -14,7 +14,7 @@ def loadbar(iteration, total, decimals=1, length=100, fill='█'):
                'f}').format(100 * iteration/float(total))
     filledLen = int(length * iteration // total)
     bar = fill * filledLen + '-' * (length - filledLen)
-    print(f'\rProgress: |{bar}| {percent}% Complete', end='\r')
+    print(f'\rProgress: |{bar}| {percent}% Complete\r')
     if iteration == total:
         print()
 
