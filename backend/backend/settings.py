@@ -29,6 +29,16 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 
+# Check basic auth vs JWT
+REST_FRAMEWORK = {
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend',
+    ],
+
+    'DEFAULT_AUTHENTIFICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ]
+}
 # Application definition
 
 INSTALLED_APPS = [
@@ -39,10 +49,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # 'blablapp.apps.BlablappConfig'
     'blablapp.apps.BlablappConfig',
     "rest_framework"
 ]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

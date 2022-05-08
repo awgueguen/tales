@@ -1,9 +1,10 @@
 from django.http import JsonResponse
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
 from rest_framework import status
-from blablapp import models
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 from blablapp import serializers
+from blablapp import models
 
 # --------------------------------------------------------------------------- #
 # read-only                                                                   #
@@ -12,12 +13,16 @@ from blablapp import serializers
 
 # character classes --------------------------------------------------------- #
 
-@api_view(['GET'])
-def classes_api(request):
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated, ])
+def classes_api(request):
+    # print('test')
     classes = models.CharacterClass.objects.all()
     res = serializers.CharacterClassSerializer(classes, many=True)
-    return JsonResponse({"classes": res.data}, safe=False)
+    return JsonResponse({"classes": res.data})
+
+# add in JsonResponse safe=False if the first item is not a proper JSON
 
 
 # actions ------------------------------------------------------------------- #
@@ -27,7 +32,7 @@ def actions_api(request):
 
     actions = models.Action.objects.all()
     res = serializers.ActionSerializer(actions, many=True)
-    return JsonResponse({"actions": res.data}, safe=False)
+    return JsonResponse({"actions": res.data})
 
 # --------------------------------------------------------------------------- #
 # CHARACTERS                                                                  #
@@ -47,7 +52,7 @@ def characters_api(request, user_id):
     if request.method == 'GET':
         characters = models.Character.objects.filter(user=user_id)
         res = serializers.CharacterSerializer(characters, many=True)
-        return JsonResponse({"characters": res.data}, safe=False)
+        return JsonResponse({"characters": res.data})
 
     if request.method == 'POST':
         serializer = serializers.CharacterSerializer(user, data=request.data)
@@ -74,45 +79,52 @@ def trigger(request):
     return
 
 
-@api_view(['GET, POST, PUT, DELETE'])
+@api_view(['GET'])
+def display_assets(request):
+    return
+
+
+@api_view(['POST'])
+def create_assets(request):
+    return
+
+
+@api_view(['GET, PUT, DELETE'])
 def stories_api(request):
 
     # TODO: all
 
     if request.method == 'GET':
         return
-    if request.method == 'POST':
-        return
+
     if request.method == 'PUT':
         return
     if request.method == 'DELETE':
         return
 
 
-@api_view(['GET, POST, PUT, DELETE'])
+@api_view(['GET, PUT, DELETE'])
 def events_api(request):
 
     # TODO: all
 
     if request.method == 'GET':
         return
-    if request.method == 'POST':
-        return
+
     if request.method == 'PUT':
         return
     if request.method == 'DELETE':
         return
 
 
-@api_view(['GET, POST, PUT, DELETE'])
+@api_view(['GET, PUT, DELETE'])
 def entities_api(request):
 
     # TODO: all
 
     if request.method == 'GET':
         return
-    if request.method == 'POST':
-        return
+
     if request.method == 'PUT':
         return
     if request.method == 'DELETE':
@@ -120,7 +132,7 @@ def entities_api(request):
 
 
 @api_view(['POST, PUT, DELETE'])
-def instances_api(request):
+def mj_instances(request):
 
     # TODO: all
 
@@ -157,21 +169,29 @@ def create_room(request, slug):
     return
 
 
-@api_view(['GET, POST', 'PUT', 'DELETE'])
+@api_view(['GET'])
 def messages_api(request, room):
 
     # TODO: all
 
     if request.method == 'GET':
         return
+
+
+@api_view(['POST'])
+def post_message(request):
     if request.method == 'POST':
         return
+    # TODO: Whisper & Quote views ?
+
+
+@api_view(['PUT', 'DELETE'])
+def edit_messages(request):
     if request.method == 'PUT':
         return
     if request.method == 'DELETE':
         return
 
-# TODO: Whisper & Quote views ?
 
 # --------------------------------------------------------------------------- #
 # USER SETTINGS                                                               #
@@ -179,13 +199,19 @@ def messages_api(request, room):
 
 
 @api_view(['GET', 'POST', 'PUT', 'DELETE'])
-def users_api(request):
+def users_api(request, user_id):
 
     # TODO : add other methods, more specific views / needs
+
+    try:
+        models.MyUser.objects.get(id=user_id)
+    except models.MyUser.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
     if request.method == 'GET':
-        users = models.MyUser.objects.all()
-        res = serializers.MyUserSerializer(users, many=True)
-        return JsonResponse({"users": res.data}, safe=False)
+        users = models.MyUser.objects.get(id=user_id)
+        res = serializers.MyUserSerializer(users)
+        return JsonResponse({"users": res.data})
 
 # --------------------------------------------------------------------------- #
 # FROM RELATED                                                                #

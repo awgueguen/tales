@@ -27,8 +27,8 @@ class ActionSerializer(serializers.ModelSerializer):
 class MyUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.MyUser
-        fields = '__all__'
-        exclude = ['is_superuser', 'is_staff']
+        fields = ['last_login', 'username', 'first_name', 'last_name',
+                  'email', 'nickname', 'unique_id', 'profile_pic', ]
 
 
 class ContactSerializer(serializers.ModelSerializer):
