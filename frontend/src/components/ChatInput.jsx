@@ -47,8 +47,10 @@ const ChatInput = (props) => {
   useEffect(() => {
     if (socket) {
 
+      
       init_listener()
       socket.on("my_response", data => {
+        console.log({data})
         setResponse((prev) => ([
           ...prev,
           {
@@ -57,7 +59,7 @@ const ChatInput = (props) => {
           }
         ]));
       });
-      console.log(response)
+      // console.log({response})
       return () => socket.disconnect();
     }
   }, [socket])
@@ -69,18 +71,35 @@ const ChatInput = (props) => {
     //return () => socket.disconnect();
   }, []);
 
-  const [input, setInput] = useState('')
+  const [input, setInput] = useState({message: '', tester: ''})
   // const id = props?.id || ''
   const handleChange = (e) => {
-    setInput(e.target.value.trim())
+    console.log(e.target)
+    setInput({
+      ...input,
+      [e.target.name]: e.target.value.trim()
+    })
   };
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    console.log(`msg submitted: ${input}`)
-    socket.emit('my_event', {data: input})
-    setInput('')
+    console.log(`msg submitted: ${input.message}`)
+    socket.emit('my_event', {data: input.message})
+    setInput({
+      ...input,
+      message: ''
+    })
   };
+
+  const handleSubmitBis = (e) => {
+    e.preventDefault()
+    console.log(`msg envoyé à tlm: ${input.tester}`)
+    socket.emit('my_broadcast_event', {data:input.tester})
+    setInput({
+      ...input,
+      tester: ''
+    })
+  }
 
   return (
     <>
@@ -90,9 +109,9 @@ const ChatInput = (props) => {
         // id={id}
         placeholder={props.inputName}
         onChange={handleChange}
-        value={input}
+        value={input.message}
       />
-      {props.room ?
+      {/* {props.room ?
         (<input
           type="text"
           name={props.inputName}
@@ -103,9 +122,19 @@ const ChatInput = (props) => {
         />)
         :
         ('')
-      }
+      } */}
       <button type='submit' onClick={handleSubmit}>
         {props.buttonName}
+      </button>
+      <input
+      type='text'
+      name='tester'
+      placeholder='tester'
+      onChange={handleChange}
+      value={input.tester}
+      />
+      <button type='submit' onClick={handleSubmitBis}>
+        envoyer à tlm
       </button>
       <ul>
         {

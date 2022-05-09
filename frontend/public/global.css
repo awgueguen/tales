@@ -4,12 +4,9 @@ html,
 body {
     box-sizing: border-box;
     height: 100%;
-<<<<<<< HEAD
     /* background-color: rgb(139, 0, 0); */
 
     color: #333;
-=======
->>>>>>> alexis
 }
 
 *,
