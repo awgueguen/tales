@@ -4,10 +4,8 @@ from blablapp import views
 # test ---------------------------------------------------------------------- #
 
 
-
-
 urlpatterns = [
- 
+
 
     # room ------------------------------------------------------------------ #
     path('room-<int:room_id>', views.get_room),
@@ -33,7 +31,7 @@ urlpatterns = [
     # setup ----------------------------------------------------------------- #
     path('room/create', views.create_room),
     # création d'une room
-    path('room/create/id=<int:room_id>/entities', views.mj_instances),
+    path('room/create/id=<int:room_id>/entities', views.create_instances),
     # associer des instances à une room & les personaliser
 
     # assets ---------------------------------------------------------------- #
