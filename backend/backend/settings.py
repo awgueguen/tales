@@ -60,7 +60,6 @@ MIDDLEWARE = [
 
     'corsheaders.middleware.CorsMiddleware',  # cors middleware
 
-
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -156,10 +155,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # CORS SETTINGS ------------------------------------------------------------- #
 CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000'
     # A list of origins that are authorized to make cross-site HTTP requests.
 ]
 
-CSRF_TRUSTED_ORIGINS = [
+CORS_TRUSTED_ORIGINS = [
+    "localhost"
     # A list of hosts which are trusted origins for unsafe requests.
     # subdomain.safesite.com
 ]
