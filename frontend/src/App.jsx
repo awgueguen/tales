@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route, Link, useLocation } from "react-router-dom";
+import DisplayFriends from "@components/DisplayFriends";
 
-import Home from "./pages/Home";
+import Home from "@components/Home";
 import Register from "@pages/Register";
 
 const App = () => {
@@ -9,7 +10,8 @@ const App = () => {
     <>
       <BrowserRouter>
         <Routes>
-          <Route index path="/" element={<Home />} />
+          <Route path="/" element={<Home />} />
+          <Route index path="/displayFriends" element={<DisplayFriends />} />
           <Route path="/register" element={<Register />} />
         </Routes>
       </BrowserRouter>

@@ -1,38 +1,53 @@
 from django.http import JsonResponse
-from rest_framework import status
+from rest_framework import status, permissions
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework_simplejwt.views import TokenObtainPairView
+
 from blablapp import serializers
 from blablapp import models
+
+# --------------------------------------------------------------------------- #
+# token claim customizations                                                  #
+# --------------------------------------------------------------------------- #
+
+
+class MyTokenObtainPairView(TokenObtainPairView):
+    serializer_class = serializers.MyTokenObtainPairSerializer
+
 
 # --------------------------------------------------------------------------- #
 # read-only                                                                   #
 # --------------------------------------------------------------------------- #
 
-
 # character classes --------------------------------------------------------- #
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated, ])
+@authentication_classes([JWTAuthentication])
+@permission_classes([permissions.IsAuthenticated])
 def classes_api(request):
-    # print('test')
+
+    print(request.user)
     classes = models.CharacterClass.objects.all()
     res = serializers.CharacterClassSerializer(classes, many=True)
     return JsonResponse({"classes": res.data})
 
-# add in JsonResponse safe=False if the first item is not a proper JSON
+# add in JsonResponse safe = False if the first item is not a proper JSON
 
 
 # actions ------------------------------------------------------------------- #
 
 @api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([permissions.IsAuthenticated])
 def actions_api(request):
 
     actions = models.Action.objects.all()
     res = serializers.ActionSerializer(actions, many=True)
-    return JsonResponse({"actions": res.data})
+    return JsonResponse({"actions": res.data}) # safe=False
 
 # --------------------------------------------------------------------------- #
 # CHARACTERS                                                                  #
@@ -42,6 +57,8 @@ def actions_api(request):
 
 
 @api_view(['GET', 'POST'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([permissions.IsAuthenticated])
 def characters_api(request, user_id):
 
     try:
@@ -63,6 +80,8 @@ def characters_api(request, user_id):
 
 
 @api_view(['PUT'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([permissions.IsAuthenticated])
 def characters_ingame(request):
 
     # TODO: all
@@ -75,28 +94,43 @@ def characters_ingame(request):
 # --------------------------------------------------------------------------- #
 
 @api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([permissions.IsAuthenticated])
 def trigger(request):
+
+    # TODO: check Django Signals
     return
 
 
 @api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([permissions.IsAuthenticated])
 def display_assets(request):
+
+    # TODO: all
+
     return
 
 
 @api_view(['POST'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([permissions.IsAuthenticated])
 def create_assets(request):
+
+    # TODO: all
+
     return
 
 
 @api_view(['GET, PUT, DELETE'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([permissions.IsAuthenticated])
 def stories_api(request):
 
     # TODO: all
 
     if request.method == 'GET':
         return
-
     if request.method == 'PUT':
         return
     if request.method == 'DELETE':
@@ -104,13 +138,14 @@ def stories_api(request):
 
 
 @api_view(['GET, PUT, DELETE'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([permissions.IsAuthenticated])
 def events_api(request):
 
     # TODO: all
 
     if request.method == 'GET':
         return
-
     if request.method == 'PUT':
         return
     if request.method == 'DELETE':
@@ -118,13 +153,14 @@ def events_api(request):
 
 
 @api_view(['GET, PUT, DELETE'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([permissions.IsAuthenticated])
 def entities_api(request):
 
     # TODO: all
 
     if request.method == 'GET':
         return
-
     if request.method == 'PUT':
         return
     if request.method == 'DELETE':
@@ -132,8 +168,11 @@ def entities_api(request):
 
 
 @api_view(['POST, PUT, DELETE'])
-def mj_instances(request):
+@authentication_classes([JWTAuthentication])
+@permission_classes([permissions.IsAuthenticated])
+def create_instances(request):
 
+    # TODO: add new permissions values checking if player is DM of the room
     # TODO: all
 
     if request.method == 'POST':
@@ -145,7 +184,11 @@ def mj_instances(request):
 
 
 @api_view(['GET', 'PUT'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([permissions.IsAuthenticated])
 def instances_ingame(request):
+
+    # TODO: only accept trigger
     # TODO: all
 
     if request.method == 'GET':
@@ -160,16 +203,28 @@ def instances_ingame(request):
 # --------------------------------------------------------------------------- #
 
 @api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([permissions.IsAuthenticated])
 def get_room(request):
+
+    # TODO: all + check if user is participant, or if room is public
+
     return
 
 
 @api_view(['POST', 'PUT'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([permissions.IsAuthenticated])
 def create_room(request, slug):
+
+    # TODO: all
+
     return
 
 
 @api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([permissions.IsAuthenticated])
 def messages_api(request, room):
 
     # TODO: all
@@ -179,14 +234,24 @@ def messages_api(request, room):
 
 
 @api_view(['POST'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([permissions.IsAuthenticated])
 def post_message(request):
+
+    # TODO: all + check if user is member of a room
+
     if request.method == 'POST':
         return
     # TODO: Whisper & Quote views ?
 
 
 @api_view(['PUT', 'DELETE'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([permissions.IsAuthenticated])
 def edit_messages(request):
+
+    # TODO: all + check if user is member of a room
+
     if request.method == 'PUT':
         return
     if request.method == 'DELETE':
@@ -199,6 +264,8 @@ def edit_messages(request):
 
 
 @api_view(['GET', 'POST', 'PUT', 'DELETE'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([permissions.IsAuthenticated])
 def users_api(request, user_id):
 
     # TODO : add other methods, more specific views / needs
@@ -221,6 +288,8 @@ def users_api(request, user_id):
 
 
 @api_view(['GET', 'POST', 'PUT'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([permissions.IsAuthenticated])
 def contacts_api(request):
 
     # TODO: all
@@ -236,6 +305,8 @@ def contacts_api(request):
 # tickbox ------------------------------------------------------------------- #
 
 @api_view(['GET', 'POST', 'PUT'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([permissions.IsAuthenticated])
 def tick_api(request):
 
     # TODO: all
