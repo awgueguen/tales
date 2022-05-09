@@ -1,7 +1,9 @@
+import random
+
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+
 from django.template.defaultfilters import slugify
-import random
 
 
 # --------------------------------------------------------------------------- #
@@ -14,27 +16,37 @@ class CharacterClass(models.Model):
     hp = models.PositiveIntegerField(help_text="Maximum 20")
     atk = models.PositiveIntegerField(help_text="Maximum 20")
     defense = models.PositiveIntegerField(help_text="Maximum 20")
-    actions = models.ManyToManyField('blablapp.Action')
+    actions = models.ManyToManyField('blablapp.Action', related_name='classes')
 
     # TODO: add default basic actions
 
     class Meta:
+        ordering = ["name"]
         verbose_name = 'Character Class'
         verbose_name_plural = 'Character Classes'
 
+    def __str__(self):
+        return self.name
+
 
 class Character(models.Model):
-    characterClassId = models.ForeignKey(
-        CharacterClass, on_delete=models.RESTRICT)
-    userId = models.ForeignKey("blablapp.MyUser", on_delete=models.CASCADE)
+    characterClass = models.ForeignKey(
+        CharacterClass, on_delete=models.RESTRICT, related_name="characters")
+    user = models.ForeignKey(
+        "blablapp.MyUser", on_delete=models.CASCADE, related_name="characters")
     name = models.CharField(max_length=30)
     background = models.TextField(help_text="Not Required", blank=True)
     image = models.ImageField(
         help_text="Upload a character image", upload_to="characters")
 
     class Meta:
+        ordering = ['user', 'characterClass']
         verbose_name = 'Character'
         verbose_name_plural = 'Characters'
+
+    def __str__(self):
+        return self.name
+
 
 # --------------------------------------------------------------------------- #
 # ACTIONS INFORMATIONS                                                        #
@@ -47,8 +59,13 @@ class Action(models.Model):
     trigger = models.CharField(max_length=10, unique=True)
 
     class Meta:
+        ordering = ['title']
         verbose_name = 'Action'
         verbose_name_plural = 'Actions'
+
+    def __str__(self):
+        return self.title
+
 
 # --------------------------------------------------------------------------- #
 # USERS INFORMATIONS                                                          #
@@ -75,20 +92,29 @@ class MyUser(AbstractUser):
 
         super(MyUser, self).save(*args, **kwargs)
 
+    class Meta:
+        ordering = ['-date_joined']
+        verbose_name = 'User'
+        verbose_name_plural = 'Users'
+
     REQUIRED_FIELDS = ["nickname", "birthdate"]
+
+    def __str__(self):
+        return self.username
 
 
 class Contact(models.Model):
-    senderId = models.ForeignKey(
-        MyUser, related_name="ContactSender", on_delete=models.CASCADE)
-    receiverId = models.ForeignKey(
-        MyUser, related_name="ContactReceiver", on_delete=models.CASCADE)
+    sender = models.ForeignKey(
+        MyUser, on_delete=models.CASCADE)
+    receiver = models.ForeignKey(
+        MyUser, on_delete=models.CASCADE, related_name="contacts")
     approved = models.BooleanField(default=False)
     sentAt = models.DateTimeField(auto_now_add=True, editable=False)
     approvedAt = models.DateTimeField(null=True)
     refusedAt = models.DateTimeField(null=True)
 
     class Meta:
+        ordering = ['sender', "approved"]
         verbose_name = "Contact"
         verbose_name_plural = "Contacts"
 
@@ -97,10 +123,11 @@ class Tickbox(models.Model):
     createdAt = models.DateTimeField(auto_now_add=True, editable=False)
     editAt = models.DateTimeField(auto_now=True, blank=True)
     checked = models.BooleanField(default=False)
-    userId = models.OneToOneField(
-        MyUser, on_delete=models.CASCADE, primary_key=True)
+    user = models.OneToOneField(
+        MyUser, on_delete=models.CASCADE, primary_key=True, related_name="tickboxes")
 
     class Meta:
+        ordering = ["createdAt"]
         verbose_name = "Tickbox"
         verbose_name_plural = "Tickboxes"
 
@@ -110,13 +137,22 @@ class Tickbox(models.Model):
 # --------------------------------------------------------------------------- #
 
 
-class Entity(models.Model):
+class AbstractEntity(models.Model):
     name = models.CharField(max_length=30)
     image = models.ImageField(
         help_text="Upload a Creature / NPC picture", upload_to="entities", blank=True)
     hp = models.PositiveIntegerField(help_text="Maximum 20")
     atk = models.PositiveIntegerField(help_text="Maximum 20")
     defense = models.PositiveIntegerField(help_text="Maximum 20")
+
+    class Meta:
+        abstract = True
+
+    def __str__(self):
+        return self.name
+
+
+class Entity(AbstractEntity):
     trigger = models.CharField(max_length=10, unique=True)
 
     class Meta:
@@ -124,9 +160,12 @@ class Entity(models.Model):
         verbose_name_plural = "Entities"
 
 
-class EntityInstance(Entity):
-    roomId = models.ForeignKey(
-        "blablapp.Room", on_delete=models.CASCADE, null=True)
+class EntityInstance(AbstractEntity):
+    instance = models.AutoField(primary_key=True)
+    entity = models.ForeignKey(
+        Entity, on_delete=models.CASCADE, related_name="instances")
+    room = models.ForeignKey(
+        "blablapp.Room", on_delete=models.CASCADE, null=True, related_name="instances")
     currentHP = models.PositiveIntegerField(
         help_text="Not Required", null=True)
     currentATK = models.PositiveIntegerField(
@@ -134,14 +173,34 @@ class EntityInstance(Entity):
     currentDEF = models.PositiveIntegerField(
         help_text="Not Required", null=True)
 
-    def __init__(self, *args, **kwargs):
-        super(EntityInstance, self).__init__(*args, **kwargs)
-        if self.currentHP is None:
-            self.currentHP = kwargs.get('hp')
-        if self.currentATK is None:
-            self.currentATK = kwargs.get('atk')
-        if self.currentDEF is None:
-            self.currentDEF = kwargs.get('defense')
+    trigger = models.CharField(max_length=10)
+
+    def save(self, *args, **kwargs):
+        """
+        Set the currentHP according to whats injected
+        **kwargs = if the items is called EntityInstance(currentHP=<number>)
+        It will cover three basic scenarios: set new value, default, and modification
+        """
+        if kwargs.get('currentHP'):
+            self.currentHP = kwargs.get('currentHP')
+        elif not self.currentHP:
+            self.currentHP = self.hp
+
+        if kwargs.get('currentATK'):
+            self.currentATK = kwargs.get('currentATK')
+        elif not self.currentATK:
+            self.currentATK = self.atk
+
+        if kwargs.get('currentDEF'):
+            self.currentDEF = kwargs.get('currentDEF')
+        elif not self.currentDEF:
+            self.currentDEF = self.defense
+
+        super(EntityInstance, self).save(*args, **kwargs)
+
+    class Meta:
+        verbose_name = "Entity Instance"
+        verbose_name_plural = "Entity Instances"
 
 
 class Event(models.Model):
@@ -152,10 +211,15 @@ class Event(models.Model):
         help_text="Upload a picture for your Event", upload_to="events", blank=True)
     # chronology = models.IntegerField(help_text="Event order in a Story")
     trigger = models.CharField(max_length=10, unique=True)
+    # stories = models.ManyToManyField("blablapp.Story", related_name="events")
 
     class Meta:
+        ordering = ['title']
         verbose_name = "Event"
         verbose_name_plural = "Events"
+
+    def __str__(self):
+        return self.title
 
 
 class Story(models.Model):
@@ -171,12 +235,16 @@ class Story(models.Model):
     deleted = models.BooleanField(default=False)
     trigger = models.CharField(max_length=10, unique=True)
     # triggerCount = models.IntegerField(blank=True)
-    events = models.ManyToManyField(Event)
-    entities = models.ManyToManyField(Entity)
+    events = models.ManyToManyField(Event, related_name="stories")
+    entities = models.ManyToManyField(Entity, related_name="stories")
 
     class Meta:
+        ordering = ['title']
         verbose_name = "Story"
         verbose_name_plural = "Stories"
+
+    def __str__(self):
+        return self.title
 
 
 # --------------------------------------------------------------------------- #
@@ -187,7 +255,8 @@ class Story(models.Model):
 # room ---------------------------------------------------------------------- #
 
 class Room(models.Model):
-    storyId = models.ForeignKey(Story, on_delete=models.RESTRICT)
+    story = models.ForeignKey(
+        Story, on_delete=models.RESTRICT, related_name="room")
     title = models.CharField(max_length=30)
     createdAt = models.DateTimeField(auto_now_add=True, editable=False)
     editedAt = models.DateTimeField(auto_now=True)
@@ -197,20 +266,25 @@ class Room(models.Model):
         verbose_name="Room visibility", help_text="Change room visibility", default=False)
 
     class Meta:
-        ordering = ["createdAt", "isPublic"]
+        ordering = ["-isPublic", "createdAt"]
         verbose_name = "Room"
         verbose_name_plural = "Rooms"
 
+    def __str__(self):
+        return self.title
+
 
 class RoomParticipant(models.Model):
-    roomId = models.ForeignKey(Room, on_delete=models.CASCADE)
-    userId = models.ForeignKey(MyUser, on_delete=models.CASCADE)
+    room = models.ForeignKey(
+        Room, on_delete=models.CASCADE, related_name="participants")
+    user = models.ForeignKey(
+        MyUser, on_delete=models.CASCADE, related_name="rooms")
     isAdmin = models.BooleanField(
         verbose_name="Is DM", help_text="Determine if the participant is the DM", default=False)
     nickname = models.CharField(
         help_text="By default the user nickname", max_length=35, null=True)
-    characterId = models.ForeignKey(Character, verbose_name="Character", help_text="Choose your player",
-                                    on_delete=models.RESTRICT)
+    character = models.ForeignKey(Character, verbose_name="Character", help_text="Choose your player",
+                                  on_delete=models.RESTRICT, related_name="rooms")
     hit = models.IntegerField(
         verbose_name="Hit Point", help_text="Hit points taken by the participant", default=0)
     joinedAt = models.DateTimeField(auto_now_add=True, editable=False)
@@ -221,19 +295,24 @@ class RoomParticipant(models.Model):
 
     def save(self, *args, **kwargs):
         if self.nickname is None:
-            self.nickname = self.userId.nickname
-            super(RoomParticipant, self).save(*args, **kwargs)
+            self.nickname = self.user.nickname
+        super(RoomParticipant, self).save(*args, **kwargs)
 
     class Meta:
         verbose_name = "Room Participant"
         verbose_name_plural = "Room Participants"
 
+    def __str__(self):
+        return self.nickname
+
 
 # messages ------------------------------------------------------------------ #
 
 class Message(models.Model):
-    roomId = models.ForeignKey(Room, on_delete=models.CASCADE)
-    senderId = models.ForeignKey(MyUser, on_delete=models.CASCADE)
+    room = models.ForeignKey(
+        Room, on_delete=models.CASCADE, related_name="messages")
+    sender = models.ForeignKey(
+        MyUser, on_delete=models.CASCADE, related_name="messages")
     messageContent = models.TextField(
         verbose_name="Message Content")
     image = models.ImageField(
@@ -250,7 +329,7 @@ class Message(models.Model):
     isTriggered = models.BooleanField(default=False)
 
     class Meta:
-        ordering = ["roomId", "createdAt"]
+        ordering = ["room", "createdAt"]
         verbose_name = "Message"
         verbose_name_plural = "Messages"
 
@@ -259,17 +338,17 @@ class Message(models.Model):
 
 
 class Whisper(models.Model):
-    messageId = models.OneToOneField(
-        Message, on_delete=models.CASCADE, primary_key=True)
-    senderId = models.ForeignKey(
-        MyUser, related_name="WhisperSender", on_delete=models.CASCADE)
-    receiverId = models.ForeignKey(
-        MyUser,  related_name="WhisperReceiver", on_delete=models.CASCADE)
+    message = models.OneToOneField(
+        Message, on_delete=models.CASCADE, primary_key=True, related_name="whisper")
+    sender = models.ForeignKey(
+        MyUser, on_delete=models.CASCADE, related_name="whispers")
+    receiver = models.ForeignKey(
+        MyUser, on_delete=models.CASCADE, related_name="received_whispers")
 
 
 class Quote(models.Model):
-    messageId = models.OneToOneField(
-        Message, related_name="QuoteSender", on_delete=models.CASCADE, primary_key=True)
-    quotedId = models.ForeignKey(
-        Message, related_name="QuoteReceiver", null=True,
-        on_delete=models.SET_NULL)
+    message = models.OneToOneField(
+        Message, on_delete=models.CASCADE, primary_key=True, related_name="quotes")
+    quoted = models.ForeignKey(
+        Message, null=True,
+        on_delete=models.SET_NULL, related_name="messages_quoted")

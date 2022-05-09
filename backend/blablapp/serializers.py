@@ -1,6 +1,21 @@
 from rest_framework import serializers
-from .models import MyUser, Contact;
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
 from blablapp import models
+
+
+# Serialization allows complex data (querysets, model) to be converted into native Python data.
+# These can be easily converted JSON.
+
+# --------------------------------------------------------------------------- #
+# token customizations                                                        #
+# --------------------------------------------------------------------------- #
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+        token['username'] = user.username
+        return token
 
 
 class CharacterClassSerializer(serializers.ModelSerializer):
@@ -24,7 +39,8 @@ class ActionSerializer(serializers.ModelSerializer):
 class MyUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.MyUser
-        fields = '__all__'
+        fields = ['last_login', 'username', 'first_name', 'last_name',
+                  'email', 'nickname', 'unique_id', 'profile_pic', ]
 
 
 class ContactSerializer(serializers.ModelSerializer):

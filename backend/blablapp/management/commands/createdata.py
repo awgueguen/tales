@@ -1,8 +1,9 @@
-from django.core.management.base import BaseCommand
-from blablapp.models import *
-import faker.providers
-from faker import Faker
+import os
 import random
+from django.core.management.base import BaseCommand
+from faker import Faker
+import faker.providers
+from blablapp.models import CharacterClass, Character, Action, MyUser, Contact, Tickbox, Entity, EntityInstance, Event, Story, Room, RoomParticipant, Message, Whisper, Quote
 
 ACTIONS = ["Attack", "Hide", "Search", "Use", "Talk", "Charm", "Trap"]
 
@@ -12,7 +13,7 @@ def loadbar(iteration, total, decimals=1, length=100, fill='█'):
                'f}').format(100 * iteration/float(total))
     filledLen = int(length * iteration // total)
     bar = fill * filledLen + '-' * (length - filledLen)
-    print(f'\rProgress: |{bar}| {percent}% Complete', end='\r')
+    print(f'\rProgress: |{bar}| {percent}% Complete\r')
     if iteration == total:
         print()
 
@@ -27,6 +28,10 @@ class Command(BaseCommand):
     # Faker.seed(0)
 
     def handle(self, *args, **kwargs):  # sourcery no-metrics
+
+        print(">>> reset db")
+        os.system('python manage.py flush --noinput')
+        print(">>> db flushed\n")
 
         fake = Faker(["en_US"])
         fancyfake = Faker(["nl_NL"])
@@ -80,7 +85,7 @@ class Command(BaseCommand):
         # USER RELATED                                                        #
         # ------------------------------------------------------------------- #
 
-        user_input = int(input(">>> How many users: "))
+        user_input = int(input(">>> How many users: ") or "10")
         # user & tickbox ---------------------------------------------------- #
         loadbar(0, user_input)
         for i in range(user_input):
@@ -101,7 +106,7 @@ class Command(BaseCommand):
             # tickbox ------------------------------------------------------- #
             Tickbox.objects.create(
                 checked=True,
-                userId=user
+                user=user
             )
 
             # characters ---------------------------------------------------- #
@@ -110,8 +115,8 @@ class Command(BaseCommand):
                 class_id = CharacterClass.objects.order_by("?").first()
 
                 Character.objects.create(
-                    characterClassId=class_id,
-                    userId=user_id,
+                    characterClass=class_id,
+                    user=user_id,
                     name=fake.name(),
                     background=fake.text(max_nb_chars=400),
                     image=fake.image_url(),
@@ -133,8 +138,8 @@ class Command(BaseCommand):
         for i in range(user_input // 2):
             user_list = MyUser.objects.order_by("?")
             Contact.objects.create(
-                senderId=user_list.first(),
-                receiverId=user_list.last(),
+                sender=user_list.first(),
+                receiver=user_list.last(),
                 approved=fake.boolean(chance_of_getting_true=75),
             )
             loadbar(i + 1, user_input // 2)
@@ -206,7 +211,7 @@ class Command(BaseCommand):
         # ROOM RELATED                                                        #
         # ------------------------------------------------------------------- #
 
-        room_input = int(input(">>> How many rooms: "))
+        room_input = int(input(">>> How many rooms: ") or "10")
         # room -------------------------------------------------------------- #
         loadbar(0, room_input)
         for i in range(room_input):
@@ -214,28 +219,38 @@ class Command(BaseCommand):
             max_players = random.randint(1, 5)
 
             room = Room.objects.create(
-                storyId=story_id,
+                story=story_id,
                 title=fake.sentence(nb_words=3, variable_nb_words=False),
                 maxParticipants=max_players,
                 isPublic=fake.boolean(chance_of_getting_true=25)
             )
 
             user_id = MyUser.objects.order_by("?").values(
-                'id', 'character')[:max_players]
+                'id', 'characters')[:max_players]
 
             # participants -------------------------------------------------- #
-            for j in range(len(user_id)):
-                user = MyUser.objects.get(id__exact=user_id[j]["id"])
+            for index, value in enumerate(user_id):
+                user = MyUser.objects.get(id__exact=value["id"])
                 character = Character.objects.get(
-                    id__exact=user_id[j]["character"])
+                    id__exact=value["characters"])
 
-                admin = j == 0
+                admin = index == 0
                 RoomParticipant.objects.create(
-                    roomId=room,
-                    userId=user,
+                    room=room,
+                    user=user,
                     isAdmin=admin,
-                    characterId=character,
+                    character=character,
                 )
+
+            # entities instances -------------------------------------------- #
+            for _ in range(3):
+                entity = Entity.objects.order_by("?").first()
+                instance_e = EntityInstance(
+                    entity=entity,
+                    room=room
+                )
+                instance_e.__dict__.update(entity.__dict__)
+                instance_e.save()
 
             # messages ------------------------------------------------------ #
             for _ in range(30):
@@ -249,8 +264,8 @@ class Command(BaseCommand):
                     chance_of_getting_true=20)
 
                 message = Message.objects.create(
-                    roomId=room,
-                    senderId=sender,
+                    room=room,
+                    sender=sender,
                     messageContent=fake.sentence(nb_words=10),
                     quoted=quote,
                     whispered=whisper,
@@ -260,32 +275,24 @@ class Command(BaseCommand):
                 # whisper --------------------------------------------------- #
                 if whisper:
                     Whisper.objects.create(
-                        messageId=message,
-                        senderId=sender,
-                        receiverId=receiver
+                        message=message,
+                        sender=sender,
+                        receiver=receiver
                     )
 
                 # quote ----------------------------------------------------- #
                 elif quote:
                     quote = Message.objects.all().first()
                     Quote.objects.create(
-                        messageId=message,
-                        quotedId=quote
+                        message=message,
+                        quoted=quote
                     )
-
-                    # TODO FIX => ENITY INSTANCE
-
-                    # for _ in range(3):
-                    #     entity = Entity.objects.order_by("?").first()
-                    #     EntityInstance.objects.create(
-                    #         entity_ptr_id=entity.pk,
-                    #         roomId=room
-                    #     )
 
             loadbar(i + 1, room_input)
 
         check_rooms = Room.objects.all().count()
         check_participants = RoomParticipant.objects.all().count()
+        check_instances = EntityInstance.objects.all().count()
         check_messages = Message.objects.all().count()
         check_whispers = Whisper.objects.all().count()
         check_quotes = Quote.objects.all().count()
@@ -294,6 +301,8 @@ class Command(BaseCommand):
             f'# Number of Rooms: {check_rooms}'))
         self.stdout.write(self.style.SUCCESS(
             f'# Number of Participants: {check_participants}'))
+        self.stdout.write(self.style.SUCCESS(
+            f'# Number of Instances from multiple entities: {check_instances}'))
         self.stdout.write(self.style.SUCCESS(
             f'# Number of Messages: {check_messages}'))
         self.stdout.write(self.style.SUCCESS(
