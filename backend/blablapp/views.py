@@ -1,8 +1,9 @@
 from django.http import JsonResponse
 from rest_framework import status
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework import permissions
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from blablapp import serializers
 from blablapp import models
 
@@ -10,34 +11,19 @@ from blablapp import models
 # read-only                                                                   #
 # --------------------------------------------------------------------------- #
 
-# tests --------------------------------------------------------------------- #
-from rest_framework.decorators import action
-from rest_framework.viewsets import ReadOnlyModelViewSet
-
-
-class ClassesViewSet(ReadOnlyModelViewSet):
-    serializer_class = serializers.CharacterClassSerializer
-    queryset = models.CharacterClass.objects.all()
-    permission_classes = [IsAuthenticated]
-
-    @action(detail=False)
-    def get_list(self, request):
-        content = {'message': 'Hello, World!'}
-        return Response(content)
-
-
 # character classes --------------------------------------------------------- #
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated, ])
+@authentication_classes([JWTAuthentication])
+@permission_classes([permissions.IsAuthenticated])
 def classes_api(request):
-    # print('test')
+    print(request.user)
     classes = models.CharacterClass.objects.all()
     res = serializers.CharacterClassSerializer(classes, many=True)
     return JsonResponse({"classes": res.data})
 
-# add in JsonResponse safe=False if the first item is not a proper JSON
+# add in JsonResponse safe = False if the first item is not a proper JSON
 
 
 # actions ------------------------------------------------------------------- #

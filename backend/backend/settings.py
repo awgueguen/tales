@@ -10,8 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
-from pathlib import Path
 from datetime import timedelta
+from pathlib import Path
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-5=&g$z5p&tbekg86dc5vestupeyzu+eu*91z#gay!$y5rcu*b^
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
 
 
 INSTALLED_APPS = [
@@ -41,8 +41,25 @@ INSTALLED_APPS = [
     'blablapp.apps.BlablappConfig',
     "rest_framework",
     "corsheaders",
-    'rest_framework_simplejwt',
 ]
+# REST SETTINGS ------------------------------------------------------------- #
+
+REST_FRAMEWORK = {
+
+    'DEFAULT_AUTHENTIFICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+
+    ]
+}
+# JWT SETTINGS -------------------------------------------------------------- #
+
+
+SIMPLE_JWT_SIGNING_KEY = "b=72^ado*%1(v3r7rga9ch)03xr=d*f)lroz94kosf!61((9=i"
+
+SIMPLE_JWT = {
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=15),
+    'ROTATE_REFRESH_TOKENS': True,
+}
 
 
 MIDDLEWARE = [
@@ -133,7 +150,7 @@ USE_TZ = True
 ROOT_DIR = Path(__file__).resolve().parent.parent.parent
 
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 
 MEDIA_ROOT = os.path.join(ROOT_DIR, 'frontend', 'media')
@@ -142,16 +159,6 @@ MEDIA_ROOT = os.path.join(ROOT_DIR, 'frontend', 'media')
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-# REST SETTINGS ------------------------------------------------------------- #
-
-REST_FRAMEWORK = {
-
-    'DEFAULT_AUTHENTIFICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-
-    ]
-}
 
 
 # CORS SETTINGS ------------------------------------------------------------- #
@@ -167,11 +174,6 @@ CSRF_TRUSTED_ORIGINS = [
 CORS_ALLOW_CREDENTIALS = True
 # If True, cookies will be allowed to be included in cross-site HTTP requests.
 
+CORS_ORIGIN_WHITELIST = ['http://localhost:3000']
+
 # REST ---------------------------------------------------------------------- #
-
-# JWT SETTINGS -------------------------------------------------------------- #
-
-SIMPLE_JWT = {
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=15),
-    'ROTATE_REFRESH_TOKENS': True,
-}

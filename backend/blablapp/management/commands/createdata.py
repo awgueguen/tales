@@ -5,7 +5,6 @@ from faker import Faker
 import faker.providers
 from blablapp.models import CharacterClass, Character, Action, MyUser, Contact, Tickbox, Entity, EntityInstance, Event, Story, Room, RoomParticipant, Message, Whisper, Quote
 
-
 ACTIONS = ["Attack", "Hide", "Search", "Use", "Talk", "Charm", "Trap"]
 
 
