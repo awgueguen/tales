@@ -19,6 +19,7 @@ ALLOWED_HOSTS = []
 
 
 INSTALLED_APPS = [
+    "corsheaders",
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -26,7 +27,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    "corsheaders",
+
     'rest_framework_simplejwt.token_blacklist',
     'blablapp',
 
@@ -47,7 +48,7 @@ REST_FRAMEWORK = {
 
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=7),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=90),
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': True,
@@ -57,9 +58,8 @@ SIMPLE_JWT = {
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
+
     'django.middleware.security.SecurityMiddleware',
-
-
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -151,8 +151,10 @@ MEDIA_ROOT = os.path.join(ROOT_DIR, 'frontend', 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# --------------------------------------------------------------------------- #
+# CORS SETTINGS                                                               #
+# --------------------------------------------------------------------------- #
 
-# CORS SETTINGS ------------------------------------------------------------- #
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000'
     # A list of origins that are authorized to make cross-site HTTP requests.
@@ -179,3 +181,5 @@ CORS_ALLOW_METHODS = [
     "POST",
     "PUT",
 ]
+
+# cors settings end --------------------------------------------------------- #
