@@ -47,7 +47,7 @@ def actions_api(request):
 
     actions = models.Action.objects.all()
     res = serializers.ActionSerializer(actions, many=True)
-    return JsonResponse({"actions": res.data}) # safe=False
+    return JsonResponse({"actions": res.data})  # safe=False
 
 # --------------------------------------------------------------------------- #
 # CHARACTERS                                                                  #
