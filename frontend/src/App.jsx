@@ -1,20 +1,29 @@
-import React, { useEffect, useState } from "react";
-import { BrowserRouter, Routes, Route, Link, useLocation } from "react-router-dom";
+import React, { Fragment } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+/* components -------------------------------------------------------------- */
 import DisplayFriends from "@components/DisplayFriends";
-
-import Home from "@components/Home";
-import Register from "@pages/Register";
+import Header from "@components/Header";
+/* pages ------------------------------------------------------------------- */
+import HomePage from "@pages/HomePage";
+import LoginPage from "@pages/LoginPage";
+/* utils ------------------------------------------------------------------- */
+import PrivateRoute from "@utils/PrivateRoute";
 
 const App = () => {
   return (
     <>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route index path="/displayFriends" element={<DisplayFriends />} />
-          <Route path="/register" element={<Register />} />
-        </Routes>
-      </BrowserRouter>
+      <Router>
+        <Fragment>
+          <Header />
+          <Routes>
+            <Route path="/" element={<PrivateRoute />}>
+              <Route path="/" element={<HomePage />} />
+            </Route>
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/displayFriends" element={<DisplayFriends />} />
+          </Routes>
+        </Fragment>
+      </Router>
     </>
   );
 };
