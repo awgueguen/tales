@@ -13,9 +13,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-5=&g$z5p&tbekg86dc5vestupeyzu+eu*91z#gay!$y5rcu*b^'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 
 INSTALLED_APPS = [
@@ -48,7 +48,7 @@ REST_FRAMEWORK = {
 
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=7),
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=5),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=90),
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': True,
@@ -141,7 +141,7 @@ USE_TZ = True
 ROOT_DIR = Path(__file__).resolve().parent.parent.parent
 
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 
 MEDIA_ROOT = os.path.join(ROOT_DIR, 'frontend', 'media')
@@ -182,4 +182,7 @@ CORS_ALLOW_METHODS = [
     "PUT",
 ]
 
-# cors settings end --------------------------------------------------------- #
+
+# --------------------------------------------------------------------------- #
+# USER SETTINGS                                                               #
+# --------------------------------------------------------------------------- #

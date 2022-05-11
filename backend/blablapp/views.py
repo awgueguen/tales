@@ -57,10 +57,11 @@ def actions_api(request):
 
 
 @api_view(['GET', 'POST'])
-@authentication_classes([JWTAuthentication])
+# @authentication_classes([JWTAuthentication])
 @permission_classes([permissions.IsAuthenticated])
 def characters_api(request, user_id):
-
+    print('test')
+    print(request.user)
     try:
         user = models.MyUser.objects.get(id=user_id)
     except models.MyUser.DoesNotExist:

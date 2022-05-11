@@ -1,9 +1,11 @@
 import { Navigate, Outlet } from "react-router-dom";
+import { useContext } from "react";
+
+import AuthContext from "@context/AuthContext";
 
 const PrivateRoute = () => {
-  console.log("Private route works!");
-  const auth = null;
-  return auth ? <Outlet /> : <Navigate to="/login" />;
+  const { username, userId } = useContext(AuthContext);
+  return username ? <Outlet /> : <Navigate to="/login" />;
 };
 
 export default PrivateRoute;
