@@ -51,7 +51,7 @@ urlpatterns = [
     # user related ---------------------------------------------------------- #
     path('user/<int:user_id>', views.users_api),
     # profil utilisateur
-    path('user/<int:user_id>/characters/', views.characters_api),
+    path('characters/', views.characters_api),
     # voir les personnages associés à un utilisateurs
     path('user/<int:user_id>/contacts', views.contacts_api),
     # gestion des contacts utilisateurs

@@ -310,7 +310,7 @@ class RoomParticipant(models.Model):
 
 class Message(models.Model):
     room = models.ForeignKey(
-        Room, on_delete=models.CASCADE, related_name="messages")
+        Room, on_delete=models.CASCADE, related_name="messages", null=True)
     sender = models.ForeignKey(
         MyUser, on_delete=models.CASCADE, related_name="messages")
     messageContent = models.TextField(

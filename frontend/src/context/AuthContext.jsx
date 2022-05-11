@@ -24,7 +24,11 @@ export const AuthProvider = ({ children }) => {
   );
 
   useEffect(() => {
-    let timer = 3 * 60 * 1000;
+    if (loading) {
+      updateToken();
+    }
+
+    let timer = 4 * 60 * 1000;
 
     let interval = setInterval(() => {
       if (authTokens) {
@@ -33,6 +37,7 @@ export const AuthProvider = ({ children }) => {
     }, timer);
 
     return () => clearInterval(interval);
+    // eslint-disable-next-line
   }, [authTokens, loading]);
 
   /* login method ---------------------------------------------------------- */
@@ -41,31 +46,33 @@ export const AuthProvider = ({ children }) => {
     let username = e.target.username.value;
     let password = e.target.password.value;
     /* fetch token --------------------------------------------------------- */
-    let res = await axios({
-      url: "http://127.0.0.1:8000/token/",
-      method: "POST",
-      header: {
-        "Content-Type": "application/json",
-      },
-      data: { username, password },
-    });
-    /* check response status ----------------------------------------------- */
-    if (res.status === 200) {
-      /* if ok ------------------------------------------------------------- */
-      let resTokens = res.data;
-      let resUsername = jwt_decode(res.data.access).username;
-      let resId = jwt_decode(res.data.access).user_id;
+    if (username && password) {
+      await axios({
+        url: "http://127.0.0.1:8000/token/",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        data: { username, password },
+      })
+        .then((response) => {
+          if (response.status === 200) {
+            let resTokens = response.data;
+            let resUsername = jwt_decode(response.data.access).username;
+            let resId = jwt_decode(response.data.access).user_id;
 
-      setAuthTokens(resTokens);
-      setUsername(resUsername);
-      setUserId(resId);
+            setAuthTokens(resTokens);
+            setUsername(resUsername);
+            setUserId(resId);
 
-      localStorage.setItem("authTokens", JSON.stringify(resTokens));
+            localStorage.setItem("authTokens", JSON.stringify(resTokens));
 
-      navigate("/");
-    } else {
-      /* if error ---------------------------------------------------------- */
-      alert("Wrong input");
+            navigate("/");
+          }
+        })
+        .catch((e) => {
+          alert("Wrong input");
+        });
     }
   };
 
@@ -78,28 +85,33 @@ export const AuthProvider = ({ children }) => {
 
   /* refresh token --------------------------------------------------------- */
   let updateToken = async () => {
-    console.log("prout");
-    let res = await axios({
-      url: "http://127.0.0.1:8000/token/refresh/",
-      method: "POST",
-      header: {
-        "Content-Type": "application/json",
-      },
-      data: { refresh: authTokens.refresh },
-    });
+    if (authTokens) {
+      await axios({
+        url: "http://127.0.0.1:8000/token/refresh/",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        data: { refresh: authTokens?.refresh },
+      })
+        .then((response) => {
+          if (response.status === 200) {
+            let resTokens = response.data;
+            let resUsername = jwt_decode(response.data.access).username;
+            let resId = jwt_decode(response.data.access).user_id;
 
-    if (res.status === 200) {
-      let resTokens = res.data;
-      let resUsername = jwt_decode(res.data.access).username;
-      let resId = jwt_decode(res.data.access).user_id;
+            setAuthTokens(resTokens);
+            setUsername(resUsername);
+            setUserId(resId);
 
-      setAuthTokens(resTokens);
-      setUsername(resUsername);
-      setUserId(resId);
+            localStorage.setItem("authTokens", JSON.stringify(resTokens));
+          }
+        })
+        .catch((e) => logoutUser());
+    }
 
-      localStorage.setItem("authTokens", JSON.stringify(resTokens));
-    } else {
-      logoutUser();
+    if (loading) {
+      setLoading(false);
     }
   };
 
@@ -112,5 +124,5 @@ export const AuthProvider = ({ children }) => {
     logoutUser,
   };
 
-  return <AuthContext.Provider value={contextData}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={contextData}>{loading ? null : children}</AuthContext.Provider>;
 };

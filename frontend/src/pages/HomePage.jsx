@@ -4,23 +4,28 @@ import AuthContext from "@context/AuthContext";
 
 const HomePage = () => {
   let [characters, setCharacters] = useState([]);
-  let { authTokens } = useContext(AuthContext);
+  let { authTokens, logoutUser } = useContext(AuthContext);
 
   useEffect(() => {
     getCharacters();
+    // eslint-disable-next-line
   }, []);
 
   let getCharacters = async () => {
-    console.log(authTokens);
-    let res = await axios.get({
-      url: "http://127.0.0.1:8000/api/classes/",
+    await axios({
+      url: "http://127.0.0.1:8000/api/characters/",
       method: "GET",
-      header: {
+      headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + String(authTokens.access),
+        Authorization: `Bearer ${authTokens.access}`,
       },
+    }).then((response) => {
+      if (response.status === 200) {
+        setCharacters(response.data.characters);
+      } else if (response.statusText === "Unauthorized") {
+        logoutUser();
+      }
     });
-    console.log(res);
   };
 
   return (
@@ -28,7 +33,7 @@ const HomePage = () => {
       <p>You are logged to the homepage</p>
       <ul>
         {characters.map((character, i) => (
-          <li id={i}>{character.body}</li>
+          <li key={i}>{character.name}</li>
         ))}
       </ul>
     </div>

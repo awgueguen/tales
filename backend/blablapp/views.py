@@ -30,7 +30,6 @@ class MyTokenObtainPairView(TokenObtainPairView):
 @permission_classes([permissions.IsAuthenticated])
 def classes_api(request):
 
-    print(request.user)
     classes = models.CharacterClass.objects.all()
     res = serializers.CharacterClassSerializer(classes, many=True)
     return JsonResponse({"classes": res.data})
@@ -57,18 +56,13 @@ def actions_api(request):
 
 
 @api_view(['GET', 'POST'])
-# @authentication_classes([JWTAuthentication])
+@authentication_classes([JWTAuthentication])
 @permission_classes([permissions.IsAuthenticated])
-def characters_api(request, user_id):
-    print('test')
-    print(request.user)
-    try:
-        user = models.MyUser.objects.get(id=user_id)
-    except models.MyUser.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+def characters_api(request):
+    user = request.user
 
     if request.method == 'GET':
-        characters = models.Character.objects.filter(user=user_id)
+        characters = models.Character.objects.filter(user=user)
         res = serializers.CharacterSerializer(characters, many=True)
         return JsonResponse({"characters": res.data})
 
