@@ -47,7 +47,7 @@ class ContactSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Contact
         fields = '__all__'
-
+        """ à modifier : mettre champs spécifiques  """
 
 class TickboxSerializer(serializers.ModelSerializer):
     class Meta:
