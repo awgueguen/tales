@@ -1,5 +1,7 @@
 /* gobal ------------------------------------------------------------------- */
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
 /* context & components ---------------------------------------------------- */
 import AuthContext from "@context/AuthContext";
 
@@ -8,14 +10,24 @@ import AuthContext from "@context/AuthContext";
 /* ------------------------------------------------------------------------- */
 
 const LoginPage = () => {
-  let { loginUser } = useContext(AuthContext);
+  let { loginUser, username } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (username) {
+      navigate("/");
+    }
+  }, []);
+
   return (
     <div>
-      <form onSubmit={loginUser}>
-        <input type="text" name="username" placeholder="enter username" />
-        <input type="password" name="password" placeholder="enter password" />
-        <input type="submit" />
-      </form>
+      {username ? null : (
+        <form onSubmit={loginUser}>
+          <input type="text" name="username" placeholder="enter username" />
+          <input type="password" name="password" placeholder="enter password" />
+          <input type="submit" />
+        </form>
+      )}
     </div>
   );
 };

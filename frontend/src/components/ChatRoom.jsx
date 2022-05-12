@@ -1,16 +1,19 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation, useParams } from "react-router";
 import "@styles/chatroom.css";
 import useChat from "@hooks/useChat";
+import useTrigger from "@hooks/useTrigger";
 
 const ChatRoom = () => {
-  const roomId  = useParams().roomId;
-  const userId = useLocation()?.state?.user || 'INVITE';
-  console.log(`dans ChatRoom - roomId: ${roomId} - userId: ${userId}`)
+  const roomId = useParams().roomId;
+  const userId = useLocation()?.state?.user || "INVITE";
+  console.log(`dans ChatRoom - roomId: ${roomId} - userId: ${userId}`);
+  const [trigger, checkTrigger] = useTrigger();
   const { messages, sendMessage } = useChat(roomId, userId);
   const [newMessage, setNewMessage] = useState("");
 
   const handleNewMessageChange = (event) => {
+    checkTrigger(event.target.value);
     setNewMessage(event.target.value);
   };
 
@@ -25,12 +28,7 @@ const ChatRoom = () => {
       <div className="messages-container">
         <ol className="messages-list">
           {messages.map((message, i) => (
-            <li
-              key={i}
-              className={`message-item ${
-                message.ownedByCurrentUser ? "my-message" : "received-message"
-              }`}
-            >
+            <li key={i} className={`message-item ${message.ownedByCurrentUser ? "my-message" : "received-message"}`}>
               {message.data}
             </li>
           ))}
@@ -48,6 +46,5 @@ const ChatRoom = () => {
     </div>
   );
 };
-
 
 export default ChatRoom;
