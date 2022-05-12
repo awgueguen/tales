@@ -1,7 +1,6 @@
 import React, { Fragment } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 /* components -------------------------------------------------------------- */
-import DisplayFriends from "@components/DisplayFriends";
 import Header from "@components/Header";
 /* pages ------------------------------------------------------------------- */
 import HomePage from "@pages/HomePage";
@@ -14,6 +13,9 @@ import { AuthProvider } from "@context/AuthContext";
 import CreateRoom from "@components/CreateRoom";
 import JoinRoom from "@components/JoinRoom";
 import ChatRoom from "@components/ChatRoom";
+/* friends ------------------------------------------------------- */
+import DisplayFriends from "@components/DisplayFriends";
+import AddFriends from "@components/AddFriends";
 
 const App = () => {
   return (
@@ -34,10 +36,6 @@ const App = () => {
                 <Route path="/createroom" element={<CreateRoom />} />
                 <Route path="/joinroom" element={<JoinRoom />} />
               </Route>
-              
-              
-
-
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
             </Routes>

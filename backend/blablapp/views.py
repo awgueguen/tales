@@ -295,14 +295,23 @@ def users_api(request, user_id):
 
 
 @api_view(['GET', 'POST', 'PUT'])
-@authentication_classes([JWTAuthentication])
-@permission_classes([permissions.IsAuthenticated])
-def contacts_api(request):
+# @authentication_classes([JWTAuthentication])
+# @permission_classes([permissions.IsAuthenticated])
+def contacts_api(request, user_id):
 
     # TODO: all
 
     if request.method == 'GET':
-        return
+        return JsonResponse({"users": 
+        {"last_login": "null", 
+        "username": "SergioLoLo", 
+        "first_name": "Sergio", 
+        "last_name": "Lopez", 
+        "email": "chiendelacasse@gmail.com", 
+        "nickname": "BougDétère", 
+        "unique_id": "BougDétère94-302", 
+        "profile_pic": "/media/profile_pics/default.jpg"}
+        })
     if request.method == 'POST':
         return
     if request.method == 'PUT':
