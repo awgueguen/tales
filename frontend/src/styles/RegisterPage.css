@@ -1,0 +1,10 @@
+#register--form {
+    width: 500px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#register--form > input {
+    padding: 5px;
+}

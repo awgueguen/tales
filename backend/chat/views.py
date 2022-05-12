@@ -1,20 +1,18 @@
-from django.shortcuts import render
+import socketio
+from django.http import HttpResponse
 
 async_mode = 'eventlet'
 
-import os
-
-from django.http import HttpResponse, JsonResponse
-import socketio
 
 sio = socketio.Server(async_mode=async_mode, cors_allowed_origins='http://localhost:3000') 
 
 '''to print the logs'''
 #logger=True, engineio_logger=True, 
 
+
 def index(request):
 
-    return JsonResponse({"cool":"cool"})
+    return HttpResponse()
 
 
 @sio.event() #namespace='/dung' revoir le fonctionnement et mieux comprendre l'intérêt

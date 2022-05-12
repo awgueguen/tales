@@ -74,6 +74,7 @@ class Action(models.Model):
 
 class MyUser(AbstractUser):
     """remove almost all blanks later"""
+    email = models.EmailField(unique=True)
     nickname = models.CharField(max_length=30)
     unique_id = models.SlugField(
         verbose_name="User ID", null=True, max_length=255, unique=True, editable=False)
@@ -284,7 +285,7 @@ class RoomParticipant(models.Model):
     nickname = models.CharField(
         help_text="By default the user nickname", max_length=35, null=True)
     character = models.ForeignKey(Character, verbose_name="Character", help_text="Choose your player",
-                                  on_delete=models.RESTRICT, related_name="rooms")
+                                  on_delete=models.RESTRICT, related_name="rooms", null=True)
     hit = models.IntegerField(
         verbose_name="Hit Point", help_text="Hit points taken by the participant", default=0)
     joinedAt = models.DateTimeField(auto_now_add=True, editable=False)
@@ -310,7 +311,7 @@ class RoomParticipant(models.Model):
 
 class Message(models.Model):
     room = models.ForeignKey(
-        Room, on_delete=models.CASCADE, related_name="messages")
+        Room, on_delete=models.CASCADE, related_name="messages", null=True)
     sender = models.ForeignKey(
         MyUser, on_delete=models.CASCADE, related_name="messages")
     messageContent = models.TextField(

@@ -19,6 +19,18 @@ class MyTokenObtainPairView(TokenObtainPairView):
 
 
 # --------------------------------------------------------------------------- #
+# user register                                                               #
+# --------------------------------------------------------------------------- #
+@api_view(['POST'])
+def register_user(request):
+    serializer = serializers.RegisterSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+# --------------------------------------------------------------------------- #
 # read-only                                                                   #
 # --------------------------------------------------------------------------- #
 
@@ -30,7 +42,6 @@ class MyTokenObtainPairView(TokenObtainPairView):
 @permission_classes([permissions.IsAuthenticated])
 def classes_api(request):
 
-    print(request.user)
     classes = models.CharacterClass.objects.all()
     res = serializers.CharacterClassSerializer(classes, many=True)
     return JsonResponse({"classes": res.data})
@@ -47,7 +58,7 @@ def actions_api(request):
 
     actions = models.Action.objects.all()
     res = serializers.ActionSerializer(actions, many=True)
-    return JsonResponse({"actions": res.data}) # safe=False
+    return JsonResponse({"actions": res.data})  # safe=False
 
 # --------------------------------------------------------------------------- #
 # CHARACTERS                                                                  #
@@ -59,15 +70,11 @@ def actions_api(request):
 @api_view(['GET', 'POST'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([permissions.IsAuthenticated])
-def characters_api(request, user_id):
-
-    try:
-        user = models.MyUser.objects.get(id=user_id)
-    except models.MyUser.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+def characters_api(request):
+    user = request.user
 
     if request.method == 'GET':
-        characters = models.Character.objects.filter(user=user_id)
+        characters = models.Character.objects.filter(user=user)
         res = serializers.CharacterSerializer(characters, many=True)
         return JsonResponse({"characters": res.data})
 
