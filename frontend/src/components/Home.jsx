@@ -1,13 +1,13 @@
 // import '../styles/index.css';
 // import ChatInput from '../components/ChatInput'
-import ChatRoom from '../components/ChatRoom';
+import RoomInstance from '../components/RoomInstance';
 
 
 function Home() {
   return (
     
     <>
-      <ChatRoom channel='sonMandela' nick='tamer' />
+      <RoomInstance channel='sonMandela' nick='tamer' />
       {/* HAHA*/}
     </>
   );

@@ -1,80 +1,86 @@
-import React, { useState, useEffect } from 'react';
-import io from "socket.io-client";
+import React, { useState, useEffect, useRef } from 'react';
+import { useLocation, useParams } from 'react-router-dom';
+// import io from "socket.io-client";
+import socketIOClient from "socket.io-client";
+
 const ENDPOINT = "http://localhost:8000";
 
-// dans ce sens l'endpoint devrait etre bon en revanche côté django
-// pour l'instant on va chercher le static index.html .. 
-
-// à voir demain
-
-// ++ voir CORS (retrouver le tuto/explain qui va bien)
 
 const ChatInput = (props) => {
 
-  const [response, setResponse] = useState([]);
+  const [response, setResponse] = useState(['hello'])
+  // useState([{time: new Date().toLocaleString('fr-FR'), msg: 'Hello'}]);
+  const [users, setUsers]  = useState([])
   const has_msg = (msg_content) => {
     return msg_content != '' && msg_content.trim()
   }
-  // socket à mettre dans une ref
-  const [socket, setSocket] = useState(null)
-  // let socket = null;
+  // const room = useLocation().pathname;
+  const room = useParams().roomId
+  const user = useLocation()?.state?.user || 'INVITE';
+
+  console.log('room: ', room, 'user:', user)
+  // const user = useLocation().state.
+  const socket = useRef(null);
+  // const [socket, setSocket] = useState(null)
 
   const init_listener = () => {
-    console.log(socket)
-    socket.on('connect', function () {
-      console.log('connect')
-      socket.emit('my_event', { data: 'I\'m connected! (client)' });
+    console.log(socket.current, 'cucu')
+    socket.current.on('connect', function () {
+        console.log('connect')
+        socket.current.emit('my_event', { data: 'I\'m connected! (client)' });
     });
 
-    socket.on('disconnect', function () {
-      // $('#log').append('<br>Disconnected');
+    socket.current.on('disconnect', function () {
       console.log('disconnected')
     });
-
-    socket.on('my_response', function (msg) {
-      console.log(msg)
-      msg.data = has_msg(msg.data)
-      // if (msg.count){
-      //     $('#log').append(msg.count);
-      // }
-      if (msg.data) {
-        // $('#log').append('<br>Received: ' + msg.data);
-        console.log('msg:', msg.data)
-      }
+    socket.current.on("my_response", data => {
+      console.log('data dans le my_response Client: ', data )
+      setResponse((prev) => ([
+        ...prev,
+        {
+          time: new Date().toLocaleString('fr-FR'),
+          user: data?.user || '',
+          msg: data.data
+        }
+        // data.data
+      ]));
+      console.log('coucou', response)
     });
   }
 
   useEffect(() => {
-    if (socket) {
 
-      
+    if (socket.current === null) {
+      socket.current = socketIOClient(ENDPOINT);
+
+      socket.current.emit("join",{room: room});
       init_listener()
-      socket.on("my_response", data => {
-        console.log({data})
-        setResponse((prev) => ([
-          ...prev,
-          {
-            time: new Date().toLocaleString('fr-FR'),
-            msg: data
-          }
-        ]));
-      });
+      // socket.current.on("my_response", data => {
+      //   console.log('data dans le myresponse Client: ', data )
+      //   setResponse((prev) => ([
+      //     ...prev,
+      //     // {
+      //     //   time: new Date().toLocaleString('fr-FR'),
+      //     //   msg: data
+      //     // }
+      //     data.data
+      //   ]));
+      //   console.log('coucou', response)
+      // });
       // console.log({response})
-      return () => socket.disconnect();
     }
-  }, [socket])
+    return () => {
+      // socket.current.emit("exit_chat", room);
+      socket.current.disconnect();
+    };
+  }, [])
 
-  useEffect(() => {
-
-    setSocket(io(ENDPOINT))
-    // let socket = null;
-    //return () => socket.disconnect();
-  }, []);
+  // useEffect(() => {
+  // }, []);
 
   const [input, setInput] = useState({message: '', tester: ''})
   // const id = props?.id || ''
   const handleChange = (e) => {
-    console.log(e.target)
     setInput({
       ...input,
       [e.target.name]: e.target.value.trim()
@@ -83,8 +89,7 @@ const ChatInput = (props) => {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    console.log(`msg submitted: ${input.message}`)
-    socket.emit('my_event', {data: input.message})
+    socket.current.emit('my_room_event', {data: input.message, user: user, room: room})
     setInput({
       ...input,
       message: ''
@@ -94,7 +99,7 @@ const ChatInput = (props) => {
   const handleSubmitBis = (e) => {
     e.preventDefault()
     console.log(`msg envoyé à tlm: ${input.tester}`)
-    socket.emit('my_broadcast_event', {data:input.tester})
+    socket.current.emit('my_broadcast_event', {data:input.tester})
     setInput({
       ...input,
       tester: ''
@@ -138,13 +143,18 @@ const ChatInput = (props) => {
       </button>
       <ul>
         {
+          response.length > 0 &&
           response.map((data, index) => {
+            return(
             <li key={index}>
-              {data.date} -- {data.msg}
+              {data.user}
+              {data.time}
+              {data.msg}
             </li>
-          })
+          )})
         }
       </ul>
+      
     </>
   )
 }
