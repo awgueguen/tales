@@ -1,5 +1,11 @@
+/* gobal ------------------------------------------------------------------- */
 import React, { useContext } from "react";
+/* context & components ---------------------------------------------------- */
 import AuthContext from "@context/AuthContext";
+
+/* ------------------------------------------------------------------------- */
+/* export                                                                    */
+/* ------------------------------------------------------------------------- */
 
 const LoginPage = () => {
   let { loginUser } = useContext(AuthContext);

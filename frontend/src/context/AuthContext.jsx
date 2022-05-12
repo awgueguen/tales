@@ -1,18 +1,33 @@
+/* gobal ------------------------------------------------------------------- */
 import axios from "axios";
 import jwt_decode from "jwt-decode";
-
 import { createContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+
+/* TODO -------------------------------------------------------------------- */
+//// login method
+//// refresh token
+//// logout
+// add authlib to use gmail & github
+
+/* ------------------------------------------------------------------------- */
+/* context                                                                   */
+/* ------------------------------------------------------------------------- */
 
 const AuthContext = createContext();
 
 export default AuthContext;
+
+/* ------------------------------------------------------------------------- */
+/* provider                                                                  */
+/* ------------------------------------------------------------------------- */
 
 export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
   let [loading, setLoading] = useState(true);
 
   /* life cycle methods ---------------------------------------------------- */
+
   let [authTokens, setAuthTokens] = useState(() =>
     localStorage.getItem("authTokens") ? JSON.parse(localStorage.getItem("authTokens")) : null
   );
@@ -41,11 +56,11 @@ export const AuthProvider = ({ children }) => {
   }, [authTokens, loading]);
 
   /* login method ---------------------------------------------------------- */
+
   let loginUser = async (e) => {
     e.preventDefault();
     let username = e.target.username.value;
     let password = e.target.password.value;
-    /* fetch token --------------------------------------------------------- */
     if (username && password) {
       await axios({
         url: "http://127.0.0.1:8000/token/",
@@ -77,6 +92,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   /* logout method --------------------------------------------------------- */
+
   let logoutUser = () => {
     setAuthTokens(null);
     setUsername(null);
@@ -84,6 +100,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   /* refresh token --------------------------------------------------------- */
+
   let updateToken = async () => {
     if (authTokens) {
       await axios({
@@ -116,6 +133,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   /* data ------------------------------------------------------------------ */
+
   let contextData = {
     username,
     userId,

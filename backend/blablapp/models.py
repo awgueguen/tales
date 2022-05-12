@@ -74,6 +74,7 @@ class Action(models.Model):
 
 class MyUser(AbstractUser):
     """remove almost all blanks later"""
+    email = models.EmailField(unique=True)
     nickname = models.CharField(max_length=30)
     unique_id = models.SlugField(
         verbose_name="User ID", null=True, max_length=255, unique=True, editable=False)

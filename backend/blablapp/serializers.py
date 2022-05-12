@@ -17,6 +17,28 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['username'] = user.username
         return token
 
+# --------------------------------------------------------------------------- #
+# register setup                                                              #
+# --------------------------------------------------------------------------- #
+
+
+class RegisterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.MyUser
+        fields = ['first_name', 'last_name', 'email',
+                  'nickname', 'birthdate', 'username', 'password']
+
+    def create(self, validated_data):
+        password = validated_data.pop('password')
+        myUser = models.MyUser(**validated_data)
+        myUser.set_password(password)
+        myUser.save()
+        return myUser
+
+# --------------------------------------------------------------------------- #
+# basic serializers                                                           #
+# --------------------------------------------------------------------------- #
+
 
 class CharacterClassSerializer(serializers.ModelSerializer):
     class Meta:

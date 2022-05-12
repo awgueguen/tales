@@ -8,6 +8,7 @@ import HomePage from "@pages/HomePage";
 /* authentifications ------------------------------------------------------- */
 import PrivateRoute from "@utils/PrivateRoute";
 import LoginPage from "@pages/LoginPage";
+import RegisterPage from "@pages/RegisterPage";
 import { AuthProvider } from "@context/AuthContext";
 
 const App = () => {
@@ -20,9 +21,10 @@ const App = () => {
             <Routes>
               <Route path="/" element={<PrivateRoute />}>
                 <Route path="/" element={<HomePage />} />
+                <Route path="/displayFriends" element={<DisplayFriends />} />
               </Route>
               <Route path="/login" element={<LoginPage />} />
-              <Route path="/displayFriends" element={<DisplayFriends />} />
+              <Route path="/register" element={<RegisterPage />} />
             </Routes>
           </Fragment>
         </AuthProvider>
