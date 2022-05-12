@@ -2,12 +2,11 @@ import React, { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route, Link, useLocation } from "react-router-dom";
 import DisplayFriends from "@components/DisplayFriends"; // probleme de token il faut virer le decorateur dans l'url ou consommer le token
 
-import Home from "@components/Home";
+// import Home from "@components/Home";
 import Register from "@pages/Register";
 import CreateRoom from "@components/CreateRoom";
 import JoinRoom from "@components/JoinRoom";
 import ChatRoom from "@components/ChatRoom";
-import ChatInput from "@components/ChatInput";
 
 const App = () => {
   return (
