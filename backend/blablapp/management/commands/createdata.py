@@ -88,7 +88,7 @@ class Command(BaseCommand):
         user_input = int(input(">>> How many users: ") or "10")
         # user & tickbox ---------------------------------------------------- #
         loadbar(0, user_input)
-        f = open("./blablapp/management/commands/password.txt",
+        f = open("./blablapp/password.txt",
                  "w+", encoding="utf-8")
         for i in range(user_input):
             login = fake.unique.user_name()
@@ -196,7 +196,6 @@ class Command(BaseCommand):
                     hp=random.randint(1, 20),
                     atk=random.randint(1, 20),
                     defense=random.randint(1, 20),
-                    trigger=fake.unique.hex_color()
                 )
                 story.entities.add(entity)
 
@@ -255,7 +254,8 @@ class Command(BaseCommand):
                 entity = Entity.objects.order_by("?").first()
                 instance_e = EntityInstance(
                     entity=entity,
-                    room=room
+                    room=room,
+                    trigger=fake.unique.hex_color()
                 )
                 instance_e.__dict__.update(entity.__dict__)
                 instance_e.save()

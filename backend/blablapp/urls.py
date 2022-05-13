@@ -22,7 +22,7 @@ urlpatterns = [
     # agir sur un message en particulier, l'éditer, le supprimer
 
     # gameplay -------------------------------------------------------------- #
-    path('gameplay/triggers/<str:trigger>/', views.trigger),
+    path('triggers/', views.trigger),
     # rechercher un trigger existant dans une table
     path('gameplay/instances_ingame/<int:instance_id>&hit=<int:hit>',
          views.instances_ingame),

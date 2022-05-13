@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext } from "react";
 import { useLocation, useParams } from "react-router";
 import "@styles/chatroom.css";
 import useChat from "@hooks/useChat";
@@ -6,14 +6,16 @@ import useTrigger from "@hooks/useTrigger";
 
 import AuthContext from "@context/AuthContext";
 
+// décomposer en sous composants ?
+
 const ChatRoom = () => {
-  const { authTokens } = useContext(AuthContext);
+  const { authTokens, username, userId } = useContext(AuthContext);
   const accessToken = authTokens.access;
 
   const roomId = useParams().roomId;
-  const userId = useLocation()?.state?.user || "INVITE";
-  console.log(`dans ChatRoom - roomId: ${roomId} - userId: ${userId}`);
-  const [trigger, checkTrigger] = useTrigger(accessToken);
+  // const userId = useLocation()?.state?.user || "INVITE";
+  console.log(`dans ChatRoom - roomId: ${roomId} - userId: ${username}`);
+  const [trigger, checkTrigger] = useTrigger(accessToken, roomId, userId);
   const { messages, sendMessage } = useChat(roomId, userId);
   const [newMessage, setNewMessage] = useState("");
 

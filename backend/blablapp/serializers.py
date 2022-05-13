@@ -10,6 +10,7 @@ from blablapp import models
 # --------------------------------------------------------------------------- #
 # token customizations                                                        #
 # --------------------------------------------------------------------------- #
+
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
@@ -35,26 +36,60 @@ class RegisterSerializer(serializers.ModelSerializer):
         myUser.save()
         return myUser
 
+
+# --------------------------------------------------------------------------- #
+# triggers                                                                    #
+# --------------------------------------------------------------------------- #
+
+
+class EntityInstanceTriggers(serializers.ModelSerializer):
+    class Meta:
+        model = models.EntityInstance
+        fields = ['instance', 'name', 'trigger']
+
+
+class StoryTriggers(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.Story
+        fields = ['id', 'title', 'trigger']
+
+
+class ActionTriggers(serializers.ModelSerializer):
+    class Meta:
+        model = models.Action
+        fields = ['id', 'title', 'trigger']
+
+
+class EventTriggers(serializers.ModelSerializer):
+    class Meta:
+        model = models.Event
+        fields = ['id', 'title', 'trigger']
+
+
 # --------------------------------------------------------------------------- #
 # basic serializers                                                           #
 # --------------------------------------------------------------------------- #
 
+class ActionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Action
+        fields = '__all__'
+
 
 class CharacterClassSerializer(serializers.ModelSerializer):
+    actions = ActionSerializer(many=True, read_only=True)
+
     class Meta:
         model = models.CharacterClass
         fields = '__all__'
 
 
 class CharacterSerializer(serializers.ModelSerializer):
+    characterClass = CharacterClassSerializer()
+
     class Meta:
         model = models.Character
-        fields = '__all__'
-
-
-class ActionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.Action
         fields = '__all__'
 
 
@@ -70,6 +105,7 @@ class ContactSerializer(serializers.ModelSerializer):
         model = models.Contact
         fields = '__all__'
         """ à modifier : mettre champs spécifiques  """
+
 
 class TickboxSerializer(serializers.ModelSerializer):
     class Meta:

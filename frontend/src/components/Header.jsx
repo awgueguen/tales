@@ -15,7 +15,7 @@ const Header = () => {
     <div>
       <Link to="/">Home</Link>
       <span> | </span>
-      <Link to="/rooms/test">Test Room</Link>
+      <Link to="/rooms/1">Test Room</Link>
       <span> | </span>
 
       {username ? <span onClick={logoutUser}>Logout</span> : <Link to="/login">Login</Link>}

@@ -46,8 +46,6 @@ def classes_api(request):
     res = serializers.CharacterClassSerializer(classes, many=True)
     return JsonResponse({"classes": res.data})
 
-# add in JsonResponse safe = False if the first item is not a proper JSON
-
 
 # actions ------------------------------------------------------------------- #
 
@@ -58,7 +56,59 @@ def actions_api(request):
 
     actions = models.Action.objects.all()
     res = serializers.ActionSerializer(actions, many=True)
-    return JsonResponse({"actions": res.data})  # safe=False
+    return JsonResponse({"actions": res.data})
+
+# --------------------------------------------------------------------------- #
+# triggers                                                                    #
+# --------------------------------------------------------------------------- #
+
+
+@api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([permissions.IsAuthenticated])
+def trigger(request):
+    # TODO ------------------------------------------------------------------ #
+    # // get all triggers with this view
+    # // Filter actions to only show whats character has
+    # // add filter for room id
+    # Get everything from one serializer
+    # Filter is Admin
+
+    # code ------------------------------------------------------------------ #
+    room_id = request.GET.get("room_id")
+    username = request.user
+
+    entity_instances = models.EntityInstance.objects.filter(room=room_id)
+    entity_instances_triggers = serializers.EntityInstanceTriggers(
+        entity_instances, many=True)
+
+    story = models.Story.objects.get(room=room_id)
+    story_trigger = serializers.StoryTriggers(story)
+
+    story_id = story_trigger.data['id']
+
+    event = models.Event.objects.filter(stories__id=story_id)
+    event_triggers = serializers.EventTriggers(event, many=True)
+
+    action_triggers = {'data': []}
+
+    try:
+        character = models.Character.objects.get(
+            rooms__room=room_id, user__username=username)
+        character_serializer = serializers.CharacterSerializer(character).data
+
+        action_triggers = {
+            'data': [{'id': i['id'], 'title': i["title"], 'trigger': i['trigger']}
+                     for i in character_serializer['characterClass']['actions']]}
+
+    except models.Character.DoesNotExist:
+        print('no character associated\nplease connect with someone register in the room')
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    return JsonResponse({"data": {"actions": action_triggers['data'],
+                                  "entityInstances": entity_instances_triggers.data,
+                                  "events": event_triggers.data,
+                                  "story": [story_trigger.data]}})
 
 # --------------------------------------------------------------------------- #
 # CHARACTERS                                                                  #
@@ -99,14 +149,6 @@ def characters_ingame(request):
 # --------------------------------------------------------------------------- #
 # STORY RELATED                                                               #
 # --------------------------------------------------------------------------- #
-
-@api_view(['GET'])
-@authentication_classes([JWTAuthentication])
-@permission_classes([permissions.IsAuthenticated])
-def trigger(request):
-
-    # TODO: check Django Signals
-    return
 
 
 @api_view(['GET'])
@@ -302,16 +344,16 @@ def contacts_api(request, user_id):
     # TODO: all
 
     if request.method == 'GET':
-        return JsonResponse({"users": 
-        {"last_login": "null", 
-        "username": "SergioLoLo", 
-        "first_name": "Sergio", 
-        "last_name": "Lopez", 
-        "email": "chiendelacasse@gmail.com", 
-        "nickname": "BougDétère", 
-        "unique_id": "BougDétère94-302", 
-        "profile_pic": "/media/profile_pics/default.jpg"}
-        })
+        return JsonResponse({"users":
+                             {"last_login": "null",
+                              "username": "SergioLoLo",
+                              "first_name": "Sergio",
+                              "last_name": "Lopez",
+                              "email": "chiendelacasse@gmail.com",
+                              "nickname": "BougDétère",
+                              "unique_id": "BougDétère94-302",
+                              "profile_pic": "/media/profile_pics/default.jpg"}
+                             })
     if request.method == 'POST':
         return
     if request.method == 'PUT':
