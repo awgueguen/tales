@@ -10,14 +10,15 @@
 
 import { useEffect, useState } from "react";
 
-const useTrigger = () => {
+const useTrigger = (token) => {
+  const [autocompletion, setAutocompletion] = useState(null);
   const [trigger, setTrigger] = useState(null);
   const [valid, setValid] = useState(false);
 
   const data = { trigger, valid };
 
   const checkTrigger = (message) => {
-    if (message.slice(-1) === "/") {
+    if (message.slice(-1) === "/" || autocompletion) {
       console.log("test");
       // add the rest when trigger is detected, and stock in trigger
     }
