@@ -88,20 +88,28 @@ class Command(BaseCommand):
         user_input = int(input(">>> How many users: ") or "10")
         # user & tickbox ---------------------------------------------------- #
         loadbar(0, user_input)
+        f = open("./blablapp/management/commands/password.txt",
+                 "w+", encoding="utf-8")
         for i in range(user_input):
+            login = fake.unique.user_name()
+            password = fake.password(length=12)
+            f.write(f'Login: {login} // Password: {password}\r\n')
             user = MyUser.objects.create(
                 nickname=fake.user_name(),
                 birthdate=fake.past_date(),
                 # baseuser -------------------------------------------------- #
-                password=fake.password(length=12),
+                # password=fake.password(length=12),
                 is_superuser=False,
-                username=fake.unique.user_name(),
+                username=login,
                 first_name=fake.first_name(),
                 last_name=fake.last_name(),
                 email=fake.unique.ascii_email(),
                 is_staff=False,
                 is_active=True,
             )
+
+            user.set_password(password)
+            user.save()
 
             # tickbox ------------------------------------------------------- #
             Tickbox.objects.create(
