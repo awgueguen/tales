@@ -14,8 +14,8 @@ const ChatRoom = () => {
 
   const roomId = useParams().roomId;
   // const userId = useLocation()?.state?.user || "INVITE";
-  console.log(`dans ChatRoom - roomId: ${roomId} - userId: ${username}`);
-  const [trigger, checkTrigger] = useTrigger(accessToken, roomId, userId);
+  // console.log(`dans ChatRoom - roomId: ${roomId} - userId: ${username}`);
+  const [checkTrigger] = useTrigger(accessToken, roomId);
   const { messages, sendMessage } = useChat(roomId, userId);
   const [newMessage, setNewMessage] = useState("");
 

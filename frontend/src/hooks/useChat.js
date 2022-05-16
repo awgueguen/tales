@@ -9,8 +9,8 @@ const ENDPOINT = "http://localhost:8000";
 const useChat = (roomId, userId) => {
   const [messages, setMessages] = useState([]);
   const socketRef = useRef();
-  console.log("room dans hook", roomId);
-  console.log("userId dans hook", userId);
+  // console.log("room dans hook", roomId);
+  // console.log("userId dans hook", userId);
   useEffect(() => {
     // socketRef.current = socketIOClient(SOCKET_SERVER_URL,
     socketRef.current = socketIOClient(
@@ -21,7 +21,7 @@ const useChat = (roomId, userId) => {
     // socketRef.current.on(NEW_CHAT_MESSAGE_EVENT, (message) => {
     socketRef.current.emit("join", { room: roomId });
     socketRef.current.on(LISTENER_EVENT, (message) => {
-      console.log("message dans hook:", message);
+      // console.log("message dans hook:", message);
       const incomingMessage = {
         ...message,
         /* ICI ON N'A TOUT LE TRUC ENVOYE PAR LE SOCKET
