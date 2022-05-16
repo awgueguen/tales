@@ -1,10 +1,8 @@
 //// check if a trigger is being written
 //// if a trigger -> fetch all available trigger (wo filter)
 //// register all available triggers in a state
-// stop trigger when " " is entered
-// register trigger in a state
-// register all message for autocompletion
-// if enter or tabe => autocompletion (decide on type of autocompletion)
+//// stop trigger when " " is entered
+//// register trigger in a state
 //// filter through depedencies in order to get only available triggers
 
 // you can search by origin or by the name of the trigger
@@ -13,45 +11,49 @@
 // don't forget to create a tutorial of the key gameplay elements (onboarding)
 
 import axios from "axios";
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
+// import useAutocomplete from "@hooks/useAutocomplete";
 
 const useTrigger = (token, roomId) => {
-  const [autocompletion, setAutocompletion] = useState(null);
-  const [availableTriggers, setAvailableTriggers] = useState(null);
+  // const [autocompletion, displayAutocomplete] = useAutocomplete();
 
+  const [availableTriggers, setAvailableTriggers] = useState(null);
+  const [triggerCandidates, setTriggerCandidates] = useState(null);
   const [trigger, setTrigger] = useState(null);
 
-  const error = useRef(null);
-
   const checkTrigger = (message) => {
-    // cas où pas de trigger
-    // cas où trigger détecté = "/" & pas d'available trigger
-    // cas où trigger & recherche
-    //    enregistrement simple & modification du available trigger
-    //    cas où reset donc "/" est effacé
-    // cas validation du trigger = " "
-    //    cas où availableTrigger.length == 1
-    //    cas où availableTrigger > 1
-    //    cas où availableTrigger = 0 => reset
-    // if (message.slice(-1) === "/" && !availableTriggers) {
-    //   fetchInitialTriggers();
-    //   setAutocompletion(message);
-    // }
-    // else if (trigger && !message.slice(-1).match(/^[a-z0-9]+$/i)) {
-    // setTrigger(message.slice(message.indexOf("/") + 1));
+    let lastCharacter = message.slice(-1);
+    let hasSlash = message.includes("/");
+
+    if (lastCharacter === "/" && !availableTriggers) {
+      fetchInitialTriggers();
+    } else if (hasSlash && lastCharacter.match(/^[a-z0-9]+$/i)) {
+      // TODO: multiple "/" + comparaison minuscule / majuscule
+      const possibleTrigger = message.slice(message.indexOf("/") + 1);
+
+      setTriggerCandidates(() => {
+        const triggers = availableTriggers?.filter((commands) =>
+          commands["trigger"].startsWith(possibleTrigger)
+        );
+        // displayAutocomplete(message, triggers);
+        return triggers;
+      });
+
+      if (trigger) {
+        setTrigger(null);
+      }
+    } else if (hasSlash) {
+      if (triggerCandidates.length === 1) {
+        setTrigger(triggerCandidates[0]);
+      } else if (lastCharacter === "/") {
+        setTriggerCandidates(availableTriggers);
+        // displayAutocomplete(message, triggerCandidates);
+      }
+    } else {
+      setTriggerCandidates(null);
+      setAvailableTriggers(null);
+    }
   };
-
-  // useEffect(() => {
-  //   if (trigger) {
-  //     const newSet = availableTriggers.filter((elem) => elem["trigger"].startsWith(trigger));
-  //     setAvailableTriggers(() => {
-  //       return newSet;
-  //     });
-
-  //     console.log({ trigger });
-  //   }
-  //   return setTrigger(() => null);
-  // }, [trigger]);
 
   const fetchInitialTriggers = () => {
     axios({
@@ -62,11 +64,12 @@ const useTrigger = (token, roomId) => {
         Authorization: `Bearer ${token}`,
       },
     }).then((response) => {
+      setTriggerCandidates(response.data[0]);
       setAvailableTriggers(response.data[0]);
     });
   };
 
-  return [checkTrigger];
+  return [checkTrigger, triggerCandidates, trigger]; // autocompletion
 };
 
 export default useTrigger;

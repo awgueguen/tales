@@ -64,7 +64,7 @@ class Command(BaseCommand):
                 action = Action.objects.create(
                     title=fake.unique.action_type(),
                     description=fake.sentence(nb_words=10),
-                    trigger=f'{ACTIONS[i][:3]}{fake.hex_color()}'  # FIXME
+                    trigger=fake.unique.ean8()
                 )
 
                 cclass.actions.add(action)
@@ -168,7 +168,7 @@ class Command(BaseCommand):
                 description=fake.sentence(nb_words=10),
                 image=fake.image_url(),
                 optimalPlayers=random.randint(1, 5),
-                trigger=fake.unique.hex_color()  # FIXME
+                trigger=fake.unique.ean8()  # FIXME
             )
 
             # events -------------------------------------------------------- #
@@ -178,7 +178,7 @@ class Command(BaseCommand):
                     description=fake.sentence(nb_words=10),
                     content=fake.paragraph(nb_sentences=5),
                     image=fake.image_url(),
-                    trigger=fake.unique.hex_color()
+                    trigger=fake.unique.ean8()
                 )
                 story.events.add(event)
 
@@ -255,7 +255,7 @@ class Command(BaseCommand):
                 instance_e = EntityInstance(
                     entity=entity,
                     room=room,
-                    trigger=fake.unique.hex_color()
+                    trigger=fake.unique.ean8()
                 )
                 instance_e.__dict__.update(entity.__dict__)
                 instance_e.save()

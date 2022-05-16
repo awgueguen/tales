@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 import { useLocation, useParams } from "react-router";
-import "@styles/chatroom.css";
+import "@styles/ChatRoom.css";
 import useChat from "@hooks/useChat";
 import useTrigger from "@hooks/useTrigger";
 
@@ -15,7 +15,7 @@ const ChatRoom = () => {
   const roomId = useParams().roomId;
   // const userId = useLocation()?.state?.user || "INVITE";
   // console.log(`dans ChatRoom - roomId: ${roomId} - userId: ${username}`);
-  const [checkTrigger] = useTrigger(accessToken, roomId);
+  const [checkTrigger, triggerCandidates, trigger, autocompletion] = useTrigger(accessToken, roomId);
   const { messages, sendMessage } = useChat(roomId, userId);
   const [newMessage, setNewMessage] = useState("");
 
@@ -41,15 +41,28 @@ const ChatRoom = () => {
           ))}
         </ol>
       </div>
-      <textarea
-        value={newMessage}
-        onChange={handleNewMessageChange}
-        placeholder="Write message..."
-        className="new-message-input-field"
-      />
+      <div id="search_container">
+        <div id="autocomplete">{autocompletion ? autocompletion : null}</div>
+        <input
+          value={newMessage}
+          onChange={handleNewMessageChange}
+          placeholder="Write message..."
+          className="new-message-input-field"
+        />
+      </div>
       <button onClick={handleSendMessage} className="send-message-button">
         Send
       </button>
+      <p>
+        Trigger: {trigger ? trigger["trigger"] : null} - {autocompletion ? autocompletion : null}
+      </p>
+      <ul>
+        {triggerCandidates?.map((candidate) => (
+          <li>
+            {candidate["trigger"]} : {candidate["title"] ? candidate["title"] : candidate["name"]}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };
