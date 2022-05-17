@@ -1,0 +1,12 @@
+.lorem-wrapper{
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0;
+    margin: 10px 15px;
+
+}
+
+.lorem-block{
+    padding-bottom: 10px;
+}

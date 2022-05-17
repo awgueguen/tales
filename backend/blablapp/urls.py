@@ -31,8 +31,18 @@ urlpatterns = [
     # setup ----------------------------------------------------------------- #
     path('room/create/', views.create_room),
     # création d'une room
+    path('room/list/<int:user_id>', views.get_user_rooms),
+    # liste les rooms auxquelles participe un utilisateur
     path('room/create/id=<int:room_id>/entities/', views.create_instances),
     # associer des instances à une room & les personaliser
+
+    #roomparticipant? ----------------------------------------------------------------- 
+    # à modifier vu qu'on peut y acceder depuis les autres routes à priori
+    path('roomparticipant/list/<int:room_id>', views.get_roomparticipants),
+
+    # stories ---------------------------------------------------------------- #
+    path('stories/', views.stories_api),
+    # list stories
 
     # assets ---------------------------------------------------------------- #
     path('assets/', views.display_assets),
@@ -55,6 +65,9 @@ urlpatterns = [
     # voir les personnages associés à un utilisateurs
     path('user/<int:user_id>/contacts/', views.contacts_api),
     # gestion des contacts utilisateurs -> just contacts/
+    path('user/<int:user_id>/contact_list/', views.user_contacts_api),
+    # gestion des contacts utilisateurs -> contacts d'un user spécifique
+    # à terme à fusionner avec le path d'Anicet
     path('user/<int:user_id>/tickbox/', views.tick_api),
     # gestion de la tickbox utilisateur -> just tickbox/
     path('register/', views.register_user)

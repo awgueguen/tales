@@ -213,6 +213,7 @@ class Event(models.Model):
     # chronology = models.IntegerField(help_text="Event order in a Story")
     trigger = models.CharField(max_length=10, unique=True)
     # stories = models.ManyToManyField("blablapp.Story", related_name="events")
+    # ajouter lien entre event et story
 
     class Meta:
         ordering = ['title']

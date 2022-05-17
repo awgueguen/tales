@@ -63,12 +63,12 @@ class MyUserSerializer(serializers.ModelSerializer):
         model = models.MyUser
         fields = ['last_login', 'username', 'first_name', 'last_name',
                   'email', 'nickname', 'unique_id', 'profile_pic', ]
-
+                  
 
 class ContactSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Contact
-        fields = '__all__'
+        fields = ['sender', 'receiver', 'approved']
         """ à modifier : mettre champs spécifiques  """
 
 class TickboxSerializer(serializers.ModelSerializer):

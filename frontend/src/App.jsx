@@ -1,5 +1,5 @@
 import React, { Fragment } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom"; //BrowserRouter as Router
 /* components -------------------------------------------------------------- */
 import Header from "@components/Header";
 /* pages ------------------------------------------------------------------- */
@@ -10,6 +10,8 @@ import LoginPage from "@pages/LoginPage";
 import RegisterPage from "@pages/RegisterPage";
 import { AuthProvider } from "@context/AuthContext";
 /* chat ------------------------------------------------------- */
+import RoomList from '@components/RoomList';
+import FriendList from '@components/FriendList'
 import CreateRoom from "@components/CreateRoom";
 import JoinRoom from "@components/JoinRoom";
 import ChatRoom from "@components/ChatRoom";
@@ -20,7 +22,6 @@ import AddFriends from "@components/AddFriends";
 const App = () => {
   return (
     <>
-      <Router>
         <AuthProvider>
           <Fragment>
             <Header />
@@ -31,7 +32,8 @@ const App = () => {
                 {/* Alexis -------------------------------------------------------  */}
                 <Route path="/" element={<HomePage />} />
                 {/* theo -------------------------------------------------------  */}
-                <Route path="/rooms" element='Rooms Page' />
+                <Route path="/friends" element={<FriendList />} />
+                <Route path="/rooms" element={<RoomList />} />
                 <Route path="/rooms/:roomId" element={<ChatRoom />} />
                 <Route path="/createroom" element={<CreateRoom />} />
                 <Route path="/joinroom" element={<JoinRoom />} />
@@ -41,8 +43,6 @@ const App = () => {
             </Routes>
           </Fragment>
         </AuthProvider>
-        
-      </Router>
     </>
   );
 };

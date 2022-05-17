@@ -34,7 +34,7 @@ const CreateRoom = () => {
 
   return (
     <div className="home-container">
-        <p className='testcss'>coucou les amis</p>
+        
       <input
         type="text"
         name='roomName'

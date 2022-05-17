@@ -129,15 +129,21 @@ def create_assets(request):
     return
 
 
-@api_view(['GET, PUT, DELETE'])
+@api_view(['GET', 'PUT', 'DELETE'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([permissions.IsAuthenticated])
 def stories_api(request):
 
-    # TODO: all
+    # TODO: PUT POST
 
     if request.method == 'GET':
-        return
+        try:
+            stories = models.Story.objects.all()
+        except models.Story.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        res = serializers.StorySerializer(stories, many=True)
+        return JsonResponse({"stories": res.data})
     if request.method == 'PUT':
         return
     if request.method == 'DELETE':
@@ -174,7 +180,7 @@ def entities_api(request):
         return
 
 
-@api_view(['POST, PUT, DELETE'])
+@api_view(['POST', 'PUT', 'DELETE'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([permissions.IsAuthenticated])
 def create_instances(request):
@@ -209,24 +215,85 @@ def instances_ingame(request):
 # ROOMS SETTINGS                                                              #
 # --------------------------------------------------------------------------- #
 
+
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([permissions.IsAuthenticated])
-def get_room(request):
+def get_room(request, user_id):
+
+    # TODO: 
+
+    try:
+        rooms = models.RoomParticipant.objects.get(user=user_id)
+    except models.RoomParticipant.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    res = serializers.MyUserSerializer(rooms)
+    return JsonResponse({"users": res.data})
+
+@api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([permissions.IsAuthenticated])
+def get_user_rooms(request, user_id):
 
     # TODO: all + check if user is participant, or if room is public
+    try:
+         rooms = models.RoomParticipant.objects.filter(user=user_id)
+    except models.RoomParticipant.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
 
-    return
+    res = serializers.RoomParticipantSerializer(rooms, many=True)
+    return JsonResponse({"rooms": res.data})
 
+@api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([permissions.IsAuthenticated])
+def get_roomparticipants(request, room_id):
+
+    # TODO: all + check if user is participant, or if room is public
+    try:
+         user = models.RoomParticipant.objects.filter(room=room_id)
+    except models.RoomParticipant.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    
+    res = serializers.RoomParticipantSerializer(user, many=True)
+    return JsonResponse({"roomparticipant": res.data})
 
 @api_view(['POST', 'PUT'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([permissions.IsAuthenticated])
-def create_room(request, slug):
+def create_room(request): #slug ?
 
-    # TODO: all
+    # TODO: PUT
+    print(request.__dict__, 'req')
+    room = request.data['room']
+    moderator = request.user
+    
+    # _______________________
+    # story = request.data.room['story']
+    # roomparticipant = request.data['invitation']
+    # story = room['story']
+    # try:
+    #     story_id = models.Story.objects.get(title=story)
+    # except models.Story.DoesNotExist:
+    #     print('no story found')
+    #     return Response(status=status.HTTP_404_NOT_FOUND)
+        
+    # res = serializers.StorySerializer(story_id)
+    # room['story'] = res.data['id']
+    # _______________________
 
-    return
+    if request.method == 'POST':
+        res = serializers.RoomSerializer(data=room)
+        if res.is_valid():
+            res.save()
+            # response = res.data
+            return Response(res.data, status=status.HTTP_201_CREATED)
+        print('serializer not valid')
+        return Response(res.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    if request.method == 'PUT':
+        return
 
 
 @api_view(['GET'])
@@ -312,6 +379,29 @@ def contacts_api(request, user_id):
         "unique_id": "BougDétère94-302", 
         "profile_pic": "/media/profile_pics/default.jpg"}
         })
+    if request.method == 'POST':
+        return
+    if request.method == 'PUT':
+        return
+
+
+
+@api_view(['GET', 'POST', 'PUT'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([permissions.IsAuthenticated])
+def user_contacts_api(request, user_id):
+
+    # TODO: all
+
+    if request.method == 'GET':
+        try:
+            contacts_id = models.Contact.objects.filter(sender=user_id)
+        except models.Contact.DoesNotExit:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        res = serializers.ContactSerializer(contacts_id, many=True)
+        res = [elem for elem in res.data if elem['approved']] 
+        return JsonResponse({"user_contact": res})
+
     if request.method == 'POST':
         return
     if request.method == 'PUT':
