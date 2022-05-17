@@ -300,18 +300,35 @@ def users_api(request, user_id):
 def contacts_api(request, user_id):
 
     # TODO: all
+# "view de check si l'utilisateur exist
+# view pour ajouter le contact à la db"
 
     if request.method == 'GET':
-        return JsonResponse({"users": 
-        {"last_login": "null", 
-        "username": "SergioLoLo", 
-        "first_name": "Sergio", 
-        "last_name": "Lopez", 
-        "email": "chiendelacasse@gmail.com", 
-        "nickname": "BougDétère", 
-        "unique_id": "BougDétère94-302", 
-        "profile_pic": "/media/profile_pics/default.jpg"}
-        })
+        # return JsonResponse({"users":[ 
+        # {"last_login": "null", 
+        # "username": "SergioLoLo", 
+        # "first_name": "Sergio", 
+        # "last_name": "Lopez", 
+        # "email": "chiendelacasse@gmail.com", 
+        # "nickname": "BougDétère", 
+        # "unique_id": "BougDétère94-302", 
+        # "profile_pic": "/media/profile_pics/default.jpg"}]
+        # })
+        
+
+
+
+        #  modifier receiver
+        contacts_id = models.Contact.objects.filter(receiver=user_id)
+        res = serializers.ContactSerializer(contacts_id, many=True)
+
+        print('res', res.data)
+        res = [elem['sender'] for elem in res.data if elem['approved']] # ?
+        users = models.MyUser.objects.filter(id__in=res)
+
+        resbis = serializers.MyUserSerializer(users, many=True) 
+        print('test', resbis.data)
+        return JsonResponse({"contacts": resbis.data})
     if request.method == 'POST':
         return
     if request.method == 'PUT':
@@ -332,4 +349,24 @@ def tick_api(request):
     if request.method == 'POST':
         return
     if request.method == 'PUT':
+        return
+
+
+
+@api_view(['GET', 'POST'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([permissions.IsAuthenticated])
+def add_user_api(request, username):
+
+
+
+    if request.method == 'GET':
+        try:
+            user = models.MyUser.objects.get(username=username)
+        except models.MyUser.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        res = serializers.MyUserSerializer(user)
+        return JsonResponse({"user": res.data})
+
+    if request.method == 'POST':
         return

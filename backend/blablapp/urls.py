@@ -50,6 +50,7 @@ urlpatterns = [
 
     # user related ---------------------------------------------------------- #
     path('user/<int:user_id>/', views.users_api),
+    path('user/<str:username>/add', views.add_user_api),
     # profil utilisateur -> just myprofile
     path('characters/', views.characters_api),
     # voir les personnages associés à un utilisateurs
