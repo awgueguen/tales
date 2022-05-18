@@ -32,13 +32,16 @@ urlpatterns = [
     path('room/create/', views.create_room),
     # création d'une room
     path('room/list/<int:user_id>', views.get_user_rooms),
+    path('room/publiclist/', views.get_public_rooms),
+
+    path('room/<int:user_id>/list/', views.get_user_rooms_list),
     # liste les rooms auxquelles participe un utilisateur
     path('room/create/id=<int:room_id>/entities/', views.create_instances),
     # associer des instances à une room & les personaliser
 
     #roomparticipant? ----------------------------------------------------------------- 
     # à modifier vu qu'on peut y acceder depuis les autres routes à priori
-    path('roomparticipant/list/<int:room_id>', views.get_roomparticipants),
+    # path('roomparticipant/list/<str:ids>', views.get_roomparticipants),
 
     # stories ---------------------------------------------------------------- #
     path('stories/', views.stories_api),

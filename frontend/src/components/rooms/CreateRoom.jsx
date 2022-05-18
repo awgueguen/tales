@@ -1,23 +1,3 @@
-// import React, {useState, useEffect} from 'react'
-
-// const CreateRoom = () => {
-//     const [input, setInput] = useState('')
-//   return (
-//     <>
-//         <input
-//             value={input}
-//             type={text}
-//             onChange={handleChange}
-//             placeholder='type room name'
-//         >
-
-//         </input>
-//     </>
-//   )
-// }
-
-// export default CreateRoom
-
 import React, {useState} from "react";
 import { Link } from "react-router-dom";
 

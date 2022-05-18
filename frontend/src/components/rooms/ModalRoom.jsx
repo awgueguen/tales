@@ -1,9 +1,9 @@
 import React, {useState, useEffect, useContext} from 'react';
-import CustomInput from './CustomInput';
+import CustomInput from '@components/CustomInput';
 import AuthContext from "@context/AuthContext";
 import axios from 'axios';
 
-const ModalForm = () => {
+const ModalRoom = () => {
     /**
      * Modal qui permet de créer une room
      * 
@@ -118,4 +118,4 @@ const ModalForm = () => {
   )
 };
 
-export default ModalForm;
+export default ModalRoom;

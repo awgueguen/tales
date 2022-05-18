@@ -9,6 +9,8 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from blablapp import serializers
 from blablapp import models
 
+from collections import OrderedDict
+
 # --------------------------------------------------------------------------- #
 # token claim customizations                                                  #
 # --------------------------------------------------------------------------- #
@@ -231,6 +233,7 @@ def get_room(request, user_id):
     res = serializers.MyUserSerializer(rooms)
     return JsonResponse({"users": res.data})
 
+
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([permissions.IsAuthenticated])
@@ -245,19 +248,12 @@ def get_user_rooms(request, user_id):
     res = serializers.RoomParticipantSerializer(rooms, many=True)
     return JsonResponse({"rooms": res.data})
 
-@api_view(['GET'])
-@authentication_classes([JWTAuthentication])
-@permission_classes([permissions.IsAuthenticated])
-def get_roomparticipants(request, room_id):
 
-    # TODO: all + check if user is participant, or if room is public
-    try:
-         user = models.RoomParticipant.objects.filter(room=room_id)
-    except models.RoomParticipant.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-    
-    res = serializers.RoomParticipantSerializer(user, many=True)
-    return JsonResponse({"roomparticipant": res.data})
+
+
+
+#FEU
+
 
 @api_view(['POST', 'PUT'])
 @authentication_classes([JWTAuthentication])
@@ -268,7 +264,7 @@ def create_room(request): #slug ?
     print(request.__dict__, 'req')
     room = request.data['room']
     moderator = request.user
-    
+    # il faudra ajouter isAdmin=True en créant les roomParts
     # _______________________
     # story = request.data.room['story']
     # roomparticipant = request.data['invitation']
@@ -423,3 +419,150 @@ def tick_api(request):
         return
     if request.method == 'PUT':
         return
+
+
+
+def get_user_detail(user_id: int) -> dict:
+
+    try:
+        user = models.MyUser.objects.get(id=user_id)
+    except models.MyUser.DoesNotExist:
+        return f'error: user with id {user_id} not found'
+    return serializers.MyUserSerializer(user).data
+
+# def get_is_admin(user_id, room_id):
+
+#     try:
+#         room_part = models.RoomParticipant.objects.get(rooms__id=user_id, participants__id=room_id)
+#     except models.MyUser.DoesNotExist:
+#         return f'error: user with id {user_id} not found'
+#     return serializers.RoomParticipant(room_part).data
+
+
+def get_room_participants_by_user_id(user_id:int) -> 'list[OrderedDict]':
+    try:
+        rooms_participants_ = models.RoomParticipant.objects.filter(user_id=user_id)
+    except models.RoomParticipant.DoesNotExist:
+        return f'error: user with id {user_id} not found'
+    rooms_participants = serializers.RoomParticipantSerializer(rooms_participants_, many=True)
+    return rooms_participants.data
+
+def get_room_participants_by_room_list(room_list:'list[int]') -> 'list[OrderedDict]':
+
+    try:
+        rooms_participants_ = models.RoomParticipant.objects.filter(room__in=room_list)
+    except models.RoomParticipant.DoesNotExist:
+        return f'no participant found'
+    rooms_participants = serializers.RoomParticipantSerializer(rooms_participants_, many=True)
+    return rooms_participants.data
+
+
+def get_rooms_by_list_id(rooms_ids:'list[int]') -> 'list[OrderedDict]':
+    try:
+        rooms_ = models.Room.objects.filter(id__in=rooms_ids)
+    except models.Room.DoesNotExist:
+        return f'error: no room found'
+    rooms = serializers.RoomSerializer(rooms_, many=True)
+    return rooms.data
+
+
+def get_stories_by_list_id(stories_ids:'list[int]') -> 'list[OrderedDict]':
+    try:
+        stories_ = models.Story.objects.filter(id__in=stories_ids)
+    except models.Story.DoesNotExist:
+            return f'error: no story found'
+    stories = serializers.StorySerializer(stories_, many=True)
+    return stories.data
+
+
+def get_all_rooms() -> 'list[OrderedDict]':
+    try:
+        rooms_ = models.Room.objects.all()
+    except models.RoomParticipant.DoesNotExist:
+        return f"there's no room yet"
+
+    rooms = serializers.RoomSerializer(rooms_, many=True)
+    # print(rooms.data)
+    return rooms.data
+
+def filter_by(look_for: dict, _in: dict, _key: str) -> 'list[dict]':
+
+    for i in range(len(look_for)):
+        for j in range(len(_in)):
+            if look_for[i]['id'] == _in[j][_key]:
+                _in[j][_key] = look_for[i]
+    return(_in)
+
+@api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([permissions.IsAuthenticated])
+def get_user_rooms_list(request, user_id):
+
+    # TODO:
+    user = get_user_detail(user_id)
+    print('test', user)
+
+    rooms_participants = get_room_participants_by_user_id(user_id)
+    roompart_response = [{key: val for key,val in elem.items() if key in ['id', 'isAdmin', 'nickname', 'room', 'character']} for elem in rooms_participants]
+    # recup que certaines clefs -> Serializers (fields)
+    rooms_ids = [e['room'] for e in rooms_participants]
+
+    # ici il faudra chercher le nb de participants pour une room ?
+
+    rooms = get_rooms_by_list_id(rooms_ids)
+    stories_ids = [e['story'] for e in rooms]
+    room_response = [{key: val for key,val in elem.items() if key in ['id', 'maxParticipants', 'isPublic', 'story']} for elem in rooms]
+    
+    stories = get_stories_by_list_id(stories_ids)
+    story_response = [{key: val for key,val in elem.items() if key in ['id', 'title', 'description', 'image']} for elem in stories]
+    print(f'story_response {story_response}\n\n')
+
+    room_response = filter_by(story_response, room_response, 'story')
+    roompart_response = filter_by(room_response, roompart_response, 'room')
+
+    return Response(data=roompart_response, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([permissions.IsAuthenticated])
+def get_public_rooms(request):
+
+    # TODO: chercher tout les rooms participants associés aux rooms pour faire nb/max
+
+    
+
+    rooms = [{key: val for key, val in elem.items() if key in ['id', 'maxParticipants', 'story']} for elem in get_all_rooms() if elem['isPublic']]
+    print('rooms in get public rooms', rooms)
+
+    rooms_id = [e['id'] for e in rooms]
+    test = get_room_participants_by_room_list(rooms_id)
+    print(f'\ntest all participant {len(test)}\n\n')
+
+
+    stories_ids = [e['story'] for e in rooms]
+    stories = get_stories_by_list_id(stories_ids)
+    story_response = [{key: val for key,val in elem.items() if key in ['id', 'title', 'description', 'image']} for elem in stories]
+
+    room_response = filter_by(story_response, rooms, 'story')
+
+
+    print(f'\nfinalcountdown {room_response}\n')
+
+
+    '''
+    Si on n'a pas besoin de toutes ces extra infos on peut juste mettre 
+    nb_participant = len(ce_participant) pour avoir nb_part/max_part
+    '''
+    for elem in test:
+        for i in range(len(room_response)):
+            if elem['room'] == room_response[i]['id']:
+                try:
+                    room_response[i]['participants'] += [elem]
+                except:
+                    room_response[i]['participants'] = []
+                    room_response[i]['participants'] += [{key: val for key,val in elem.items() if key in ['id', 'isAdmin', 'nickname', 'character', 'user']}]
+        # print(f'\n{elem}\n')
+
+    print(f'\ntest all participant {len(test)}\n\n')
+    return Response(data=room_response, status=status.HTTP_200_OK)

@@ -335,7 +335,6 @@ class Message(models.Model):
         verbose_name = "Message"
         verbose_name_plural = "Messages"
 
-
 # message mechanism --------------------------------------------------------- #
 
 

@@ -3,15 +3,15 @@ import AuthContext from "@context/AuthContext";
 import axios from 'axios';
 
 import RoomDetail from '@components/RoomDetail'
-import ModalForm from '@components/ModalForm';
+import ModalRoom from '@components/ModalRoom';
 
 const RoomList = (props) => {
-
+    // display
     const { authTokens, userId } = useContext(AuthContext);    
     const [roomsIdsList, setRoomsIdsList] = useState('');
     // liste des rooms où userId participe
     // roomparticipant.room (+nick?) where user = userId
-
+    
     const [roomsTitle, setRoomsTitle] = useState([])
     // liste du nom des rooms où userId participe
     // rooms.title where rooms.id = roomsIdsList[x]
@@ -20,6 +20,8 @@ const RoomList = (props) => {
     // list des participants de chaque room où userId participe
     // RoomParticpant.user (+nick?) where room.id = roomsIdsList[x]
 
+
+    // c'est la grosse merde
     const url_list = 'http://localhost:8000/api/room/list/'
     // room/list/<int:user_id>/
     const url_get = 'http://localhost:8000/api/roomparticipant/list/'
@@ -43,16 +45,20 @@ const RoomList = (props) => {
             */
         return
     }
+
+    const url_room_list = (userId) => `http://localhost:8000/api/room/${userId}/list/`
+    const [roomList, setroomList] = useState()
+
     useEffect( () => {
         const request = axios.CancelToken.source()
-        const fetch = async (method, url) => {
+        const fetch = async () => {
             await axios({
-                url: url,
-                method: method,
+                url: url_room_list(userId),
+                method: 'GET',
                 headers: {Authorization: `Bearer ${authTokens.access}`},
                 cancelToken: request.token,
             })
-            .then ((response) => setRoomsIdsList(response.data.rooms))
+            .then ((response) => {console.log(response.data); setroomList(response.data)})
             .catch((e) => console.log('error', e))
         }
 
@@ -63,28 +69,54 @@ const RoomList = (props) => {
     }, [userId])
 
     useEffect( () => {
+        const request = axios.CancelToken.source()
+        const fetch = async (method, url) => {
+            await axios({
+                url: url,
+                method: method,
+                headers: {Authorization: `Bearer ${authTokens.access}`},
+                cancelToken: request.token,
+            })
+            .then ((response) => setRoomsIdsList(response.data.rooms.map((r) => r.id)))
+            .catch((e) => console.log('error', e))
+        }
 
-        //mettre la fonction qui suit dans un hook / useCallback qui dépend de [...params]
-        for (let elem of roomsIdsList){
+        fetch('get', `${url_list}${userId}`)
+
+        return () => { request.cancel(); }
+    // eslint-disable-next-line
+    }, [userId])
+
+    useEffect( () => {
+        // for (let elem of roomsIdsList){
+            const ids = roomsIdsList.toString().replaceAll(",","-")
             axios({
                 method: "GET",
-                url: `${url_get}${elem.room}`, //dd
-                headers: { Authorization: 'Bearer ' + authTokens.access }
+                url: `${url_get}${ids}`,
+                headers: { Authorization: 'Bearer ' + authTokens.access },
                 })//
             .then((response) => {
-                console.log(response)
-                setRoomsParticipants((prev) => ({...prev, [elem.room]: response.data.roomparticipant}))
+                // setRoomsParticipants((prev) => ({...prev, [elem.room]: response.data.roomparticipant}))
+                console.log(response.data)
+                setRoomsParticipants(response.data)
 
             }).catch((error) => {
                 console.log(`error: ${error}`)
             })
-        }
+        // }
     // eslint-disable-next-line
     }, [roomsIdsList])
 
+    // useEffect( () => {
+    //     axios({
+    //         method:'Get',
+    //         url: `${url_get}${roomsI}`
+    //     })
+    // }, [roomsIdsList])
+
     useEffect( () => {
-        console.log(roomsParticipants)
-    }, [roomsParticipants])
+        console.log(roomList)
+    }, [roomList])
 
   return (
       <>
@@ -97,6 +129,7 @@ const RoomList = (props) => {
                 
                     <div className='room-title'>{Object.keys(room)} : {roomsParticipants[room].map( (x) => x.nickname) }
                     </div>
+                    {/*plutôt story.img, story.description, roomPart / maxParticipant sur le wireframe*/}
                     <button className='show-room-detail' onClick={(room) => {handleDetail(room.id)} }>Detail</button>
                     {/* Il faudra faire en sorte de repasser detail en false lors du click n'importe où ailleurs (cf unikorn) */}
                     {/* Par ailleurs pour l'instant on ouvre pas le detail d'une room en particulier, il faut réflechir à ça 
@@ -110,8 +143,9 @@ const RoomList = (props) => {
                 </ul>)
             })}
         </li>
+        
         <button className='create-room' onClick={handleModal}>Create Room</button>
-        {modal ? <ModalForm />: ''}
+        {modal ? <ModalRoom />: ''}
     </>
   )
 }

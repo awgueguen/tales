@@ -6,7 +6,7 @@ import {Link} from 'react-router-dom';
 
 const RoomList = (props) => {
 
-    const { authTokens, userId } = useContext(AuthContext);    
+    const { authTokens, userId } = useContext(AuthContext);
     // const [contactListIds, setContactListIds] = useState('');
     // const [contactListName, setContactListName] = useState([])
 
@@ -57,8 +57,8 @@ const RoomList = (props) => {
                 </ul>
             )}
         </li>
-        <LoremIpsum size={10}/>
-        <Link to='/rooms'>to rooms</Link>
+        {/* <LoremIpsum size={10}/>
+        <Link to='/rooms'>to rooms</Link> */}
     </>
   )
 }
