@@ -267,6 +267,8 @@ class Room(models.Model):
         verbose_name="Maximum Participants")
     isPublic = models.BooleanField(
         verbose_name="Room visibility", help_text="Change room visibility", default=False)
+    # ajouter deux fields + def save()
+    # ajouter field => histoire terminée.
 
     class Meta:
         ordering = ["-isPublic", "createdAt"]
