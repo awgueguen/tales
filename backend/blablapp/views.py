@@ -322,12 +322,12 @@ def contacts_api(request, user_id):
         contacts_id = models.Contact.objects.filter(receiver=user_id)
         res = serializers.ContactSerializer(contacts_id, many=True)
 
-        print('res', res.data)
+        # print('res', res.data)
         res = [elem['sender'] for elem in res.data if elem['approved']] # ?
         users = models.MyUser.objects.filter(id__in=res)
 
         resbis = serializers.MyUserSerializer(users, many=True) 
-        print('test', resbis.data)
+        # print('test', resbis.data)
         return JsonResponse({"contacts": resbis.data})
     if request.method == 'POST':
         return
@@ -358,15 +358,26 @@ def tick_api(request):
 @permission_classes([permissions.IsAuthenticated])
 def add_user_api(request, username):
 
-
-
+    print('test >>>>', request.user)
+    try:
+        receiver = models.MyUser.objects.get(username__iexact=username)
+    except models.MyUser.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    
     if request.method == 'GET':
-        try:
-            user = models.MyUser.objects.get(username=username)
-        except models.MyUser.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-        res = serializers.MyUserSerializer(user)
+
+        res = serializers.MyUserSerializer(receiver)
         return JsonResponse({"user": res.data})
 
     if request.method == 'POST':
-        return
+        sender = models.MyUser.objects.get(username=request.user)
+
+        receiver = serializers.MyUserSerializer(receiver).data['id']
+        sender = serializers.MyUserSerializer(sender).data['id']
+      
+        serializer = serializers.ContactSerializer(data={'sender': sender, 'receiver': receiver})   
+        if serializer.is_valid():
+            # serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
