@@ -1,0 +1,15 @@
+@use "../abstracts" as *;
+
+#login {
+  min-height: 100vh;
+  background-color: setcolor(main, 500);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  form {
+    max-width: 40em;
+    background-color: red;
+  }
+}

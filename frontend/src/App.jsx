@@ -1,7 +1,6 @@
 import React, { Fragment } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 /* components -------------------------------------------------------------- */
-import Header from "@components/Header";
 /* pages ------------------------------------------------------------------- */
 import HomePage from "@pages/HomePage";
 /* authentifications ------------------------------------------------------- */
@@ -23,7 +22,6 @@ const App = () => {
       <Router>
         <AuthProvider>
           <Fragment>
-            <Header />
             <Routes>
               <Route path="/" element={<PrivateRoute />}>
                 {/* anicet -------------------------------------------------------  */}

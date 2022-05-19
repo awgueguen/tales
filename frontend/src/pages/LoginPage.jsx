@@ -20,7 +20,7 @@ const LoginPage = () => {
   }, []);
 
   return (
-    <div>
+    <div id="login">
       {username ? null : (
         <form onSubmit={loginUser}>
           <input type="text" name="username" placeholder="enter username" />
