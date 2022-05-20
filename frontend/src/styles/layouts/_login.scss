@@ -2,7 +2,9 @@
 
 #connect {
     min-height: 100vh;
-    background-image: url("../media/static/landing_background.png");
+    background: url("../media/static/landing_background.png") no-repeat center
+        center fixed;
+    @include image-cover;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -11,14 +13,15 @@
         display: flex;
         flex-direction: column;
 
-        width: clamp(30em, 70vw, 60em);
-        min-height: 30em;
+        width: clamp(30em, 10em + 45vw, 80em);
+        min-height: clamp(30em, 10em + 20vw, 45em);
 
         align-items: stretch;
     }
 
     &__button {
         @include flex-column-center;
+        gap: 0.6rem;
     }
 }
 
@@ -42,7 +45,6 @@
         flex: 2;
         background-color: hsla(0, 0%, 11%, 0.726);
         padding: 1rem;
-        gap: 1rem;
 
         form[name="connect"] {
             @include flex-column-center;
@@ -82,17 +84,6 @@
                     color: white;
                     grid-area: checkbox;
                 }
-            }
-        }
-    }
-    &__button {
-        @include btn-green;
-
-        &__legend {
-            color: setcolor(text__dk, 500);
-
-            a {
-                color: white;
             }
         }
     }

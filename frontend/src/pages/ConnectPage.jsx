@@ -34,21 +34,24 @@ const ConnectPage = () => {
     e.preventDefault();
     setOrigin((oldState) => !oldState);
   };
-
-  /* tests ----------------------------------------------------------------- */
-
-  // useEffect(() => {
-  //   console.log(register);
-  // }, [register]);
+  /* register -------------------------------------------------------------- */
+  const handleSubmit = () => {
+    if (origin) {
+      loginUser({ ...login });
+    } else {
+      console.log("register");
+    }
+  };
 
   /* lifecycle ------------------------------------------------------------- */
-  let { username } = useContext(AuthContext);
+  let { loginUser, username } = useContext(AuthContext);
   const navigate = useNavigate();
 
   useEffect(() => {
     if (username) {
       navigate("/");
     }
+    // eslint-disable-next-line
   }, []);
 
   /* display --------------------------------------------------------------- */
@@ -57,7 +60,7 @@ const ConnectPage = () => {
       <div id="connect__container">
         <div className="connect__description">
           <h1>Dungeons & Dragons</h1>
-          <h4>A free text & chat based multiplayer RPG.</h4>
+          <h3>A free text & chat based multiplayer RPG.</h3>
         </div>
         <div className="connect__input">
           {origin ? (
@@ -66,10 +69,12 @@ const ConnectPage = () => {
             <Register values={register} handleChange={handleChange} />
           )}
           <div id="connect__button">
-            <button className="connect__button">{origin ? "LOGIN" : "REGISTER"}</button>
-            <span className="connect__button__legend">
+            <button onClick={handleSubmit} className="btn-primary">
+              {origin ? "LOGIN" : "REGISTER"}
+            </button>
+            <span>
               {origin ? "not registered yet?" : "already a member?"}{" "}
-              {origin ? <a onClick={handleOrigin}>sign up</a> : <a onClick={handleOrigin}>sign in</a>}
+              {origin ? <span onClick={handleOrigin}>sign up</span> : <span onClick={handleOrigin}>sign in</span>}
             </span>
           </div>
         </div>

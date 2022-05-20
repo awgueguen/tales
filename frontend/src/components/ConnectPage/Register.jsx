@@ -16,8 +16,8 @@ const Register = ({ values, handleChange }) => {
           placeholder="re-type password"
         />
         <input value={email} onChange={handleChange} type="email" name="email" placeholder="email" />
-        <label>
-          <input value={rgpd} onChange={handleChange} type="checkbox" name="rgpd" /> I agree with the terms and
+        <label className="input-checkbox">
+          <input value={rgpd} onChange={handleChange} type="checkbox" name="rgpd" />I agree with the terms and
           conditions.
         </label>
       </form>

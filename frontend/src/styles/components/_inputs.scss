@@ -1,0 +1,25 @@
+@use "../abstracts" as *;
+
+input {
+    color: white;
+
+    padding: 0.7rem 0.5rem;
+
+    outline: 0;
+    background: none;
+
+    border-width: 0 0 1px;
+    border-color: setcolor(text__dk, 500);
+
+    &::placeholder {
+        color: setcolor(text__dk, 400);
+        padding: 1rem;
+    }
+}
+
+.input {
+    &-checkbox {
+        display: flex;
+        gap: 0.5rem;
+    }
+}

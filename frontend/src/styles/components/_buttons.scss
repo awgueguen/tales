@@ -1,0 +1,26 @@
+@use "../abstracts" as *;
+
+.btn-primary {
+    cursor: pointer;
+
+    background-color: setcolor(alert, 500);
+
+    border: 0px;
+    border-radius: 5px;
+
+    padding: 0.7rem;
+
+    ~ span {
+        color: setcolor(text__dk, 500);
+
+        span {
+            cursor: pointer;
+            color: white;
+            text-decoration: solid underline white 1px;
+            text-underline-offset: 0.1rem;
+        }
+    }
+    &:hover {
+        background-color: setcolor(alert, 300);
+    }
+}

@@ -4,8 +4,8 @@ import { useContext } from "react";
 import AuthContext from "@context/AuthContext";
 
 const PrivateRoute = () => {
-  const { username, userId } = useContext(AuthContext);
-  return username ? <Outlet /> : <Navigate to="/login" />;
+  const { username } = useContext(AuthContext);
+  return username ? <Outlet /> : <Navigate to="/welcome" />;
 };
 
 export default PrivateRoute;

@@ -4,17 +4,13 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+
+    gap: 2rem;
 }
 
-@mixin btn-green {
-    background-color: setcolor(alert, 500);
-
-    border: 0px;
-    border-radius: 5px;
-
-    padding: 0.7rem;
-
-    &:hover {
-        background-color: setcolor(alert, 300);
-    }
+@mixin image-cover {
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
 }

@@ -57,10 +57,8 @@ export const AuthProvider = ({ children }) => {
 
   /* login method ---------------------------------------------------------- */
 
-  let loginUser = async (e) => {
-    e.preventDefault();
-    let username = e.target.username.value;
-    let password = e.target.password.value;
+  let loginUser = async ({ username, password }) => {
+    console.log("connect");
     if (username && password) {
       await axios({
         url: "http://127.0.0.1:8000/token/",
