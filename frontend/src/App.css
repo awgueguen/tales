@@ -9,6 +9,10 @@
 *::after {
   box-sizing: border-box;
 }
+img{
+    width: 50px;
+    height: 50px;
+}
 
 /* Remove default margin */
 body,

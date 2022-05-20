@@ -7,47 +7,47 @@ const LISTENER_EVENT = "my_response";
 const ENDPOINT = "http://localhost:8000";
 
 const useChat = (roomId, userId) => {
+  // const useChat = (roomId, username) => {
+  // est-ce que ça a du sens de mettre la date ici ou de le mettre dans les socketEvent ???
+
+  let date = new Date().toUTCString().split('').slice(0, -3)
+      date[18] = String(parseInt(date[18]) + 2)
+      date = date.join('')
+
   const [messages, setMessages] = useState([]);
   const socketRef = useRef();
-  // console.log("room dans hook", roomId);
-  // console.log("userId dans hook", userId);
   useEffect(() => {
-    // socketRef.current = socketIOClient(SOCKET_SERVER_URL,
-    socketRef.current = socketIOClient(
-      ENDPOINT
-      //   ,{query: { roomId },
-    );
-
-    // socketRef.current.on(NEW_CHAT_MESSAGE_EVENT, (message) => {
-    socketRef.current.emit("join", { room: roomId });
+    
+    socketRef.current = socketIOClient(ENDPOINT);
+    socketRef.current.emit("join", {room: roomId, date: date,});
     socketRef.current.on(LISTENER_EVENT, (message) => {
       // console.log("message dans hook:", message);
       const incomingMessage = {
         ...message,
-        /* ICI ON N'A TOUT LE TRUC ENVOYE PAR LE SOCKET
-        A REVOIR */
-        // ownedByCurrentUser: message.senderId === socketRef.current.id,
-        ownedByCurrentUser: message.user === userId,
+        ownedByCurrentUser: message.user === userId
+        // ownedByCurrentUser: message.user === nickname
       };
       setMessages((messages) => [...messages, incomingMessage]);
     });
 
-    // return () => {
-    //   socketRef.current.disconnect();
-    // };
-  }, [roomId]);
+    return () => {
+      socketRef.current.disconnect();
+    };
+  }, [roomId, userId]); //authTokens.access
+// }, [roomId, username]); //authTokens.access
 
   const sendMessage = (messageBody) => {
     /* __________
         ajouter ici le record dans la db ?
-    __________*/
+    __________*/ 
+      // c'est le retour de shlagman ...
 
-    // socketRef.current.emit(NEW_CHAT_MESSAGE_EVENT, {
-    socketRef.current.emit(EMIT_EVENT, {
-      data: messageBody,
-      //   senderId: socketRef.current.id,
-      user: userId,
-      room: roomId,
+      socketRef.current.emit(EMIT_EVENT, {
+        data: messageBody,
+        // user: username,
+        user: userId,
+        date: date,
+        room: roomId
     });
   };
 

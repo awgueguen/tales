@@ -96,16 +96,14 @@ class CharacterSerializer(serializers.ModelSerializer):
 class MyUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.MyUser
-        fields = ['id', 'last_login', 'username', 'first_name', 'last_name',
-                  'email', 'nickname', 'unique_id', 'profile_pic', ]
-
+        fields = ['last_login', 'username', 'first_name', 'last_name',
+                  'email', 'nickname', 'unique_id', 'profile_pic', 'id']
+                  
 
 class ContactSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Contact
-        fields = ['receiver', 'sender', 'approved']
-
-
+        fields = ['sender', 'receiver', 'approved']
 
 class TickboxSerializer(serializers.ModelSerializer):
     class Meta:
@@ -136,6 +134,10 @@ class StorySerializer(serializers.ModelSerializer):
         model = models.Story
         fields = '__all__'
 
+class StoryModalSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Story
+        fields = ['id', 'image', 'title', 'optimalPlayers', 'description']
 
 class RoomSerializer(serializers.ModelSerializer):
     class Meta:

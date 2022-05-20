@@ -211,10 +211,11 @@ class Event(models.Model):
     content = models.TextField()
     image = models.ImageField(
         help_text="Upload a picture for your Event", upload_to="events", blank=True)
-    chronology = models.IntegerField(
-        help_text="Event order in a Story", null=True)
+    # chronology = models.IntegerField(
+    #     help_text="Event order in a Story", null=True)
     trigger = models.CharField(max_length=10, unique=True)
     # stories = models.ManyToManyField("blablapp.Story", related_name="events")
+    # ajouter lien entre event et story
 
     class Meta:
         ordering = ['title']
@@ -337,7 +338,6 @@ class Message(models.Model):
         ordering = ["room", "createdAt"]
         verbose_name = "Message"
         verbose_name_plural = "Messages"
-
 
 # message mechanism --------------------------------------------------------- #
 

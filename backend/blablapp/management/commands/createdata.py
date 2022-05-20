@@ -178,7 +178,7 @@ class Command(BaseCommand):
                     description=fake.sentence(nb_words=10),
                     content=fake.paragraph(nb_sentences=5),
                     image=fake.image_url(),
-                    trigger=fake.unique.ean8()
+                    trigger=fake.unique.ean8(),
                 )
                 story.events.add(event)
 
