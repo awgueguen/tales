@@ -51,3 +51,4 @@ MVP (Login / Contacts / Salons / Chat) propre et s'amuser sur des features sympa
 
 ___
 
+La taille des images est modif dans le App.css global

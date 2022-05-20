@@ -10,6 +10,7 @@ from blablapp import models
 # --------------------------------------------------------------------------- #
 # token customizations                                                        #
 # --------------------------------------------------------------------------- #
+
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
@@ -35,22 +36,40 @@ class RegisterSerializer(serializers.ModelSerializer):
         myUser.save()
         return myUser
 
+
+# --------------------------------------------------------------------------- #
+# triggers                                                                    #
+# --------------------------------------------------------------------------- #
+
+
+class EntityInstanceTriggers(serializers.ModelSerializer):
+    class Meta:
+        model = models.EntityInstance
+        fields = ['instance', 'name', 'trigger']
+
+
+class StoryTriggers(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.Story
+        fields = ['id', 'title', 'trigger']
+
+
+class ActionTriggers(serializers.ModelSerializer):
+    class Meta:
+        model = models.Action
+        fields = ['id', 'title', 'trigger']
+
+
+class EventTriggers(serializers.ModelSerializer):
+    class Meta:
+        model = models.Event
+        fields = ['id', 'title', 'trigger']
+
+
 # --------------------------------------------------------------------------- #
 # basic serializers                                                           #
 # --------------------------------------------------------------------------- #
-
-
-class CharacterClassSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.CharacterClass
-        fields = '__all__'
-
-
-class CharacterSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.Character
-        fields = '__all__'
-
 
 class ActionSerializer(serializers.ModelSerializer):
     class Meta:
@@ -58,18 +77,33 @@ class ActionSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class CharacterClassSerializer(serializers.ModelSerializer):
+    actions = ActionSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = models.CharacterClass
+        fields = '__all__'
+
+
+class CharacterSerializer(serializers.ModelSerializer):
+    characterClass = CharacterClassSerializer()
+
+    class Meta:
+        model = models.Character
+        fields = '__all__'
+
+
 class MyUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.MyUser
-        fields = ['id', 'last_login', 'username', 'first_name', 'last_name',
-                  'email', 'nickname', 'unique_id', 'profile_pic', ]
-
+        fields = ['last_login', 'username', 'first_name', 'last_name',
+                  'email', 'nickname', 'unique_id', 'profile_pic', 'id']
+                  
 
 class ContactSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Contact
-        fields = ['receiver', 'sender', 'approved']
-
+        fields = ['sender', 'receiver', 'approved']
 
 class TickboxSerializer(serializers.ModelSerializer):
     class Meta:
@@ -100,6 +134,10 @@ class StorySerializer(serializers.ModelSerializer):
         model = models.Story
         fields = '__all__'
 
+class StoryModalSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Story
+        fields = ['id', 'image', 'title', 'optimalPlayers', 'description']
 
 class RoomSerializer(serializers.ModelSerializer):
     class Meta:

@@ -22,7 +22,7 @@ urlpatterns = [
     # agir sur un message en particulier, l'éditer, le supprimer
 
     # gameplay -------------------------------------------------------------- #
-    path('gameplay/triggers/<str:trigger>/', views.trigger),
+    path('triggers/', views.trigger),
     # rechercher un trigger existant dans une table
     path('gameplay/instances_ingame/<int:instance_id>&hit=<int:hit>',
          views.instances_ingame),
@@ -31,8 +31,21 @@ urlpatterns = [
     # setup ----------------------------------------------------------------- #
     path('room/create/', views.create_room),
     # création d'une room
+    path('room/list/<int:user_id>', views.get_user_rooms),
+    path('room/publiclist/', views.get_public_rooms),
+
+    path('room/<int:user_id>/list/', views.get_user_rooms_list),
+    # liste les rooms auxquelles participe un utilisateur
     path('room/create/id=<int:room_id>/entities/', views.create_instances),
     # associer des instances à une room & les personaliser
+
+    #roomparticipant? ----------------------------------------------------------------- 
+    # à modifier vu qu'on peut y acceder depuis les autres routes à priori
+    # path('roomparticipant/list/<str:ids>', views.get_roomparticipants),
+
+    # stories ---------------------------------------------------------------- #
+    path('stories/', views.stories_api),
+    # list stories
 
     # assets ---------------------------------------------------------------- #
     path('assets/', views.display_assets),
@@ -56,6 +69,9 @@ urlpatterns = [
     # voir les personnages associés à un utilisateurs
     path('user/<int:user_id>/contacts/', views.contacts_api),
     # gestion des contacts utilisateurs -> just contacts/
+    path('user/contact_list/', views.user_contacts_api),
+    # gestion des contacts utilisateurs -> contacts d'un user spécifique
+    # à terme à fusionner avec le path d'Anicet
     path('user/<int:user_id>/tickbox/', views.tick_api),
     # gestion de la tickbox utilisateur -> just tickbox/
     path('register/', views.register_user)

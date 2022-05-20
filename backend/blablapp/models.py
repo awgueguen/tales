@@ -102,6 +102,7 @@ class MyUser(AbstractUser):
 
     def __str__(self):
         return self.username
+        # request.user return this
 
 
 class Contact(models.Model):
@@ -111,8 +112,8 @@ class Contact(models.Model):
         MyUser, on_delete=models.CASCADE, related_name="contacts")
     approved = models.BooleanField(default=False)
     sentAt = models.DateTimeField(auto_now_add=True, editable=False)
-    approvedAt = models.DateTimeField(null=True)
-    refusedAt = models.DateTimeField(null=True)
+    approvedAt = models.DateTimeField(blank=True, null=True)
+    refusedAt = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         ordering = ['sender', "approved"]
@@ -154,7 +155,6 @@ class AbstractEntity(models.Model):
 
 
 class Entity(AbstractEntity):
-    trigger = models.CharField(max_length=10, unique=True)
 
     class Meta:
         verbose_name = "Entity"
@@ -202,6 +202,7 @@ class EntityInstance(AbstractEntity):
     class Meta:
         verbose_name = "Entity Instance"
         verbose_name_plural = "Entity Instances"
+        unique_together = ('room', 'trigger')
 
 
 class Event(models.Model):
@@ -210,9 +211,11 @@ class Event(models.Model):
     content = models.TextField()
     image = models.ImageField(
         help_text="Upload a picture for your Event", upload_to="events", blank=True)
-    # chronology = models.IntegerField(help_text="Event order in a Story")
+    # chronology = models.IntegerField(
+    #     help_text="Event order in a Story", null=True)
     trigger = models.CharField(max_length=10, unique=True)
     # stories = models.ManyToManyField("blablapp.Story", related_name="events")
+    # ajouter lien entre event et story
 
     class Meta:
         ordering = ['title']
@@ -265,6 +268,8 @@ class Room(models.Model):
         verbose_name="Maximum Participants")
     isPublic = models.BooleanField(
         verbose_name="Room visibility", help_text="Change room visibility", default=False)
+    # ajouter deux fields + def save()
+    # ajouter field => histoire terminée.
 
     class Meta:
         ordering = ["-isPublic", "createdAt"]
@@ -285,7 +290,7 @@ class RoomParticipant(models.Model):
     nickname = models.CharField(
         help_text="By default the user nickname", max_length=35, null=True)
     character = models.ForeignKey(Character, verbose_name="Character", help_text="Choose your player",
-                                  on_delete=models.RESTRICT, related_name="rooms", null=True)
+                                  on_delete=models.RESTRICT, related_name="rooms", blank=True, null=True)
     hit = models.IntegerField(
         verbose_name="Hit Point", help_text="Hit points taken by the participant", default=0)
     joinedAt = models.DateTimeField(auto_now_add=True, editable=False)
@@ -333,7 +338,6 @@ class Message(models.Model):
         ordering = ["room", "createdAt"]
         verbose_name = "Message"
         verbose_name_plural = "Messages"
-
 
 # message mechanism --------------------------------------------------------- #
 

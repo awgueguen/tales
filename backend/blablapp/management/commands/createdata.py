@@ -64,7 +64,7 @@ class Command(BaseCommand):
                 action = Action.objects.create(
                     title=fake.unique.action_type(),
                     description=fake.sentence(nb_words=10),
-                    trigger=f'{ACTIONS[i][:3]}{fake.hex_color()}'  # FIXME
+                    trigger=fake.unique.ean8()
                 )
 
                 cclass.actions.add(action)
@@ -88,20 +88,28 @@ class Command(BaseCommand):
         user_input = int(input(">>> How many users: ") or "10")
         # user & tickbox ---------------------------------------------------- #
         loadbar(0, user_input)
+        f = open("./blablapp/password.txt",
+                 "w+", encoding="utf-8")
         for i in range(user_input):
+            login = fake.unique.user_name()
+            password = fake.password(length=12)
+            f.write(f'Login: {login} // Password: {password}\r\n')
             user = MyUser.objects.create(
                 nickname=fake.user_name(),
                 birthdate=fake.past_date(),
                 # baseuser -------------------------------------------------- #
-                password=fake.password(length=12),
+                # password=fake.password(length=12),
                 is_superuser=False,
-                username=fake.unique.user_name(),
+                username=login,
                 first_name=fake.first_name(),
                 last_name=fake.last_name(),
                 email=fake.unique.ascii_email(),
                 is_staff=False,
                 is_active=True,
             )
+
+            user.set_password(password)
+            user.save()
 
             # tickbox ------------------------------------------------------- #
             Tickbox.objects.create(
@@ -160,7 +168,7 @@ class Command(BaseCommand):
                 description=fake.sentence(nb_words=10),
                 image=fake.image_url(),
                 optimalPlayers=random.randint(1, 5),
-                trigger=fake.unique.hex_color()  # FIXME
+                trigger=fake.unique.ean8()  # FIXME
             )
 
             # events -------------------------------------------------------- #
@@ -170,7 +178,7 @@ class Command(BaseCommand):
                     description=fake.sentence(nb_words=10),
                     content=fake.paragraph(nb_sentences=5),
                     image=fake.image_url(),
-                    trigger=fake.unique.hex_color()
+                    trigger=fake.unique.ean8(),
                 )
                 story.events.add(event)
 
@@ -188,7 +196,6 @@ class Command(BaseCommand):
                     hp=random.randint(1, 20),
                     atk=random.randint(1, 20),
                     defense=random.randint(1, 20),
-                    trigger=fake.unique.hex_color()
                 )
                 story.entities.add(entity)
 
@@ -247,7 +254,8 @@ class Command(BaseCommand):
                 entity = Entity.objects.order_by("?").first()
                 instance_e = EntityInstance(
                     entity=entity,
-                    room=room
+                    room=room,
+                    trigger=fake.unique.ean8()
                 )
                 instance_e.__dict__.update(entity.__dict__)
                 instance_e.save()
