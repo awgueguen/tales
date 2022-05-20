@@ -46,8 +46,6 @@ def classes_api(request):
     res = serializers.CharacterClassSerializer(classes, many=True)
     return JsonResponse({"classes": res.data})
 
-# add in JsonResponse safe = False if the first item is not a proper JSON
-
 
 # actions ------------------------------------------------------------------- #
 
@@ -58,7 +56,61 @@ def actions_api(request):
 
     actions = models.Action.objects.all()
     res = serializers.ActionSerializer(actions, many=True)
-    return JsonResponse({"actions": res.data})  # safe=False
+    return JsonResponse({"actions": res.data})
+
+# --------------------------------------------------------------------------- #
+# triggers                                                                    #
+# --------------------------------------------------------------------------- #
+
+
+@api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([permissions.IsAuthenticated])
+def trigger(request):
+    # TODO ------------------------------------------------------------------ #
+    # // get all triggers with this view
+    # // Filter actions to only show whats character has
+    # // add filter for room id
+    # Get everything from one serializer
+    # Filter is Admin
+
+    # code ------------------------------------------------------------------ #
+    room_id = request.GET.get("room_id")
+    username = request.user
+
+    entity_instances = models.EntityInstance.objects.filter(room=room_id)
+    entity_instances_serializer = serializers.EntityInstanceTriggers(
+        entity_instances, many=True)
+    entity_instances_triggers = [dict(item, **{'tab': 'EntityInstance'})
+                                 for item in entity_instances_serializer.data]
+
+    story = models.Story.objects.filter(room=room_id)
+    story_serializer = serializers.StoryTriggers(story, many=True)
+    story_trigger = [dict(item, **{'tab': 'Story'})
+                     for item in story_serializer.data]
+
+    story_id = story_trigger[0]['id']
+
+    event = models.Event.objects.filter(stories__id=story_id)
+    event_serializer = serializers.EventTriggers(event, many=True)
+    event_triggers = [dict(item, **{'tab': 'Event'})
+                      for item in event_serializer.data]
+
+    action_triggers = []
+
+    try:
+        character = models.Character.objects.get(
+            rooms__room=room_id, user__username=username)
+        character_serializer = serializers.CharacterSerializer(character).data
+
+        action_triggers = [{'id': i['id'], 'title': i["title"], 'trigger': i['trigger'], 'tab': 'Action'}
+                           for i in character_serializer['characterClass']['actions']]
+
+    except models.Character.DoesNotExist:
+        print('no character associated\nplease connect with someone registered in the room')
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    return Response([entity_instances_triggers + story_trigger + event_triggers + action_triggers])
 
 # --------------------------------------------------------------------------- #
 # CHARACTERS                                                                  #
@@ -67,9 +119,9 @@ def actions_api(request):
 # characters ---------------------------------------------------------------- #
 
 
-@api_view(['GET', 'POST'])
-@authentication_classes([JWTAuthentication])
-@permission_classes([permissions.IsAuthenticated])
+@ api_view(['GET', 'POST'])
+@ authentication_classes([JWTAuthentication])
+@ permission_classes([permissions.IsAuthenticated])
 def characters_api(request):
     user = request.user
 
@@ -86,9 +138,9 @@ def characters_api(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['PUT'])
-@authentication_classes([JWTAuthentication])
-@permission_classes([permissions.IsAuthenticated])
+@ api_view(['PUT'])
+@ authentication_classes([JWTAuthentication])
+@ permission_classes([permissions.IsAuthenticated])
 def characters_ingame(request):
 
     # TODO: all
@@ -100,18 +152,10 @@ def characters_ingame(request):
 # STORY RELATED                                                               #
 # --------------------------------------------------------------------------- #
 
-@api_view(['GET'])
-@authentication_classes([JWTAuthentication])
-@permission_classes([permissions.IsAuthenticated])
-def trigger(request):
 
-    # TODO: check Django Signals
-    return
-
-
-@api_view(['GET'])
-@authentication_classes([JWTAuthentication])
-@permission_classes([permissions.IsAuthenticated])
+@ api_view(['GET'])
+@ authentication_classes([JWTAuthentication])
+@ permission_classes([permissions.IsAuthenticated])
 def display_assets(request):
 
     # TODO: all
@@ -119,9 +163,9 @@ def display_assets(request):
     return
 
 
-@api_view(['POST'])
-@authentication_classes([JWTAuthentication])
-@permission_classes([permissions.IsAuthenticated])
+@ api_view(['POST'])
+@ authentication_classes([JWTAuthentication])
+@ permission_classes([permissions.IsAuthenticated])
 def create_assets(request):
 
     # TODO: all
@@ -129,9 +173,9 @@ def create_assets(request):
     return
 
 
-@api_view(['GET, PUT, DELETE'])
-@authentication_classes([JWTAuthentication])
-@permission_classes([permissions.IsAuthenticated])
+@ api_view(['GET, PUT, DELETE'])
+@ authentication_classes([JWTAuthentication])
+@ permission_classes([permissions.IsAuthenticated])
 def stories_api(request):
 
     # TODO: all
@@ -144,9 +188,9 @@ def stories_api(request):
         return
 
 
-@api_view(['GET, PUT, DELETE'])
-@authentication_classes([JWTAuthentication])
-@permission_classes([permissions.IsAuthenticated])
+@ api_view(['GET, PUT, DELETE'])
+@ authentication_classes([JWTAuthentication])
+@ permission_classes([permissions.IsAuthenticated])
 def events_api(request):
 
     # TODO: all
@@ -159,9 +203,9 @@ def events_api(request):
         return
 
 
-@api_view(['GET, PUT, DELETE'])
-@authentication_classes([JWTAuthentication])
-@permission_classes([permissions.IsAuthenticated])
+@ api_view(['GET, PUT, DELETE'])
+@ authentication_classes([JWTAuthentication])
+@ permission_classes([permissions.IsAuthenticated])
 def entities_api(request):
 
     # TODO: all
@@ -174,9 +218,9 @@ def entities_api(request):
         return
 
 
-@api_view(['POST, PUT, DELETE'])
-@authentication_classes([JWTAuthentication])
-@permission_classes([permissions.IsAuthenticated])
+@ api_view(['POST, PUT, DELETE'])
+@ authentication_classes([JWTAuthentication])
+@ permission_classes([permissions.IsAuthenticated])
 def create_instances(request):
 
     # TODO: add new permissions values checking if player is DM of the room
@@ -190,9 +234,9 @@ def create_instances(request):
         return
 
 
-@api_view(['GET', 'PUT'])
-@authentication_classes([JWTAuthentication])
-@permission_classes([permissions.IsAuthenticated])
+@ api_view(['GET', 'PUT'])
+@ authentication_classes([JWTAuthentication])
+@ permission_classes([permissions.IsAuthenticated])
 def instances_ingame(request):
 
     # TODO: only accept trigger
@@ -209,9 +253,9 @@ def instances_ingame(request):
 # ROOMS SETTINGS                                                              #
 # --------------------------------------------------------------------------- #
 
-@api_view(['GET'])
-@authentication_classes([JWTAuthentication])
-@permission_classes([permissions.IsAuthenticated])
+@ api_view(['GET'])
+@ authentication_classes([JWTAuthentication])
+@ permission_classes([permissions.IsAuthenticated])
 def get_room(request):
 
     # TODO: all + check if user is participant, or if room is public
@@ -219,9 +263,9 @@ def get_room(request):
     return
 
 
-@api_view(['POST', 'PUT'])
-@authentication_classes([JWTAuthentication])
-@permission_classes([permissions.IsAuthenticated])
+@ api_view(['POST', 'PUT'])
+@ authentication_classes([JWTAuthentication])
+@ permission_classes([permissions.IsAuthenticated])
 def create_room(request, slug):
 
     # TODO: all
@@ -229,9 +273,9 @@ def create_room(request, slug):
     return
 
 
-@api_view(['GET'])
-@authentication_classes([JWTAuthentication])
-@permission_classes([permissions.IsAuthenticated])
+@ api_view(['GET'])
+@ authentication_classes([JWTAuthentication])
+@ permission_classes([permissions.IsAuthenticated])
 def messages_api(request, room):
 
     # TODO: all
@@ -240,9 +284,9 @@ def messages_api(request, room):
         return
 
 
-@api_view(['POST'])
-@authentication_classes([JWTAuthentication])
-@permission_classes([permissions.IsAuthenticated])
+@ api_view(['POST'])
+@ authentication_classes([JWTAuthentication])
+@ permission_classes([permissions.IsAuthenticated])
 def post_message(request):
 
     # TODO: all + check if user is member of a room
@@ -252,9 +296,9 @@ def post_message(request):
     # TODO: Whisper & Quote views ?
 
 
-@api_view(['PUT', 'DELETE'])
-@authentication_classes([JWTAuthentication])
-@permission_classes([permissions.IsAuthenticated])
+@ api_view(['PUT', 'DELETE'])
+@ authentication_classes([JWTAuthentication])
+@ permission_classes([permissions.IsAuthenticated])
 def edit_messages(request):
 
     # TODO: all + check if user is member of a room
@@ -270,9 +314,9 @@ def edit_messages(request):
 # --------------------------------------------------------------------------- #
 
 
-@api_view(['GET', 'POST', 'PUT', 'DELETE'])
-@authentication_classes([JWTAuthentication])
-@permission_classes([permissions.IsAuthenticated])
+@ api_view(['GET', 'POST', 'PUT', 'DELETE'])
+@ authentication_classes([JWTAuthentication])
+@ permission_classes([permissions.IsAuthenticated])
 def users_api(request, user_id):
 
     # TODO : add other methods, more specific views / needs
@@ -294,7 +338,7 @@ def users_api(request, user_id):
 # contact request ----------------------------------------------------------- #
 
 
-@api_view(['GET', 'POST', 'PUT'])
+@ api_view(['GET', 'POST', 'PUT'])
 # @authentication_classes([JWTAuthentication])
 # @permission_classes([permissions.IsAuthenticated])
 def contacts_api(request, user_id):
@@ -304,19 +348,6 @@ def contacts_api(request, user_id):
 # view pour ajouter le contact à la db"
 
     if request.method == 'GET':
-        # return JsonResponse({"users":[ 
-        # {"last_login": "null", 
-        # "username": "SergioLoLo", 
-        # "first_name": "Sergio", 
-        # "last_name": "Lopez", 
-        # "email": "chiendelacasse@gmail.com", 
-        # "nickname": "BougDétère", 
-        # "unique_id": "BougDétère94-302", 
-        # "profile_pic": "/media/profile_pics/default.jpg"}]
-        # })
-        
-
-
 
         #  modifier receiver
         contacts_id = models.Contact.objects.filter(receiver=user_id)
@@ -337,9 +368,9 @@ def contacts_api(request, user_id):
 
 # tickbox ------------------------------------------------------------------- #
 
-@api_view(['GET', 'POST', 'PUT'])
-@authentication_classes([JWTAuthentication])
-@permission_classes([permissions.IsAuthenticated])
+@ api_view(['GET', 'POST', 'PUT'])
+@ authentication_classes([JWTAuthentication])
+@ permission_classes([permissions.IsAuthenticated])
 def tick_api(request):
 
     # TODO: all

@@ -15,6 +15,8 @@ const Header = () => {
     <div>
       <Link to="/">Home</Link>
       <span> | </span>
+      <Link to="/rooms/1">Test Room</Link>
+      <span> | </span>
 
       {username ? <span onClick={logoutUser}>Logout</span> : <Link to="/login">Login</Link>}
       {username ? "" : <Link to="/register"> | Register</Link>}

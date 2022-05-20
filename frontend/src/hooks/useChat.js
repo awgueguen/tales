@@ -4,32 +4,30 @@ import socketIOClient from "socket.io-client";
 // const NEW_CHAT_MESSAGE_EVENT = "newChatMessage";
 const EMIT_EVENT = "my_room_event";
 const LISTENER_EVENT = "my_response";
-const SOCKET_SERVER_URL = "http://localhost:4000";
 const ENDPOINT = "http://localhost:8000";
-
-
 
 const useChat = (roomId, userId) => {
   const [messages, setMessages] = useState([]);
   const socketRef = useRef();
-    console.log('room dans hook', roomId)
-    console.log('userId dans hook', userId)
+  // console.log("room dans hook", roomId);
+  // console.log("userId dans hook", userId);
   useEffect(() => {
-    // socketRef.current = socketIOClient(SOCKET_SERVER_URL, 
-    socketRef.current = socketIOClient(ENDPOINT
-        //   ,{query: { roomId },
+    // socketRef.current = socketIOClient(SOCKET_SERVER_URL,
+    socketRef.current = socketIOClient(
+      ENDPOINT
+      //   ,{query: { roomId },
     );
 
     // socketRef.current.on(NEW_CHAT_MESSAGE_EVENT, (message) => {
-    socketRef.current.emit("join",{room: roomId});
+    socketRef.current.emit("join", { room: roomId });
     socketRef.current.on(LISTENER_EVENT, (message) => {
-      console.log('message dans hook:', message)
+      // console.log("message dans hook:", message);
       const incomingMessage = {
         ...message,
         /* ICI ON N'A TOUT LE TRUC ENVOYE PAR LE SOCKET
         A REVOIR */
         // ownedByCurrentUser: message.senderId === socketRef.current.id,
-        ownedByCurrentUser: message.user === userId
+        ownedByCurrentUser: message.user === userId,
       };
       setMessages((messages) => [...messages, incomingMessage]);
     });
@@ -42,14 +40,14 @@ const useChat = (roomId, userId) => {
   const sendMessage = (messageBody) => {
     /* __________
         ajouter ici le record dans la db ?
-    __________*/ 
+    __________*/
 
     // socketRef.current.emit(NEW_CHAT_MESSAGE_EVENT, {
-        socketRef.current.emit(EMIT_EVENT, {
+    socketRef.current.emit(EMIT_EVENT, {
       data: messageBody,
-    //   senderId: socketRef.current.id,
+      //   senderId: socketRef.current.id,
       user: userId,
-      room: roomId
+      room: roomId,
     });
   };
 
