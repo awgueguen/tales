@@ -1,44 +1,37 @@
 import React, {useState, useEffect, useContext} from 'react';
-import CustomInput from '@components/CustomInput';
-import AuthContext from "@context/AuthContext";
+import { useNavigate } from "react-router-dom";
 import axios from 'axios';
+
 import FriendCard from '@components/FriendCard'
-const ModalRoom = () => {
+import CustomInput from '@components/CustomInput';
+
+import AuthContext from "@context/AuthContext";
+
+const ModalRoom = (props) => {
     /**
      * Modal qui permet de créer une room
      * 
      * TODO:
      * Mettre en place le css pour indiquer qu'on a rempli les champs par défauts mais qu'on peut les modifier
      * (input[description, title et maxPart] quand on choisit une story)
-     * _______
      */
+    const {step, setStep, backwardStep, input, setInput, handleChange} = props
+    const navigate = useNavigate();
     const { authTokens } = useContext(AuthContext);
     const [stories, setStories] = useState()
     const [friends, setFriends] = useState()
-    const [input, setInput] = useState({
-        title: '',
-        maxParticipants: '',
-        description: '',
-        img: '',
-        invitations: [],
-        story: {id: '', title: ''},
-        ispublic: true
-    });
+    
 
     const handleStorySelect = (id) => {
-        /**
+        /*
          * choix de la story depuis le modal
          * et auto completion input
-         *  */ 
+         */ 
         const selection = stories.filter((story) => story.id === id)[0]
         const {title:t, description:d, optimalPlayers:m} = selection
         setSelectedStory(selection)
         setInput({...input, title: t, description: d, maxParticipants: m})
         setStep(1);
-    }
-
-    const backwardStep = () => {
-        setStep(step - 1);
     }
 
     const handleFriendsInvitations = (id) => {
@@ -55,8 +48,7 @@ const ModalRoom = () => {
             return
         }
         console.log(input.invitations)
-        
-        
+
         if (remove){
             invitations = invitations.filter((i) => i.id !== id)
             setInput({...input, invitations: [...invitations]})
@@ -67,22 +59,11 @@ const ModalRoom = () => {
         }
     }
     const [selectedStory, setSelectedStory] = useState()
-    const [step, setStep] = useState(0)
+    // useState(() => 
+    //     input.story.id ? stories.filter((story) => story.id === input.story.id)[0]
+    //     : ''
+    // )
     
-    const handleChange = (e) => {
-        const {name, type} = e.target
-        // const file = e.target?.files
-        const value = type === 'checkbox' ? e.target.checked : e.target.value
-        if (name === "story"){
-            setInput({...input, story: stories.filter((s) => s.id === value)[0]})
-            return
-        }
-        setInput( (prevState) => ({
-          ...prevState,
-        //   ...(e.target.type === 'file' && {'files': e.target.files}), // pour ajoùter une img
-          [name]: value,
-        }));
-    }
 
     const handleSubmit = (e) => {
         e.preventDefault()
@@ -94,9 +75,8 @@ const ModalRoom = () => {
             headers: {Authorization: `Bearer ${authTokens.access}`},
         })
         .then ((response) => {
-            // ajouter le traitement ici
-            // redirect vers la room crée ?
             console.log(response)
+            navigate(`../rooms/${response.data.room.id}`, { replace: true });
         })
 
         .catch((e) => console.log('error', e))
@@ -132,7 +112,10 @@ const ModalRoom = () => {
     }, [])
 
     useEffect(() => {
-        console.log(stories)
+        if (stories === undefined) return
+        const selected = input.story.id ? stories.filter((story) => story.id === input.story.id)[0]
+            : ''
+        if (selected) setSelectedStory(selected)
     }, [stories])
 
     useEffect(() => {
@@ -149,7 +132,7 @@ const ModalRoom = () => {
     }, [friends])
 
     useEffect(() => {
-        console.log(input.maxParticipants)
+        console.log(input)
     }, [input.maxParticipants])
 
   return (
@@ -163,7 +146,7 @@ const ModalRoom = () => {
       </div>
     {step !== 0? 
     <div className='modal-step-back' onClick={backwardStep}>
-        METTRE UNE FLECHE GAUCHE
+        METTRE UN ICONE FLECHE GAUCHE (retour arrière)
     </div>
     : ''}
     {step === 0 ?

@@ -8,21 +8,44 @@ import PublicCard from '@components/rooms/PublicCard';
 import { Link } from 'react-router-dom';
 
 /**
- * TODO : adapter les Link
- * TODO: associer les characters à l'id deja récup (useEffect l.52)
- * 
+ * TODO : 
+ * adapter les Link (?)
+ * associer les characters à l'id deja récup (useEffect l.52)
+ *  quand on rejoint une room publique ouvrir un mini modèle pour personnaliser son chara/nickname... (mvp+)
  */
 
 const RoomList = (props) => {
     
     const { authTokens, userId } = useContext(AuthContext);    
 
-
     const [modal, setModal] = useState(false)
     const handleModal = () => {
         setModal(!modal)
         return
     }
+    const [input, setInput] = useState({
+      title: '',
+      maxParticipants: '',
+      description: '',
+      img: '',
+      invitations: [],
+      story: {id: '', title: ''},
+      ispublic: true
+  });
+  const handleChange = (e) => {
+      const {name, type} = e.target
+      // const file = e.target?.files
+      const value = type === 'checkbox' ? e.target.checked : e.target.value
+      // if (name === "story"){
+      //     setInput({...input, story: stories.filter((s) => s.id === value)[0]})
+      //     return
+      // }
+      setInput( (prevState) => ({
+        ...prevState,
+      //   ...(e.target.type === 'file' && {'files': e.target.files}), // pour ajoùter une img
+        [name]: value,
+      }));
+  }
 
     const url_room_list = (userId) => `http://localhost:8000/api/room/${userId}/list/`
     const [roomList, setRoomList] = useState()
@@ -72,7 +95,10 @@ const RoomList = (props) => {
         return () => { request.cancel(); }
     // eslint-disable-next-line
     }, [userId])
-
+    const [step, setStep] = useState(0)
+    const backwardStep = () => {
+        setStep(step - 1);
+    }
 
 
     useEffect( () => {
@@ -94,6 +120,9 @@ const RoomList = (props) => {
                   <Link
                     key={index} className='private-card-link'
                     to={`/rooms/${r.id}`}
+                    state = {{alreadyUser : true}}
+  // const userId = useLocation()?.state?.user || 'INVITE';
+
                   >
                   <PrivateCard
                     isAdmin={r.isAdmin}
@@ -112,8 +141,16 @@ const RoomList = (props) => {
          */}
          <div style={{color:'red', fontSize:'20px'}}>+ Click here to show how to Add room</div>
         </div>
-        {modal ? <ModalRoom /> : ''}
-
+        {modal ?
+        <ModalRoom
+          step={step}
+          setStep={setStep}
+          backwardStep={backwardStep}
+          input={input}
+          setInput={setInput}
+          handleChange={handleChange}
+        />
+        : ''}
       </div>
 {/* ______ private-room-wrapper */}
 
@@ -137,7 +174,9 @@ const RoomList = (props) => {
               <Link
               key={index}
               className='public-card-link'
-              to={`/rooms/${r.id}`}>
+              to={`/rooms/${r.id}`}
+              state = {{alreadyUser : false}}
+              >
                 <PublicCard
                   title={r.story.title}
                   description={r.story.description}
