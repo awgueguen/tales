@@ -1,11 +1,17 @@
-import React, { useState, useEffect, useContext, useCallback } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import AuthContext from "@context/AuthContext";
 import axios from 'axios';
 
-import RoomDetail from '@components/rooms/RoomDetail';
 import ModalRoom from '@components/rooms/ModalRoom';
-import RoomCard from '@components/rooms/RoomCard';
-import StoryCard from '@components/rooms/StoryCard';
+import PrivateCard from '@components/rooms/PrivateCard';
+import PublicCard from '@components/rooms/PublicCard';
+import { Link } from 'react-router-dom';
+
+/**
+ * TODO : adapter les Link
+ * TODO: associer les characters à l'id deja récup (useEffect l.52)
+ * 
+ */
 
 const RoomList = (props) => {
     
@@ -14,19 +20,7 @@ const RoomList = (props) => {
 
     const [modal, setModal] = useState(false)
     const handleModal = () => {
-        // on ouvre un modal pour créer une room (autre composant ?)
         setModal(!modal)
-        return
-    }
-    const handleDetail = (roomId) => {
-        /*const rooms = {...state}
-        rooms[roomId].detail = true
-        setState(rooms)
-        */
-            /*
-            setState( (prev) => ( { ...prev, [roomId.detail] : true} ))
-            ça marche pareil ?
-            */
         return
     }
 
@@ -52,6 +46,7 @@ const RoomList = (props) => {
         fetch()
 
         return () => request.cancel()
+        //eslint-disable-next-line
     }, [])
 
     useEffect( () => {
@@ -90,38 +85,75 @@ const RoomList = (props) => {
     
   return (
       <>
+{/* ______private-room-wrapper */}
       <div className='private-room-wrapper'>
         <div className='existing-rooms'>
-            {roomList.map((r) => {
-                return(
-                    <RoomCard
-                      isAdmin={r.isAdmin}
-                      img={r.room.story.image}
-                      title={r.room.story.title}
-                    />
-                )
+            {roomList !== undefined && roomList.map((r, index) => {
+            return(
+                <>
+                  <Link
+                    key={index} className='private-card-link'
+                    to={`/rooms/${r.id}`}
+                  >
+                  <PrivateCard
+                    isAdmin={r.isAdmin}
+                    img={r.room.story.image}
+                    title={r.room.story.title}
+                  />
+                  </Link>
+                </>
+            )
             })}
         </div>
-        <div className='create-room'>
-            <button className='create-room' onClick={handleModal}>Create Room</button>
-            {modal ? 
-            <ModalRoom />
-            : ''}
+
+        <div className='create-room' onClick={handleModal}> 
+        {/**
+         * background '+' en image?
+         */}
+         <div style={{color:'red', fontSize:'20px'}}>+ Click here to show how to Add room</div>
         </div>
+        {modal ? <ModalRoom /> : ''}
+
       </div>
+{/* ______ private-room-wrapper */}
+
+
+{/* ______ public-room-wrapper */}
       <div className='public-room-wrapper'>
-          {publicList.map((r)=> {
-            <StoryCard 
-              title={r.story.title}
-              description={r.story.description}
-              img={r.story.image}
-              participants={r.participants}
-              // ici on pourra mettre la length à la place de la liste(selon ce qu'il faut)
-              max_participants={r.maxParticipants}
-            />
+          {publicList !== undefined && publicList.map((r, index)=> {
+/* ici on return un lien si on peut rejoindre ou une div avec className si full pour la mettre en opacity inférieure en css ? */
+              return(
+            <>
+            {r.participants.length === r.maxParticipants ?
+              <div className='full-public-room' key={index}>
+                <PublicCard
+                  title={r.story.title}
+                  description={r.story.description}
+                  img={r.story.image}
+                  full={true}
+                />
+              </div>
+            :
+              <Link
+              key={index}
+              className='public-card-link'
+              to={`/rooms/${r.id}`}>
+                <PublicCard
+                  title={r.story.title}
+                  description={r.story.description}
+                  img={r.story.image}
+                  participants={r.participants}
+                  max_participants={r.maxParticipants}
+                />
+              </Link>
+            }
+            
+            </>
+            )
           })
           }
       </div>
+{/* ______ public-room-wrapper */}
     </>
   )
 }

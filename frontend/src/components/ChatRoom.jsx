@@ -1,15 +1,15 @@
 import React, {useState, useContext} from "react";
-import { useParams } from "react-router";
-// import { useLocation, useParams } from "react-router";
+// import { useParams } from "react-router";
+import { useLocation, useParams } from "react-router";
 import "@styles/chatroom.css";
 import useChat from "@hooks/useChat";
 import AuthContext from "@context/AuthContext";
 
 const ChatRoom = () => {
 
-  const { authTokens, userId } = useContext(AuthContext);
+  const { authTokens,  } = useContext(AuthContext); // userId
   const roomId  = useParams().roomId;
-  // const userId = useLocation()?.state?.user || 'INVITE';
+  const userId = useLocation()?.state?.user || 'INVITE';
   console.log(`dans ChatRoom - roomId: ${roomId} - userId: ${userId}`)
   const { messages, sendMessage } = useChat(roomId, userId);
   const [newMessage, setNewMessage] = useState("");
@@ -17,7 +17,6 @@ const ChatRoom = () => {
   const handleNewMessageChange = (event) => {
     setNewMessage(event.target.value);
   };
-
   const handleSendMessage = () => {
     sendMessage(newMessage);
     setNewMessage("");
@@ -34,7 +33,11 @@ const ChatRoom = () => {
               className={`message-item ${
                 message.ownedByCurrentUser ? "my-message" : "received-message"
               }`}
-            >
+            > 
+              <p className='sending-date'>
+                {message.date}
+              </p>
+              {message.user} : 
               {message.data}
             </li>
           ))}

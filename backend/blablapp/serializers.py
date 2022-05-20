@@ -62,7 +62,7 @@ class MyUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.MyUser
         fields = ['last_login', 'username', 'first_name', 'last_name',
-                  'email', 'nickname', 'unique_id', 'profile_pic', ]
+                  'email', 'nickname', 'unique_id', 'profile_pic', 'id']
                   
 
 class ContactSerializer(serializers.ModelSerializer):
@@ -100,6 +100,10 @@ class StorySerializer(serializers.ModelSerializer):
         model = models.Story
         fields = '__all__'
 
+class StoryModalSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Story
+        fields = ['id', 'image', 'title', 'optimalPlayers', 'description']
 
 class RoomSerializer(serializers.ModelSerializer):
     class Meta:

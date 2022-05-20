@@ -3,7 +3,6 @@ from django.http import HttpResponse
 
 async_mode = 'eventlet'
 
-
 sio = socketio.Server(async_mode=async_mode, cors_allowed_origins='http://localhost:3000') 
 
 '''to print the logs'''
@@ -28,9 +27,9 @@ def join(sid, message):
 
     # join room, on peut dans l'ui aller vers une autre page
     sio.enter_room(sid, message['room'])
-    sio.emit('my_response', data = {'data': 'Entered room: ' + message['room'], 'room': message['room']}, room=sid)
+    sio.emit('my_response', data = {'data': 'Entered room: ' + message['room'], 'room': message['room'], 'date': message['date']}, room=sid)
 
-
+# ici on pourra mettre un msg à tlm room=rommmachin pour dire que untel s'est barré
 @sio.event()
 def leave(sid, message):
     sio.leave_room(sid, message['room'])
@@ -48,7 +47,7 @@ def close_room(sid, message):
 @sio.event()
 def my_room_event(sid, message):
     print('message reçu serveur', message)
-    sio.emit('my_response', {'data': message['data'], 'user': message['user'],}, room=message['room'])
+    sio.emit('my_response', {'data': message['data'], 'date': message['date'], 'user': message['user'],}, room=message['room'])
     print('msg emit à priori\n')
 
 
@@ -57,10 +56,14 @@ def disconnect_request(sid):
     sio.disconnect(sid)
 
 
+welcome_message = 'coucou'
+# ici on pourra écrire un message de bienvenue, les règles (triggers, regle de conduite) etc...
+#Ce message n'est vu que par l'utilisateur qui arrive dans une room mais pour le moment il est rechargé chaque fois qu'il y a une déconnexion
+
 @sio.event()
 def connect(sid, environ):
     print('\n', sid, 'sid on connexion\n')
-    sio.emit('my_response', {'data': 'Connected (server)', 'count': 0}, room=sid )
+    sio.emit('my_response', {'data': f'{welcome_message}', 'count': 0}, room=sid )
 
 
 @sio.event()

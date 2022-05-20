@@ -9,20 +9,25 @@ const ENDPOINT = "http://localhost:8000";
 
 
 const useChat = (roomId, userId) => {
+  // const useChat = (roomId, username) => {
+  // est-ce que ça a du sens de mettre la date ici ou de le mettre dans les socketEvent ???
+
+  let date = new Date().toUTCString().split('').slice(0, -3)
+      date[18] = String(parseInt(date[18]) + 2)
+      date = date.join('')
 
   const [messages, setMessages] = useState([]);
   const socketRef = useRef();
   useEffect(() => {
     
     socketRef.current = socketIOClient(ENDPOINT);
-    socketRef.current.emit("join",{room: roomId});
+    socketRef.current.emit("join", {room: roomId, date: date,});
     socketRef.current.on(LISTENER_EVENT, (message) => {
       console.log('message dans hook:', message)
       const incomingMessage = {
         ...message,
-        /* ICI ON A TOUT LE TRUC ENVOYE PAR LE SOCKET
-        A REVOIR */
         ownedByCurrentUser: message.user === userId
+        // ownedByCurrentUser: message.user === username
       };
       setMessages((messages) => [...messages, incomingMessage]);
     });
@@ -31,16 +36,20 @@ const useChat = (roomId, userId) => {
       socketRef.current.disconnect();
     };
   }, [roomId, userId]); //authTokens.access
+// }, [roomId, username]); //authTokens.access
 
   const sendMessage = (messageBody) => {
     /* __________
         ajouter ici le record dans la db ?
     __________*/ 
+      // c'est le retour de shlagman ...
 
-        socketRef.current.emit(EMIT_EVENT, {
-      data: messageBody,
-      user: userId,
-      room: roomId
+      socketRef.current.emit(EMIT_EVENT, {
+        data: messageBody,
+        // user: username,
+        user: userId,
+        date: date,
+        room: roomId
     });
   };
 

@@ -68,7 +68,7 @@ urlpatterns = [
     # voir les personnages associés à un utilisateurs
     path('user/<int:user_id>/contacts/', views.contacts_api),
     # gestion des contacts utilisateurs -> just contacts/
-    path('user/<int:user_id>/contact_list/', views.user_contacts_api),
+    path('user/contact_list/', views.user_contacts_api),
     # gestion des contacts utilisateurs -> contacts d'un user spécifique
     # à terme à fusionner avec le path d'Anicet
     path('user/<int:user_id>/tickbox/', views.tick_api),
