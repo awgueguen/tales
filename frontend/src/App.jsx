@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 /* pages ------------------------------------------------------------------- */
 import HomePage from "@pages/HomePage";
 /* authentifications ------------------------------------------------------- */
+import ConnectPage from "@pages/ConnectPage";
 import PrivateRoute from "@utils/PrivateRoute";
 import LoginPage from "@pages/LoginPage";
 import RegisterPage from "@pages/RegisterPage";
@@ -34,6 +35,7 @@ const App = () => {
                 <Route path="/createroom" element={<CreateRoom />} />
                 <Route path="/joinroom" element={<JoinRoom />} />
               </Route>
+              <Route path="/hello" element={<ConnectPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
               <Route path="*" element={<Navigate to="/" />} />

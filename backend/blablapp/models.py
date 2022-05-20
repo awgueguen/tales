@@ -289,7 +289,7 @@ class RoomParticipant(models.Model):
     nickname = models.CharField(
         help_text="By default the user nickname", max_length=35, null=True)
     character = models.ForeignKey(Character, verbose_name="Character", help_text="Choose your player",
-                                  on_delete=models.RESTRICT, related_name="rooms", null=True)
+                                  on_delete=models.RESTRICT, related_name="rooms", blank=True, null=True)
     hit = models.IntegerField(
         verbose_name="Hit Point", help_text="Hit points taken by the participant", default=0)
     joinedAt = models.DateTimeField(auto_now_add=True, editable=False)

@@ -1,15 +1,117 @@
 @use "../abstracts" as *;
 
-#login {
-  min-height: 100vh;
-  background-color: setcolor(main, 500);
+#connect {
+    min-height: 100vh;
+    background-image: url("../media/static/landing_background.png");
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
-  display: flex;
-  justify-content: center;
-  align-items: center;
+    &__container {
+        display: flex;
+        flex-direction: column;
 
-  form {
-    max-width: 40em;
-    background-color: red;
-  }
+        width: clamp(30em, 70vw, 60em);
+        min-height: 30em;
+
+        align-items: stretch;
+    }
+
+    &__button {
+        @include flex-column-center;
+    }
+}
+
+.connect {
+    &__description {
+        @include flex-column-center;
+
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
+
+        flex: 1;
+        background-color: white;
+        padding: 1em;
+    }
+    &__input {
+        @include flex-column-center;
+
+        border-bottom-right-radius: 5px;
+        border-bottom-left-radius: 5px;
+
+        flex: 2;
+        background-color: hsla(0, 0%, 11%, 0.726);
+        padding: 1rem;
+        gap: 1rem;
+
+        form[name="connect"] {
+            @include flex-column-center;
+            gap: 1rem;
+
+            > * {
+                width: 100%;
+            }
+        }
+
+        form[name="register"] {
+            display: grid;
+            gap: 1rem;
+            grid-template-areas:
+                "username username"
+                "password confirmation"
+                "email email"
+                "checkbox checkbox";
+
+            > * {
+                width: 100%;
+                display: flex;
+
+                &:nth-child(1) {
+                    grid-area: username;
+                }
+                &:nth-child(2) {
+                    grid-area: password;
+                }
+                &:nth-child(3) {
+                    grid-area: confirmation;
+                }
+                &:nth-child(4) {
+                    grid-area: email;
+                }
+                &:nth-child(5) {
+                    color: white;
+                    grid-area: checkbox;
+                }
+            }
+        }
+    }
+    &__button {
+        @include btn-green;
+
+        &__legend {
+            color: setcolor(text__dk, 500);
+
+            a {
+                color: white;
+            }
+        }
+    }
+}
+
+@media (min-width: 50em) {
+    #connect {
+        &__container {
+            flex-direction: row;
+        }
+    }
+    .connect {
+        &__description {
+            border-bottom-left-radius: 5px;
+            border-top-right-radius: 0px;
+        }
+        &__input {
+            border-top-right-radius: 5px;
+            border-bottom-left-radius: 0px;
+        }
+    }
 }

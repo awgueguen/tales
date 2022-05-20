@@ -1,3 +1,8 @@
+:root {
+  font-family: "Poppins", sans-serif;
+  font-size: 16px;
+}
+
 /* Box sizing rules */
 *,
 *::before,
@@ -72,16 +77,110 @@ select {
     scroll-behavior: auto !important;
   }
 }
-#login {
+#connect {
   min-height: 100vh;
-  background-color: hsl(346deg, 53%, 58%);
+  background-image: url("../media/static/landing_background.png");
   display: flex;
   justify-content: center;
   align-items: center;
 }
-#login form {
-  max-width: 40em;
-  background-color: red;
+#connect__container {
+  display: flex;
+  flex-direction: column;
+  width: clamp(30em, 70vw, 60em);
+  min-height: 30em;
+  align-items: stretch;
+}
+#connect__button {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.connect__description {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  flex: 1;
+  background-color: white;
+  padding: 1em;
+}
+.connect__input {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-bottom-right-radius: 5px;
+  border-bottom-left-radius: 5px;
+  flex: 2;
+  background-color: hsla(0deg, 0%, 11%, 0.726);
+  padding: 1rem;
+  gap: 1rem;
+}
+.connect__input form[name=connect] {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1rem;
+}
+.connect__input form[name=connect] > * {
+  width: 100%;
+}
+.connect__input form[name=register] {
+  display: grid;
+  gap: 1rem;
+  grid-template-areas: "username username" "password confirmation" "email email" "checkbox checkbox";
+}
+.connect__input form[name=register] > * {
+  width: 100%;
+  display: flex;
+}
+.connect__input form[name=register] > *:nth-child(1) {
+  grid-area: username;
+}
+.connect__input form[name=register] > *:nth-child(2) {
+  grid-area: password;
+}
+.connect__input form[name=register] > *:nth-child(3) {
+  grid-area: confirmation;
+}
+.connect__input form[name=register] > *:nth-child(4) {
+  grid-area: email;
+}
+.connect__input form[name=register] > *:nth-child(5) {
+  color: white;
+  grid-area: checkbox;
+}
+.connect__button {
+  background-color: hsl(140deg, 100%, 75%);
+  border: 0px;
+  border-radius: 5px;
+  padding: 0.7rem;
+}
+.connect__button:hover {
+  background-color: hsl(140deg, 100%, 68%);
+}
+.connect__button__legend {
+  color: hsl(0deg, 0%, 54%);
+}
+.connect__button__legend a {
+  color: white;
+}
+
+@media (min-width: 50em) {
+  #connect__container {
+    flex-direction: row;
+  }
+
+  .connect__description {
+    border-bottom-left-radius: 5px;
+    border-top-right-radius: 0px;
+  }
+  .connect__input {
+    border-top-right-radius: 5px;
+    border-bottom-left-radius: 0px;
+  }
 }
 
 /*# sourceMappingURL=App.css.map */

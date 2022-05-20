@@ -4,7 +4,6 @@ import axios from "axios";
 /* context & components ---------------------------------------------------- */
 import AuthContext from "@context/AuthContext";
 /* pages ------------------------------------------------------------------- */
-import "@styles/RegisterPage.css";
 
 /* TODO -------------------------------------------------------------------- */
 //// envoyer vers le back les données
