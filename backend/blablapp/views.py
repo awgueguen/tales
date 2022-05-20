@@ -276,7 +276,7 @@ def edit_messages(request):
 def users_api(request, user_id):
 
     # TODO : add other methods, more specific views / needs
-
+    print(request.user, 'request')
     try:
         models.MyUser.objects.get(id=user_id)
     except models.MyUser.DoesNotExist:

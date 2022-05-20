@@ -39,7 +39,6 @@ const AddFriends = (props) => {
     }
 
 // vérfie que l'input existe dans la db avec l'input(username) du input
-//! pblm ne console.log rien 
     const checkContactExistence = async () => {
         const request = await axios({
             method: 'GET',

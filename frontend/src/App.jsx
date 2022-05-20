@@ -16,6 +16,7 @@ import ChatRoom from "@components/ChatRoom";
 /* friends ------------------------------------------------------- */
 import DisplayFriends from "@components/DisplayFriends";
 import AddFriends from "@components/AddFriends";
+import DisplayAccount from "./components/DisplayAccount";
 
 const App = () => {
   return (
@@ -28,6 +29,7 @@ const App = () => {
               <Route path="/" element={<PrivateRoute />}>
                 {/* anicet -------------------------------------------------------  */}
                 <Route path="/displayFriends" element={<DisplayFriends />} />
+                <Route path="/displayAccount" element={<DisplayAccount />} />
                 {/* Alexis -------------------------------------------------------  */}
                 <Route path="/" element={<HomePage />} />
                 {/* theo -------------------------------------------------------  */}
