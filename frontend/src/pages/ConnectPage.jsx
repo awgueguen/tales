@@ -4,8 +4,8 @@ import { useNavigate } from "react-router-dom";
 
 /* context & components ---------------------------------------------------- */
 import AuthContext from "@context/AuthContext";
-import Login from "./ConnectPage/Login";
-import Register from "./ConnectPage/Register";
+import Login from "@components/ConnectPage/Login";
+import Register from "@components/ConnectPage/Register";
 
 const ConnectPage = () => {
   /* form handling --------------------------------------------------------- */
