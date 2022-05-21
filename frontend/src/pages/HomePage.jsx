@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useState, useEffect, useContext } from "react";
 import AuthContext from "@context/AuthContext";
-import Header from "@components/Header";
+// import Header from "@components/Header";
 
 const HomePage = () => {
   let [characters, setCharacters] = useState([]);
@@ -31,7 +31,7 @@ const HomePage = () => {
 
   return (
     <div>
-      <Header />
+      {/* <Header /> */}
       <p>You are logged to the homepage</p>
       <ul>
         {characters.map((character, i) => (

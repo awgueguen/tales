@@ -1,3 +1,4 @@
+"""WIP"""
 from django.http import JsonResponse
 from rest_framework import status, permissions
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
@@ -133,39 +134,9 @@ def characters_api(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['PUT'])
-@authentication_classes([JWTAuthentication])
-@permission_classes([permissions.IsAuthenticated])
-def characters_ingame(request):
-
-    # TODO: all
-
-    return
-
-
 # --------------------------------------------------------------------------- #
 # STORY RELATED                                                               #
 # --------------------------------------------------------------------------- #
-
-
-@api_view(['GET'])
-@authentication_classes([JWTAuthentication])
-@permission_classes([permissions.IsAuthenticated])
-def display_assets(request):
-
-    # TODO: all
-
-    return
-
-
-@api_view(['POST'])
-@authentication_classes([JWTAuthentication])
-@permission_classes([permissions.IsAuthenticated])
-def create_assets(request):
-
-    # TODO: all
-
-    return
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
@@ -186,67 +157,6 @@ def stories_api(request):
     if request.method == 'PUT':
         return
     if request.method == 'DELETE':
-        return
-
-
-@api_view(['GET, PUT, DELETE'])
-@authentication_classes([JWTAuthentication])
-@permission_classes([permissions.IsAuthenticated])
-def events_api(request):
-
-    # TODO: all
-
-    if request.method == 'GET':
-        return
-    if request.method == 'PUT':
-        return
-    if request.method == 'DELETE':
-        return
-
-
-@api_view(['GET, PUT, DELETE'])
-@authentication_classes([JWTAuthentication])
-@permission_classes([permissions.IsAuthenticated])
-def entities_api(request):
-
-    # TODO: all
-
-    if request.method == 'GET':
-        return
-    if request.method == 'PUT':
-        return
-    if request.method == 'DELETE':
-        return
-
-
-@api_view(['POST', 'PUT', 'DELETE'])
-@authentication_classes([JWTAuthentication])
-@permission_classes([permissions.IsAuthenticated])
-def create_instances(request):
-
-    # TODO: add new permissions values checking if player is DM of the room
-    # TODO: all
-
-    if request.method == 'POST':
-        return
-    if request.method == 'PUT':
-        return
-    if request.method == 'DELETE':
-        return
-
-
-@api_view(['GET', 'PUT'])
-@authentication_classes([JWTAuthentication])
-@permission_classes([permissions.IsAuthenticated])
-def instances_ingame(request):
-
-    # TODO: only accept trigger
-    # TODO: all
-
-    if request.method == 'GET':
-        return
-
-    if request.method == 'PUT':
         return
 
 
@@ -334,7 +244,7 @@ def get_public_rooms(request):
 
     room_response = filter_by(story_response, rooms, 'story')
     '''
-    Si on n'a pas besoin de toutes ces extra infos on peut juste mettre 
+    Si on n'a pas besoin de toutes ces extra infos on peut juste mettre
     nb_participant = len(ce_participant) pour avoir nb_part/max_part
     '''
     for elem in room_participants:
@@ -402,42 +312,6 @@ def create_room(request):
         return
 
 
-@api_view(['GET'])
-@authentication_classes([JWTAuthentication])
-@permission_classes([permissions.IsAuthenticated])
-def messages_api(request, room):
-
-    # TODO: all
-
-    if request.method == 'GET':
-        return
-
-
-@api_view(['POST'])
-@authentication_classes([JWTAuthentication])
-@permission_classes([permissions.IsAuthenticated])
-def post_message(request):
-
-    # TODO: all + check if user is member of a room
-
-    if request.method == 'POST':
-        return
-    # TODO: Whisper & Quote views ?
-
-
-@api_view(['PUT', 'DELETE'])
-@authentication_classes([JWTAuthentication])
-@permission_classes([permissions.IsAuthenticated])
-def edit_messages(request):
-
-    # TODO: all + check if user is member of a room
-
-    if request.method == 'PUT':
-        return
-    if request.method == 'DELETE':
-        return
-
-
 # --------------------------------------------------------------------------- #
 # USER SETTINGS                                                               #
 # --------------------------------------------------------------------------- #
@@ -467,70 +341,6 @@ def users_api(request, user_id):
 # contact request ----------------------------------------------------------- #
 
 
-@api_view(['GET', 'POST', 'PUT'])
-# @authentication_classes([JWTAuthentication])
-# @permission_classes([permissions.IsAuthenticated])
-def contacts_api(request, user_id):
-
-    # TODO: all
-    # "view de check si l'utilisateur exist
-    # view pour ajouter le contact à la db"
-
-    if request.method == 'GET':
-
-        #  modifier receiver
-        contacts_id = models.Contact.objects.filter(receiver=user_id)
-        res = serializers.ContactSerializer(contacts_id, many=True)
-
-        # print('res', res.data)
-        res = [elem['sender'] for elem in res.data if elem['approved']]  # ?
-        users = models.MyUser.objects.filter(id__in=res)
-
-        resbis = serializers.MyUserSerializer(users, many=True)
-        # print('test', resbis.data)
-        return JsonResponse({"contacts": resbis.data})
-    if request.method == 'POST':
-        return
-    if request.method == 'PUT':
-        return
-
-
-@api_view(['GET', 'POST', 'PUT'])
-@authentication_classes([JWTAuthentication])
-@permission_classes([permissions.IsAuthenticated])
-# def user_contacts_api(request, user_id):
-def user_contacts_api(request):
-
-    # TODO: all
-    user_id = get_user_detail(request.user)['id']
-
-    if request.method == 'GET':
-        try:
-            contacts = models.Contact.objects.filter(Q(sender=user_id) | Q(
-                receiver=user_id)).distinct().filter(approved=True)
-            # filter(approved=True)
-        except contacts.DoesNotExit:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-
-        res = serializers.ContactSerializer(contacts, many=True).data
-        friends_ids = [elem['receiver'] if elem['sender'] ==
-                       user_id else elem['receiver'] for elem in res]
-
-        try:
-            friends = models.MyUser.objects.filter(id__in=friends_ids)
-        except friends.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-
-        response = serializers.MyUserSerializer(friends, many=True)
-
-        return JsonResponse({"user_contact": response.data})
-
-    if request.method == 'POST':
-        return
-    if request.method == 'PUT':
-        return
-
-
 # tickbox ------------------------------------------------------------------- #
 
 @api_view(['GET', 'POST', 'PUT'])
@@ -547,33 +357,54 @@ def tick_api(request):
     if request.method == 'PUT':
         return
 
+# --------------------------------------------------------------------------- #
+# contacts                                                                    #
+# --------------------------------------------------------------------------- #
+
+
+@api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([permissions.IsAuthenticated])
+def contacts(request):
+    user = request.user
+    contact_list = models.Contact.objects.filter(
+        Q(sender__username=user) | Q(receiver__username=user), approved=True)
+    sender = contact_list.values_list('sender', flat=True)
+    receiver = contact_list.values_list('receiver__id', flat=True)
+
+    contact_list = models.MyUser.objects.filter(
+        Q(id__in=sender) | Q(id__in=receiver), ~Q(username=user))
+    res = serializers.MyUserSerializer(contact_list, many=True)
+    return Response(data=res.data, status=status.HTTP_200_OK)
+
 
 @api_view(['GET', 'POST'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([permissions.IsAuthenticated])
-def add_user_api(request, username):
-
-    print('test >>>>', request.user)
-    try:
-        receiver = models.MyUser.objects.get(username__iexact=username)
-    except models.MyUser.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+def add_contact(request):
 
     if request.method == 'GET':
+        receiver = request.GET.get("receiver")
 
-        res = serializers.MyUserSerializer(receiver)
-        return JsonResponse({"user": res.data})
+        try:
+            receiver = models.MyUser.objects.get(username__iexact=receiver)
+            return Response(status=status.HTTP_200_OK)
+        except models.MyUser.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
 
     if request.method == 'POST':
-        sender = models.MyUser.objects.get(username=request.user)
+        sender = request.user
+        receiver = request.data.get("receiver")
 
-        receiver = serializers.MyUserSerializer(receiver).data['id']
-        sender = serializers.MyUserSerializer(sender).data['id']
+        sender = models.MyUser.objects.get(username=sender).id
+        receiver = models.MyUser.objects.get(username__iexact=receiver).id
 
         serializer = serializers.ContactSerializer(
             data={'sender': sender, 'receiver': receiver, 'approved': True})
+
         if serializer.is_valid():
             serializer.save()
+
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -662,3 +493,134 @@ def filter_by(look_for: dict, _in: dict, _key: str) -> 'list[dict]':
             if look_for[i]['id'] == _in[j][_key]:
                 _in[j][_key] = look_for[i]
     return(_in)
+
+# --------------------------------------------------------------------------- #
+# WIP                                                                         #
+# --------------------------------------------------------------------------- #
+
+
+@api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([permissions.IsAuthenticated])
+def messages_api(request, room):
+
+    # TODO: all
+
+    if request.method == 'GET':
+        return
+
+
+@api_view(['POST'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([permissions.IsAuthenticated])
+def post_message(request):
+
+    # TODO: all + check if user is member of a room
+
+    if request.method == 'POST':
+        return
+    # TODO: Whisper & Quote views ?
+
+
+@api_view(['PUT', 'DELETE'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([permissions.IsAuthenticated])
+def edit_messages(request):
+
+    # TODO: all + check if user is member of a room
+
+    if request.method == 'PUT':
+        return
+    if request.method == 'DELETE':
+        return
+
+
+@api_view(['GET, PUT, DELETE'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([permissions.IsAuthenticated])
+def events_api(request):
+
+    # TODO: all
+
+    if request.method == 'GET':
+        return
+    if request.method == 'PUT':
+        return
+    if request.method == 'DELETE':
+        return
+
+
+@api_view(['GET, PUT, DELETE'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([permissions.IsAuthenticated])
+def entities_api(request):
+
+    # TODO: all
+
+    if request.method == 'GET':
+        return
+    if request.method == 'PUT':
+        return
+    if request.method == 'DELETE':
+        return
+
+
+@api_view(['POST', 'PUT', 'DELETE'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([permissions.IsAuthenticated])
+def create_instances(request):
+
+    # TODO: add new permissions values checking if player is DM of the room
+    # TODO: all
+
+    if request.method == 'POST':
+        return
+    if request.method == 'PUT':
+        return
+    if request.method == 'DELETE':
+        return
+
+
+@api_view(['GET', 'PUT'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([permissions.IsAuthenticated])
+def instances_ingame(request):
+
+    # TODO: only accept trigger
+    # TODO: all
+
+    if request.method == 'GET':
+        return
+
+    if request.method == 'PUT':
+        return
+
+
+@api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([permissions.IsAuthenticated])
+def display_assets(request):
+
+    # TODO: all
+
+    return
+
+
+@api_view(['POST'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([permissions.IsAuthenticated])
+def create_assets(request):
+
+    # TODO: all
+
+    return
+
+
+@api_view(['PUT'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([permissions.IsAuthenticated])
+def characters_ingame(request):
+
+    # TODO: all
+
+    return

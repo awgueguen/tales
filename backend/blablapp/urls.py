@@ -1,12 +1,8 @@
+"""WIP"""
 from django.urls import path
 from blablapp import views
-# from rest_framework_simplejwt.views import TokenRefreshView
-# test ---------------------------------------------------------------------- #
 
 urlpatterns = [
-    # path('token/', views.MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
-    # path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-
     # room ------------------------------------------------------------------ #
     path('room-<int:room_id>/', views.get_room),
     # afficher une room & tout ce qui en découle
@@ -39,7 +35,7 @@ urlpatterns = [
     path('room/create/id=<int:room_id>/entities/', views.create_instances),
     # associer des instances à une room & les personaliser
 
-    #roomparticipant? ----------------------------------------------------------------- 
+    # roomparticipant? -----------------------------------------------------------------
     # à modifier vu qu'on peut y acceder depuis les autres routes à priori
     # path('roomparticipant/list/<str:ids>', views.get_roomparticipants),
 
@@ -63,16 +59,18 @@ urlpatterns = [
 
     # user related ---------------------------------------------------------- #
     path('user/<int:user_id>/', views.users_api),
-    path('user/<str:username>/add', views.add_user_api),
-    # profil utilisateur -> just myprofile
     path('characters/', views.characters_api),
-    # voir les personnages associés à un utilisateurs
-    path('user/<int:user_id>/contacts/', views.contacts_api),
-    # gestion des contacts utilisateurs -> just contacts/
-    path('user/contact_list/', views.user_contacts_api),
-    # gestion des contacts utilisateurs -> contacts d'un user spécifique
-    # à terme à fusionner avec le path d'Anicet
     path('user/<int:user_id>/tickbox/', views.tick_api),
-    # gestion de la tickbox utilisateur -> just tickbox/
-    path('register/', views.register_user)
+
+    # * CLEAN
+    path('register/', views.register_user),
+
+    # contacts -------------------------------------------------------------- #
+    # * CLEAN
+    # DisplayFriends
+    path('contacts/', views.contacts),
+    # checkContactExistance, addFriendToContact
+    path('contacts/add/', views.add_contact),
+
+
 ]

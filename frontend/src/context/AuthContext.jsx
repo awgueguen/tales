@@ -1,14 +1,11 @@
+/**
+ * CLEANED CODE
+ */
 /* gobal ------------------------------------------------------------------- */
 import axios from "axios";
 import jwt_decode from "jwt-decode";
 import { createContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-
-/* TODO -------------------------------------------------------------------- */
-//// login method
-//// refresh token
-//// logout
-// add authlib to use gmail & github
 
 /* ------------------------------------------------------------------------- */
 /* context                                                                   */

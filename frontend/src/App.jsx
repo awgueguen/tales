@@ -12,10 +12,8 @@ import RoomList from "@components/rooms/RoomList";
 import CreateRoom from "@components/rooms/CreateRoom";
 import JoinRoom from "@components/rooms/JoinRoom";
 import ChatRoom from "@components/ChatRoom";
-import FriendList from "@components/FriendList";
 /* friends ------------------------------------------------------- */
 import DisplayFriends from "@components/DisplayFriends";
-import AddFriends from "@components/AddFriends";
 
 const App = () => {
   return (

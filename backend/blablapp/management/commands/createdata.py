@@ -1,3 +1,4 @@
+"""CLEAN CODE"""
 import contextlib
 import os
 import random
@@ -161,8 +162,8 @@ class Command(BaseCommand):
             f'# Number of Characters: {check_characters}\n'))
 
         # contact request --------------------------------------------------- #
-        loadbar(0, user_input)
-        for i in range(user_input):
+        loadbar(0, user_input * 2)
+        for i in range(user_input * 2):
             with contextlib.suppress(Exception):
                 user_list = MyUser.objects.order_by("?")
                 Contact.objects.create(
@@ -170,7 +171,7 @@ class Command(BaseCommand):
                     receiver=user_list.last(),
                     approved=fake.boolean(chance_of_getting_true=75),
                 )
-            loadbar(i + 1, user_input)
+            loadbar(i + 1, user_input * 2)
 
         check_contact = Contact.objects.all().count()
         self.stdout.write(self.style.SUCCESS(

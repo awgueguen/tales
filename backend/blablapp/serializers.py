@@ -3,10 +3,10 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from blablapp import models
 
+# --------------------------------------------------------------------------- #
+# WIP SERIALIZER                                                              #
+# --------------------------------------------------------------------------- #
 
-# --------------------------------------------------------------------------- #
-# basic serializers                                                           #
-# --------------------------------------------------------------------------- #
 
 class ActionSerializer(serializers.ModelSerializer):
     class Meta:
@@ -34,13 +34,7 @@ class MyUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.MyUser
         fields = ['last_login', 'username', 'first_name', 'last_name',
-                  'email', 'nickname', 'unique_id', 'profile_pic', 'id']
-
-
-class ContactSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.Contact
-        fields = ['sender', 'receiver', 'approved']
+                  'email', 'nickname',  'profile_pic', 'id']
 
 
 class TickboxSerializer(serializers.ModelSerializer):
@@ -140,6 +134,17 @@ class RegisterSerializer(serializers.ModelSerializer):
         myUser.set_password(password)
         myUser.save()
         return myUser
+
+# --------------------------------------------------------------------------- #
+# contacts serializers                                                        #
+# --------------------------------------------------------------------------- #
+
+
+class ContactSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.Contact
+        fields = ['sender', 'receiver', 'approved']
 
 
 # --------------------------------------------------------------------------- #
