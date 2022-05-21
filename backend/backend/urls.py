@@ -9,8 +9,6 @@ from rest_framework_simplejwt.views import TokenRefreshView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # path('socketio/', index),   #socket.io/
-    # path('', index, name='index')
     path('socketio', include('chat.urls')),
     path('api/', include('blablapp.urls')),
     path('token/', views.MyTokenObtainPairView.as_view(), name='token_obtain_pair'),

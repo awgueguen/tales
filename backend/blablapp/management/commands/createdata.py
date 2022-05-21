@@ -1,11 +1,21 @@
+import contextlib
 import os
 import random
 from django.core.management.base import BaseCommand
+from django.db.models import Q
 from faker import Faker
 import faker.providers
 from blablapp.models import CharacterClass, Character, Action, MyUser, Contact, Tickbox, Entity, EntityInstance, Event, Story, Room, RoomParticipant, Message, Whisper, Quote
 
-ACTIONS = ["Attack", "Hide", "Search", "Use", "Talk", "Charm", "Trap"]
+ACTIONS = ["Hide", "Search", "Charm", "Trap"]
+DEFAULT_ACTIONS = ["Attack", "Use", "Talk"]
+
+# blogs = Blog.objects.filter(author=author).values_list('id', flat=True)
+
+# action = Action.objects.get(title=action_sample) -> return trigger
+# action.id -> return action_id
+
+#  user_id = MyUser.objects.order_by("?").values('id', 'characters')
 
 
 def loadbar(iteration, total, decimals=1, length=100, fill='█'):
@@ -25,8 +35,6 @@ class Provider(faker.providers.BaseProvider):
 
 class Command(BaseCommand):
 
-    # Faker.seed(0)
-
     def handle(self, *args, **kwargs):  # sourcery no-metrics
 
         print(">>> reset db")
@@ -41,7 +49,21 @@ class Command(BaseCommand):
         # GAMEPLAY RELATED                                                    #
         # ------------------------------------------------------------------- #
 
-        # cl_input = int(input(">>> How many Class: "))
+        # actions ----------------------------------------------------------- #
+        for j in DEFAULT_ACTIONS:
+            action = Action.objects.create(
+                title=j,
+                description=fake.text(max_nb_chars=120),
+                trigger=f'{j[:4]}-{random.randint(1,99)}'
+            )
+
+        for j in ACTIONS:
+            action = Action.objects.create(
+                title=j,
+                description=fake.text(max_nb_chars=120),
+                trigger=f'{j[:4]}-{random.randint(1,99)}'
+            )
+
         # classes ----------------------------------------------------------- #
         loadbar(0, 5)
         for i in range(5):
@@ -59,15 +81,14 @@ class Command(BaseCommand):
                 defense=random.randint(1, 20),
             )
 
-            # actions ------------------------------------------------------- #
-            for _ in range(3):
-                action = Action.objects.create(
-                    title=fake.unique.action_type(),
-                    description=fake.sentence(nb_words=10),
-                    trigger=fake.unique.ean8()
-                )
+            actions = Action.objects.filter(
+                title__in=DEFAULT_ACTIONS).values_list('id', flat=True)
+            for j in actions:
+                cclass.actions.add(j)
 
-                cclass.actions.add(action)
+            action_sample = random.choice(ACTIONS)
+            action = Action.objects.get(title=action_sample)
+            cclass.actions.add(action)
 
             fake.unique.clear()
             loadbar(i + 1, 5)
@@ -97,8 +118,6 @@ class Command(BaseCommand):
             user = MyUser.objects.create(
                 nickname=fake.user_name(),
                 birthdate=fake.past_date(),
-                # baseuser -------------------------------------------------- #
-                # password=fake.password(length=12),
                 is_superuser=False,
                 username=login,
                 first_name=fake.first_name(),
@@ -114,20 +133,20 @@ class Command(BaseCommand):
             # tickbox ------------------------------------------------------- #
             Tickbox.objects.create(
                 checked=True,
-                user=user
+                user=user  # working even if we are using the username
             )
 
             # characters ---------------------------------------------------- #
-            for _ in range(3):
-                user_id = user
+            for _ in range(5):
                 class_id = CharacterClass.objects.order_by("?").first()
 
                 Character.objects.create(
                     characterClass=class_id,
-                    user=user_id,
+                    user=user,
                     name=fake.name(),
                     background=fake.text(max_nb_chars=400),
                     image=fake.image_url(),
+                    weapon=fake.color_name()
                 )
 
             loadbar(i + 1, user_input)
@@ -142,15 +161,16 @@ class Command(BaseCommand):
             f'# Number of Characters: {check_characters}\n'))
 
         # contact request --------------------------------------------------- #
-        loadbar(0, user_input // 2)
-        for i in range(user_input // 2):
-            user_list = MyUser.objects.order_by("?")
-            Contact.objects.create(
-                sender=user_list.first(),
-                receiver=user_list.last(),
-                approved=fake.boolean(chance_of_getting_true=75),
-            )
-            loadbar(i + 1, user_input // 2)
+        loadbar(0, user_input)
+        for i in range(user_input):
+            with contextlib.suppress(Exception):
+                user_list = MyUser.objects.order_by("?")
+                Contact.objects.create(
+                    sender=user_list.first(),
+                    receiver=user_list.last(),
+                    approved=fake.boolean(chance_of_getting_true=75),
+                )
+            loadbar(i + 1, user_input)
 
         check_contact = Contact.objects.all().count()
         self.stdout.write(self.style.SUCCESS(
@@ -160,30 +180,41 @@ class Command(BaseCommand):
         # STORY RELATED                                                       #
         # ------------------------------------------------------------------- #
 
+        story_input = int(input(">>> How many stories: ") or "15")
         # story ------------------------------------------------------------- #
-        loadbar(0, 5)
-        for i in range(5):
+        loadbar(0, story_input)
+        for i in range(story_input):
+            user = MyUser.objects.all().order_by("?").first()
+
+            story_title = fake.sentence(nb_words=3, variable_nb_words=False)
             story = Story.objects.create(
-                title=fake.sentence(nb_words=3, variable_nb_words=False),
+                user=user,
+                title=story_title,
                 description=fake.sentence(nb_words=10),
                 image=fake.image_url(),
-                optimalPlayers=random.randint(1, 5),
-                trigger=fake.unique.ean8()  # FIXME
+                optimalPlayers=random.randint(3, 6),
+                isPublic=fake.boolean(chance_of_getting_true=15),
+                trigger=f'{story_title[:4]}-{random.randint(1,99)}'
             )
 
             # events -------------------------------------------------------- #
-            for _ in range(5):
+            for _ in range(3):
+                event_tittle = fake.sentence(
+                    nb_words=3, variable_nb_words=False)
+
                 event = Event.objects.create(
-                    title=fake.sentence(nb_words=3, variable_nb_words=False),
+                    user=user,
+                    title=event_tittle,
                     description=fake.sentence(nb_words=10),
                     content=fake.paragraph(nb_sentences=5),
                     image=fake.image_url(),
-                    trigger=fake.unique.ean8(),
+                    isPublic=fake.boolean(chance_of_getting_true=15),
+                    trigger=f'{event_tittle[:4]}-{random.randint(1,99)}'
                 )
                 story.events.add(event)
 
             # entities ------------------------------------------------------ #
-            for _ in range(10):
+            for _ in range(2):
                 flag = True
                 while flag:
                     n = fancyfake.unique.name(),
@@ -191,15 +222,18 @@ class Command(BaseCommand):
                         flag = False
 
                 entity = Entity.objects.create(
+                    user=user,
                     name=n[0],
                     image=fake.image_url(),
                     hp=random.randint(1, 20),
                     atk=random.randint(1, 20),
                     defense=random.randint(1, 20),
+                    trigger=f'{n[0][:4]}-{random.randint(1,99)}'
+
                 )
                 story.entities.add(entity)
 
-            loadbar(i + 1, 5)
+            loadbar(i + 1, story_input)
 
         # results ----------------------------------------------------------- #
         check_stories = Story.objects.all().count()
@@ -218,53 +252,65 @@ class Command(BaseCommand):
         # ROOM RELATED                                                        #
         # ------------------------------------------------------------------- #
 
-        room_input = int(input(">>> How many rooms: ") or "10")
+        room_input = int(input(">>> How many rooms: ") or "20")
         # room -------------------------------------------------------------- #
         loadbar(0, room_input)
         for i in range(room_input):
             story_id = Story.objects.order_by('?').first()
-            max_players = random.randint(1, 5)
+
+            random_void = random.randint(0, 2)
 
             room = Room.objects.create(
                 story=story_id,
                 title=fake.sentence(nb_words=3, variable_nb_words=False),
-                maxParticipants=max_players,
+                maxParticipants=story_id.optimalPlayers,
                 isPublic=fake.boolean(chance_of_getting_true=25)
             )
 
-            user_id = MyUser.objects.order_by("?").values(
-                'id', 'characters')[:max_players]
+            user_ids = MyUser.objects.filter(~Q(id=story_id.user.id)).order_by(
+                "?").values_list('id', flat=True)[:story_id.optimalPlayers - random_void]
+
+            dm = MyUser.objects.get(id=story_id.user.id)
+
+            RoomParticipant.objects.create(
+                room=room,
+                user=dm,
+                isAdmin=True,
+            )
 
             # participants -------------------------------------------------- #
-            for index, value in enumerate(user_id):
-                user = MyUser.objects.get(id__exact=value["id"])
-                character = Character.objects.get(
-                    id__exact=value["characters"])
+            for j in user_ids:
+                character = Character.objects.filter(
+                    user=j).order_by("?").first()
+                user = MyUser.objects.get(id=j)
 
-                admin = index == 0
                 RoomParticipant.objects.create(
                     room=room,
                     user=user,
-                    isAdmin=admin,
+                    isAdmin=False,
                     character=character,
                 )
 
             # entities instances -------------------------------------------- #
-            for _ in range(3):
-                entity = Entity.objects.order_by("?").first()
+            entity = Entity.objects.order_by(
+                "?").values_list('id', flat=True)[:3]
+
+            for j in entity:
+                instance = Entity.objects.get(id=j)
                 instance_e = EntityInstance(
-                    entity=entity,
+                    entity=instance,
                     room=room,
-                    trigger=fake.unique.ean8()
                 )
-                instance_e.__dict__.update(entity.__dict__)
+                instance_e.__dict__.update(instance.__dict__)
                 instance_e.save()
 
             # messages ------------------------------------------------------ #
             for _ in range(30):
-                all_user = MyUser.objects.order_by("?")
-                sender = all_user.first()
-                receiver = all_user.last()
+                messages_users = RoomParticipant.objects.filter(
+                    room=room).order_by("?").values_list('user', flat=True)
+
+                sender = MyUser.objects.get(id=messages_users.first())
+                receiver = MyUser.objects.get(id=messages_users.last())
                 whisper = fake.boolean(chance_of_getting_true=10)
                 quote = False if whisper else fake.boolean(
                     chance_of_getting_true=10)

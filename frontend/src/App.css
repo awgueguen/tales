@@ -150,7 +150,7 @@ select {
   border-bottom-left-radius: 5px;
   flex: 2;
   background-color: hsla(0deg, 0%, 11%, 0.726);
-  padding: 1rem;
+  padding: 4rem;
 }
 .connect__input form[name=connect] {
   display: flex;
