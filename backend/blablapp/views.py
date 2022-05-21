@@ -2,7 +2,7 @@ from django.http import JsonResponse
 from rest_framework import status, permissions
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.response import Response
-from django.db.models import Q  
+from django.db.models import Q
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.views import TokenObtainPairView
 
@@ -69,14 +69,7 @@ def actions_api(request):
 @authentication_classes([JWTAuthentication])
 @permission_classes([permissions.IsAuthenticated])
 def trigger(request):
-    # TODO ------------------------------------------------------------------ #
-    # // get all triggers with this view
-    # // Filter actions to only show whats character has
-    # // add filter for room id
-    # Get everything from one serializer
-    # Filter is Admin
 
-    # code ------------------------------------------------------------------ #
     room_id = request.GET.get("room_id")
     username = request.user
 
@@ -267,7 +260,7 @@ def instances_ingame(request):
 @permission_classes([permissions.IsAuthenticated])
 def get_room(request, user_id):
 
-    # TODO: 
+    # TODO:
 
     try:
         rooms = models.RoomParticipant.objects.get(user=user_id)
@@ -285,7 +278,7 @@ def get_user_rooms(request, user_id):
 
     # TODO: all + check if user is participant, or if room is public
     try:
-         rooms = models.RoomParticipant.objects.filter(user=user_id)
+        rooms = models.RoomParticipant.objects.filter(user=user_id)
     except models.RoomParticipant.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
@@ -302,15 +295,18 @@ def get_user_rooms_list(request, user_id):
     user = get_user_detail(user_id)
 
     rooms_participants = get_room_participants_by_user_id(user_id)
-    roompart_response = [{key: val for key,val in elem.items() if key in ['id', 'isAdmin', 'nickname', 'room', 'character']} for elem in rooms_participants]
+    roompart_response = [{key: val for key, val in elem.items() if key in [
+        'id', 'isAdmin', 'nickname', 'room', 'character']} for elem in rooms_participants]
     rooms_ids = [e['room'] for e in rooms_participants]
 
     rooms = get_rooms_by_list_id(rooms_ids)
     stories_ids = [e['story'] for e in rooms]
-    room_response = [{key: val for key,val in elem.items() if key in ['id', 'maxParticipants', 'isPublic', 'story']} for elem in rooms]
-    
+    room_response = [{key: val for key, val in elem.items(
+    ) if key in ['id', 'maxParticipants', 'isPublic', 'story']} for elem in rooms]
+
     stories = get_stories_by_list_id(stories_ids)
-    story_response = [{key: val for key,val in elem.items() if key in ['id', 'title', 'description', 'image']} for elem in stories]
+    story_response = [{key: val for key, val in elem.items(
+    ) if key in ['id', 'title', 'description', 'image']} for elem in stories]
 
     room_response = filter_by(story_response, room_response, 'story')
     roompart_response = filter_by(room_response, roompart_response, 'room')
@@ -323,16 +319,18 @@ def get_user_rooms_list(request, user_id):
 @permission_classes([permissions.IsAuthenticated])
 def get_public_rooms(request):
 
-    # TODO: 
+    # TODO:
 
-    rooms = [{key: val for key, val in elem.items() if key in ['id', 'maxParticipants', 'story']} for elem in get_all_rooms() if elem['isPublic']]
+    rooms = [{key: val for key, val in elem.items() if key in ['id', 'maxParticipants', 'story']}
+             for elem in get_all_rooms() if elem['isPublic']]
 
     rooms_id = [e['id'] for e in rooms]
     room_participants = get_room_participants_by_room_list(rooms_id)
 
     stories_ids = [e['story'] for e in rooms]
     stories = get_stories_by_list_id(stories_ids)
-    story_response = [{key: val for key,val in elem.items() if key in ['id', 'title', 'description', 'image']} for elem in stories]
+    story_response = [{key: val for key, val in elem.items(
+    ) if key in ['id', 'title', 'description', 'image']} for elem in stories]
 
     room_response = filter_by(story_response, rooms, 'story')
     '''
@@ -346,7 +344,8 @@ def get_public_rooms(request):
                     room_response[i]['participants'] += [elem]
                 except:
                     room_response[i]['participants'] = []
-                    room_response[i]['participants'] += [{key: val for key,val in elem.items() if key in ['id', 'isAdmin', 'nickname', 'character', 'user']}]
+                    room_response[i]['participants'] += [{key: val for key, val in elem.items(
+                    ) if key in ['id', 'isAdmin', 'nickname', 'character', 'user']}]
 
     return Response(data=room_response, status=status.HTTP_200_OK)
 
@@ -357,7 +356,7 @@ def get_public_rooms(request):
 def create_room(request):
 
     # TODO: PUT (penser à trier le dict request.data['room'] for x in [champs_desirés] ou serializerPut ?)
-    
+
     room = request.data['room']
 
     if request.method == 'POST':
@@ -366,7 +365,7 @@ def create_room(request):
         if res.is_valid():
             res.save()
             response = {'room': res.data}
-        
+
         else:
             return Response({'err': f'problem creating the room'}, status=status.HTTP_400_BAD_REQUEST)
         mod = serializers.RoomParticipantSerializer(data={
@@ -386,17 +385,17 @@ def create_room(request):
         response['players'] = []
         for elem in room['invitations']:
             player = serializers.RoomParticipantSerializer(data={
-            'room': res.data['id'],
-            'user': elem['id'],
-            'nickname': elem['nickname'],
-            'character': 1,
+                'room': res.data['id'],
+                'user': elem['id'],
+                'nickname': elem['nickname'],
+                'character': 1,
             })
             if player.is_valid():
                 player.save()
                 response['players'] += [player.data]
             else:
                 return Response({'err': f"player {elem['username']} couldn't be created"}, status=status.HTTP_400_BAD_REQUEST)
-            
+
         return Response(response, status=status.HTTP_201_CREATED)
 
     if request.method == 'PUT':
@@ -462,7 +461,7 @@ def users_api(request, user_id):
         return JsonResponse({"users": res.data})
 
 # --------------------------------------------------------------------------- #
-# FROM RELATED                                                                #
+# FORM RELATED                                                                #
 # --------------------------------------------------------------------------- #
 
 # contact request ----------------------------------------------------------- #
@@ -474,8 +473,8 @@ def users_api(request, user_id):
 def contacts_api(request, user_id):
 
     # TODO: all
-# "view de check si l'utilisateur exist
-# view pour ajouter le contact à la db"
+    # "view de check si l'utilisateur exist
+    # view pour ajouter le contact à la db"
 
     if request.method == 'GET':
 
@@ -484,17 +483,16 @@ def contacts_api(request, user_id):
         res = serializers.ContactSerializer(contacts_id, many=True)
 
         # print('res', res.data)
-        res = [elem['sender'] for elem in res.data if elem['approved']] # ?
+        res = [elem['sender'] for elem in res.data if elem['approved']]  # ?
         users = models.MyUser.objects.filter(id__in=res)
 
-        resbis = serializers.MyUserSerializer(users, many=True) 
+        resbis = serializers.MyUserSerializer(users, many=True)
         # print('test', resbis.data)
         return JsonResponse({"contacts": resbis.data})
     if request.method == 'POST':
         return
     if request.method == 'PUT':
         return
-
 
 
 @api_view(['GET', 'POST', 'PUT'])
@@ -505,20 +503,22 @@ def user_contacts_api(request):
 
     # TODO: all
     user_id = get_user_detail(request.user)['id']
-    
+
     if request.method == 'GET':
         try:
-            contacts = models.Contact.objects.filter(Q(sender=user_id) | Q(receiver=user_id)).distinct().filter(approved=True)
+            contacts = models.Contact.objects.filter(Q(sender=user_id) | Q(
+                receiver=user_id)).distinct().filter(approved=True)
             # filter(approved=True)
-        except models.Contact.DoesNotExit:
+        except contacts.DoesNotExit:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
         res = serializers.ContactSerializer(contacts, many=True).data
-        friends_ids = [elem['receiver'] if elem['sender'] == user_id else elem['receiver'] for elem in res]
-        
+        friends_ids = [elem['receiver'] if elem['sender'] ==
+                       user_id else elem['receiver'] for elem in res]
+
         try:
             friends = models.MyUser.objects.filter(id__in=friends_ids)
-        except models.User.DoesNotExist:
+        except friends.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
         response = serializers.MyUserSerializer(friends, many=True)
@@ -548,7 +548,6 @@ def tick_api(request):
         return
 
 
-
 @api_view(['GET', 'POST'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([permissions.IsAuthenticated])
@@ -559,7 +558,7 @@ def add_user_api(request, username):
         receiver = models.MyUser.objects.get(username__iexact=username)
     except models.MyUser.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
-    
+
     if request.method == 'GET':
 
         res = serializers.MyUserSerializer(receiver)
@@ -570,18 +569,23 @@ def add_user_api(request, username):
 
         receiver = serializers.MyUserSerializer(receiver).data['id']
         sender = serializers.MyUserSerializer(sender).data['id']
-      
-        serializer = serializers.ContactSerializer(data={'sender': sender, 'receiver': receiver, 'approved': True})   
+
+        serializer = serializers.ContactSerializer(
+            data={'sender': sender, 'receiver': receiver, 'approved': True})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+# --------------------------------------------------------------------------- #
+# functions                                                                   #
+# --------------------------------------------------------------------------- #
+
 def get_user_detail(user: any) -> dict:
 
     print(user, 'user dans fonction')
-    
+
     try:
         if type(user) == str:
             user = models.MyUser.objects.get(id=user)
@@ -600,38 +604,43 @@ def get_user_detail(user: any) -> dict:
 #     return serializers.RoomParticipant(room_part).data
 
 
-def get_room_participants_by_user_id(user_id:int) -> 'list[OrderedDict]':
+def get_room_participants_by_user_id(user_id: int) -> 'list[OrderedDict]':
     try:
-        rooms_participants_ = models.RoomParticipant.objects.filter(user_id=user_id)
+        rooms_participants_ = models.RoomParticipant.objects.filter(
+            user_id=user_id)
     except models.RoomParticipant.DoesNotExist:
         return f'error: user with id {user_id} not found'
-    rooms_participants = serializers.RoomParticipantSerializer(rooms_participants_, many=True)
+    rooms_participants = serializers.RoomParticipantSerializer(
+        rooms_participants_, many=True)
     return rooms_participants.data
 
-def get_room_participants_by_room_list(room_list:'list[int]') -> 'list[OrderedDict]':
+
+def get_room_participants_by_room_list(room_list: 'list[int]') -> 'list[OrderedDict]':
 
     try:
-        rooms_participants_ = models.RoomParticipant.objects.filter(room__in=room_list)
+        rooms_participants_ = models.RoomParticipant.objects.filter(
+            room__in=room_list)
     except models.RoomParticipant.DoesNotExist:
-        return f'no participant found'
-    rooms_participants = serializers.RoomParticipantSerializer(rooms_participants_, many=True)
+        return 'no participant found'
+    rooms_participants = serializers.RoomParticipantSerializer(
+        rooms_participants_, many=True)
     return rooms_participants.data
 
 
-def get_rooms_by_list_id(rooms_ids:'list[int]') -> 'list[OrderedDict]':
+def get_rooms_by_list_id(rooms_ids: 'list[int]') -> 'list[OrderedDict]':
     try:
         rooms_ = models.Room.objects.filter(id__in=rooms_ids)
     except models.Room.DoesNotExist:
-        return f'error: no room found'
+        return 'error: no room found'
     rooms = serializers.RoomSerializer(rooms_, many=True)
     return rooms.data
 
 
-def get_stories_by_list_id(stories_ids:'list[int]') -> 'list[OrderedDict]':
+def get_stories_by_list_id(stories_ids: 'list[int]') -> 'list[OrderedDict]':
     try:
         stories_ = models.Story.objects.filter(id__in=stories_ids)
     except models.Story.DoesNotExist:
-            return f'error: no story found'
+        return 'error: no story found'
     stories = serializers.StorySerializer(stories_, many=True)
     return stories.data
 
@@ -640,14 +649,14 @@ def get_all_rooms() -> 'list[OrderedDict]':
     try:
         rooms_ = models.Room.objects.all()
     except models.RoomParticipant.DoesNotExist:
-        return f"there's no room yet"
+        return "there's no room yet"
 
     rooms = serializers.RoomSerializer(rooms_, many=True)
     # print(rooms.data)
     return rooms.data
 
-def filter_by(look_for: dict, _in: dict, _key: str) -> 'list[dict]':
 
+def filter_by(look_for: dict, _in: dict, _key: str) -> 'list[dict]':
     for i in range(len(look_for)):
         for j in range(len(_in)):
             if look_for[i]['id'] == _in[j][_key]:
