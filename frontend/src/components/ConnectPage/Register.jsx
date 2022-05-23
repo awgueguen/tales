@@ -1,11 +1,14 @@
+/**
+ * WIP
+ */
 /* global ------------------------------------------------------------------ */
-import React, { useContext, useEffect, useState } from "react";
+import React from "react";
 
-const Register = ({ values, handleChange }) => {
+const Register = ({ values, handleChange, handleSubmit }) => {
   const { username, password, passwordConfirmation, email, rgpd } = values;
   return (
     <>
-      <form name="register">
+      <form name="register" onSubmit={handleSubmit}>
         <input value={username} onChange={handleChange} type="text" name="username" placeholder="username" />
         <input value={password} onChange={handleChange} type="text" name="password" placeholder="password" />
         <input
@@ -20,6 +23,7 @@ const Register = ({ values, handleChange }) => {
           <input value={rgpd} onChange={handleChange} type="checkbox" name="rgpd" />I agree with the terms and
           conditions.
         </label>
+        <input type="submit" />
       </form>
     </>
   );

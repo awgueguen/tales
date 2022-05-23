@@ -3,7 +3,8 @@
 .btn-primary {
     cursor: pointer;
 
-    background-color: setcolor(alert, 500);
+    background-color: setcolor(alert, 400);
+    transition: background-color 350ms ease-in;
 
     border: 0px;
     border-radius: 5px;
@@ -11,16 +12,33 @@
     padding: 0.7rem;
 
     ~ span {
-        color: setcolor(text__dk, 500);
+        color: setcolor(text-dk, 300);
 
-        span {
+        a {
             cursor: pointer;
             color: white;
             text-decoration: solid underline white 1px;
             text-underline-offset: 0.1rem;
         }
     }
-    &:hover {
-        background-color: setcolor(alert, 300);
+    &:hover,
+    &:focus {
+        background-color: setcolor(alert, 500);
+        transition: background-color 350ms;
+    }
+}
+
+.btn-close {
+    cursor: pointer;
+
+    background: none;
+    color: setcolor(text-dk, 500);
+    border: none;
+
+    margin-right: -10px;
+
+    &:hover &__icon {
+        transform: rotate(1.25turn);
+        transition: transform 700ms ease-in-out;
     }
 }

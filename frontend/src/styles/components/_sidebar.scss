@@ -1,0 +1,11 @@
+@use "../abstracts" as *;
+
+.sidebar {
+    ul {
+        color: setcolor(text-dk, 300);
+
+        .active {
+            color: setcolor(text-dk, 500);
+        }
+    }
+}

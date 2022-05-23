@@ -1,5 +1,5 @@
 /**
- * CLEANED CODE
+ * * CLEAN CODE
  */
 /* gobal ------------------------------------------------------------------- */
 import axios from "axios";
@@ -34,6 +34,12 @@ export const AuthProvider = ({ children }) => {
   let [userId, setUserId] = useState(() =>
     localStorage.getItem("authTokens") ? jwt_decode(localStorage.getItem("authTokens")).user_id : null
   );
+  let [profilPic, setProfilPic] = useState(() =>
+    localStorage.getItem("authTokens") ? jwt_decode(localStorage.getItem("authTokens")).profile_pic : null
+  );
+  let [nickname, setNickname] = useState(() =>
+    localStorage.getItem("authTokens") ? jwt_decode(localStorage.getItem("authTokens")).nickname : null
+  );
 
   useEffect(() => {
     if (loading) {
@@ -55,7 +61,6 @@ export const AuthProvider = ({ children }) => {
   /* login method ---------------------------------------------------------- */
 
   let loginUser = async ({ username, password }) => {
-    console.log("connect");
     if (username && password) {
       await axios({
         url: "http://127.0.0.1:8000/token/",
@@ -70,10 +75,15 @@ export const AuthProvider = ({ children }) => {
             let resTokens = response.data;
             let resUsername = jwt_decode(response.data.access).username;
             let resId = jwt_decode(response.data.access).user_id;
+            let resPic = jwt_decode(response.data.access).profile_pic;
+            let resNickname = jwt_decode(response.data.access).nickname;
 
             setAuthTokens(resTokens);
+
             setUsername(resUsername);
             setUserId(resId);
+            setProfilPic(resPic);
+            setNickname(resNickname);
 
             localStorage.setItem("authTokens", JSON.stringify(resTokens));
 
@@ -91,6 +101,9 @@ export const AuthProvider = ({ children }) => {
   let logoutUser = () => {
     setAuthTokens(null);
     setUsername(null);
+    setUserId(null);
+    setProfilPic(null);
+    setNickname(null);
     localStorage.removeItem("authTokens");
   };
 
@@ -111,10 +124,15 @@ export const AuthProvider = ({ children }) => {
             let resTokens = response.data;
             let resUsername = jwt_decode(response.data.access).username;
             let resId = jwt_decode(response.data.access).user_id;
+            let resPic = jwt_decode(response.data.access).profile_pic;
+            let resNickname = jwt_decode(response.data.access).nickname;
 
             setAuthTokens(resTokens);
+
             setUsername(resUsername);
             setUserId(resId);
+            setProfilPic(resPic);
+            setNickname(resNickname);
 
             localStorage.setItem("authTokens", JSON.stringify(resTokens));
           }
@@ -132,6 +150,8 @@ export const AuthProvider = ({ children }) => {
   let contextData = {
     username,
     userId,
+    profilPic,
+    nickname,
     authTokens,
     loginUser,
     logoutUser,

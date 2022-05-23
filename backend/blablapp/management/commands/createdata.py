@@ -6,17 +6,15 @@ from django.core.management.base import BaseCommand
 from django.db.models import Q
 from faker import Faker
 import faker.providers
-from blablapp.models import CharacterClass, Character, Action, MyUser, Contact, Tickbox, Entity, EntityInstance, Event, Story, Room, RoomParticipant, Message, Whisper, Quote
+from blablapp.models import CharacterClass, Character, Action, MyUser, Contact, Tickbox, Entity, EntityInstance, Event, Story, Room, RoomParticipant, Message, Whisper, Quote  # pylint: disable=import-error
 
 ACTIONS = ["Hide", "Search", "Charm", "Trap"]
 DEFAULT_ACTIONS = ["Attack", "Use", "Talk"]
 
 # blogs = Blog.objects.filter(author=author).values_list('id', flat=True)
-
 # action = Action.objects.get(title=action_sample) -> return trigger
 # action.id -> return action_id
-
-#  user_id = MyUser.objects.order_by("?").values('id', 'characters')
+# user_id = MyUser.objects.order_by("?").values('id', 'characters')
 
 
 def loadbar(iteration, total, decimals=1, length=100, fill='█'):
@@ -151,7 +149,7 @@ class Command(BaseCommand):
                 )
 
             loadbar(i + 1, user_input)
-
+        f.close()
         # results ----------------------------------------------------------- #
         check_users = MyUser.objects.all().count()
         check_characters = Character.objects.all().count()
@@ -162,8 +160,8 @@ class Command(BaseCommand):
             f'# Number of Characters: {check_characters}\n'))
 
         # contact request --------------------------------------------------- #
-        loadbar(0, user_input * 2)
-        for i in range(user_input * 2):
+        loadbar(0, user_input * 4)
+        for i in range(user_input * 4):
             with contextlib.suppress(Exception):
                 user_list = MyUser.objects.order_by("?")
                 Contact.objects.create(
@@ -171,7 +169,7 @@ class Command(BaseCommand):
                     receiver=user_list.last(),
                     approved=fake.boolean(chance_of_getting_true=75),
                 )
-            loadbar(i + 1, user_input * 2)
+            loadbar(i + 1, user_input * 4)
 
         check_contact = Contact.objects.all().count()
         self.stdout.write(self.style.SUCCESS(

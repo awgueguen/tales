@@ -1,34 +1,36 @@
 /**
- * CLEANED CODE
+ * * CLEAN CODE
  */
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 /* context & components ---------------------------------------------------- */
 import AuthContext from "@context/AuthContext";
 import axios from "axios";
 
-const AddFriends = (props) => {
+const AddFriends = ({ input, handleChange, contactList, add }) => {
   let { authTokens } = useContext(AuthContext);
 
   const URL = "http://127.0.0.1:8000/api/contacts/add/";
-  const [input, setInput] = useState([]);
-  const [information, setInformation] = useState();
+  const [error, setError] = useState();
+  const [valid, setValid] = useState();
   const message = {
     alreadyFriends: "You are already friends with this user",
-    added: "You have added this user",
     notFound: "User can not be found",
     error: "An error has occured",
   };
 
-  const handleChange = (e) => {
-    setInput(e.target.value);
-  };
+  /* lifecycle ------------------------------------------------------------- */
+  useEffect(() => {
+    setError("");
+    setValid("");
+  }, [input]);
+  /* methods --------------------------------------------------------------- */
 
   /**
    * Check if the input is already a friend.
    * @returns {boolean}
    */
   const compareFriends = () => {
-    const friends = props.contacts;
+    const friends = contactList;
     return friends?.some(({ username }) => username.toLowerCase() === input.toLowerCase());
   };
 
@@ -63,31 +65,42 @@ const AddFriends = (props) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    let contact_exist = await checkContactExistence();
-    let contact_in_list = compareFriends();
-
-    if (contact_exist && !contact_in_list) {
-      const request = await addFriendToContact(input);
-      if (request) {
-        setInformation(message.added);
+    if (add) {
+      let contact_exist = await checkContactExistence();
+      let contact_in_list = compareFriends();
+      if (contact_exist && !contact_in_list) {
+        const request = await addFriendToContact(input);
+        if (request) {
+          setValid("Friend added !");
+        } else {
+          setError(message.error);
+        }
+      } else if (compareFriends(input) === true) {
+        setError(message.alreadyFriends);
       } else {
-        setInformation(message.error);
+        setError(message.notFound);
       }
-    } else if (compareFriends(input) === true) {
-      setInformation(message.alreadyFriends);
-    } else {
-      setInformation(message.notFound);
     }
   };
 
   return (
-    <div>
-      <form action="submit" onSubmit={handleSubmit}>
-        <input type="text" name="username" placeholder="Search Player" onChange={handleChange} />
-        <span>{information}</span>
+    <>
+      <form name="contact" onSubmit={handleSubmit}>
+        <input type="text" name="username" placeholder="Search, Add.." onChange={handleChange} value={input} />
+        <input type="submit" hidden />
       </form>
-      <span></span>
-    </div>
+      {contactList.filter((user) => user.nickname.startsWith(input.toLocaleLowerCase())).length > 0 ? (
+        ""
+      ) : (
+        <ul onClick={handleSubmit}>
+          <li className="contacts__add">
+            {input.length > 14 ? input.substring(0, 14) + "..." : input}{" "}
+            <span className={`icon__add-friend ${error ? "error" : valid ? "valid" : ""}`}></span>
+          </li>
+          <span className={valid || error ? "contacts__add-label" : ""}>{valid ? valid : error}</span>
+        </ul>
+      )}
+    </>
   );
 };
 

@@ -1,13 +1,17 @@
+/**
+ * * CLEAN CODE
+ */
 /* global ------------------------------------------------------------------ */
-import React, { useContext, useEffect, useState } from "react";
+import React from "react";
 
-const Login = ({ values, handleChange }) => {
+const Login = ({ values, handleChange, handleSubmit }) => {
   const { username, password } = values;
   return (
     <div>
-      <form name="connect">
+      <form name="connect" onSubmit={handleSubmit}>
         <input value={username} onChange={handleChange} type="text" name="username" placeholder="username" />
         <input value={password} onChange={handleChange} type="password" name="password" placeholder="password" />
+        <input type="submit" hidden />
       </form>
     </div>
   );

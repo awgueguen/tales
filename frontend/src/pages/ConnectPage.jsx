@@ -1,3 +1,6 @@
+/**
+ * WIP
+ */
 /* global ------------------------------------------------------------------ */
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -35,7 +38,8 @@ const ConnectPage = () => {
     setOrigin((oldState) => !oldState);
   };
   /* register -------------------------------------------------------------- */
-  const handleSubmit = () => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
     if (origin) {
       loginUser({ ...login });
     } else {
@@ -59,14 +63,14 @@ const ConnectPage = () => {
     <div id="connect">
       <div id="connect__container">
         <div className="connect__description">
-          <h1>Dungeons & Dragons</h1>
-          <h3>A free text & chat based multiplayer RPG.</h3>
+          <h1 className="wh-background">Dungeons & Dragons</h1>
+          <h3 className="wh-background">A free text & chat based multiplayer RPG.</h3>
         </div>
         <div className="connect__input">
           {origin ? (
-            <Login values={login} handleChange={handleChange} />
+            <Login values={login} handleChange={handleChange} handleSubmit={handleSubmit} />
           ) : (
-            <Register values={register} handleChange={handleChange} />
+            <Register values={register} handleChange={handleChange} handleSubmit={handleSubmit} />
           )}
           <div id="connect__button">
             <button onClick={handleSubmit} className="btn-primary">
@@ -74,7 +78,15 @@ const ConnectPage = () => {
             </button>
             <span>
               {origin ? "not registered yet?" : "already a member?"}{" "}
-              {origin ? <span onClick={handleOrigin}>sign up</span> : <span onClick={handleOrigin}>sign in</span>}
+              {origin ? (
+                <a href="#" onClick={handleOrigin}>
+                  sign up
+                </a>
+              ) : (
+                <a href="#" onClick={handleOrigin}>
+                  sign in
+                </a>
+              )}
             </span>
           </div>
         </div>

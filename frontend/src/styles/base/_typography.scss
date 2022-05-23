@@ -1,22 +1,70 @@
+@use "../abstracts" as *;
+
 :root {
     font-family: "Poppins", sans-serif;
     font-size: 16px;
+    line-height: 1.5;
+    color: setcolor(text-dk, 500);
 }
 
 h1,
 .h1 {
     font-weight: 700;
     font-size: 3rem;
-
     line-height: 3.2rem;
+
+    &.wh-background {
+        color: setcolor(text-wh, 300);
+    }
+}
+
+h2,
+.h2 {
+    font-weight: 700;
+    font-size: 2.5rem;
+    line-height: 2.8rem;
 }
 
 h3,
 .h3 {
     font-weight: 600;
     font-size: 1.3rem;
-
     line-height: 1.7rem;
+
+    &.wh-background {
+        color: setcolor(text-wh, 300);
+    }
+}
+
+ul {
+    padding: 0;
+    list-style-type: none;
+    font-weight: 300;
+}
+
+li[class^="icon__"]::before {
+    font-family: "Material Icons";
+    font-size: 1.7em;
+}
+
+span[class^="icon__"] {
+    font-family: "Material Icons";
+    font-size: 1.7em;
+}
+
+.link {
+    text-decoration: none;
+    color: inherit;
+}
+
+input,
+.input {
+    letter-spacing: 0.05rem;
+}
+
+form {
+    font-size: 0.9em;
+    font-weight: 300;
 }
 
 .input-checkbox {
@@ -31,4 +79,8 @@ h3,
         font-weight: 500;
         font-size: 0.8rem;
     }
+}
+
+.contacts__add ~ span {
+    font-size: 0.8rem;
 }

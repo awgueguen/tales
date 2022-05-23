@@ -13,8 +13,7 @@
         display: flex;
         flex-direction: column;
 
-        width: clamp(30em, 10em + 45vw, 80em);
-        min-height: clamp(30em, 10em + 20vw, 45em);
+        aspect-ratio: 1 / 0.55;
 
         align-items: stretch;
     }
@@ -29,8 +28,8 @@
     &__description {
         @include flex-column-center;
 
-        border-top-left-radius: 5px;
-        border-top-right-radius: 5px;
+        border-top-left-radius: $corner;
+        border-top-right-radius: $corner;
 
         flex: 1;
         background-color: white;
@@ -39,8 +38,8 @@
     &__input {
         @include flex-column-center;
 
-        border-bottom-right-radius: 5px;
-        border-bottom-left-radius: 5px;
+        border-bottom-right-radius: $corner;
+        border-bottom-left-radius: $corner;
 
         flex: 2;
         background-color: hsla(0, 0%, 11%, 0.726);
@@ -81,27 +80,30 @@
                     grid-area: email;
                 }
                 &:nth-child(5) {
-                    color: white;
                     grid-area: checkbox;
+                }
+                &:nth-child(6) {
+                    display: none;
                 }
             }
         }
     }
 }
 
-@media (min-width: 50em) {
+@media (min-width: map-get($breakpoints, small)) {
     #connect {
         &__container {
             flex-direction: row;
+            width: min(100vw - 10rem, 60rem);
         }
     }
     .connect {
         &__description {
-            border-bottom-left-radius: 5px;
+            border-bottom-left-radius: $corner;
             border-top-right-radius: 0px;
         }
         &__input {
-            border-top-right-radius: 5px;
+            border-top-right-radius: $corner;
             border-bottom-left-radius: 0px;
         }
     }

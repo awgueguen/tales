@@ -1,0 +1,19 @@
+li[class^="icon__"]::before {
+    margin-right: 25px;
+    vertical-align: middle;
+}
+
+.icon {
+    &__room::before {
+        content: "\eb4f";
+    }
+    &__assets::before {
+        content: "\e02f";
+    }
+    &__characters::before {
+        content: "\e84e";
+    }
+    &__add-friend::after {
+        content: "\e7fe";
+    }
+}

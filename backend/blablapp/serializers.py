@@ -115,6 +115,8 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     def get_token(cls, user):
         token = super().get_token(user)
         token['username'] = user.username
+        token['profile_pic'] = f"/media/{str(user.profile_pic)}"
+        token['nickname'] = user.nickname
         return token
 
 # --------------------------------------------------------------------------- #

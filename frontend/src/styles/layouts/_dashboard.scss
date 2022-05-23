@@ -1,0 +1,32 @@
+@use "../abstracts/" as *;
+
+#dashboard {
+    min-height: 100vh;
+    background-color: setcolor(background-color, 500);
+
+    padding: 0.5rem 2rem;
+}
+
+.dashboard {
+    &__grid {
+        display: grid;
+        grid-template-areas:
+            "header header header"
+            "sidebar container container"
+            "sidebar container container";
+        grid-template-columns: 15rem auto;
+
+        > * {
+            &:nth-child(1) {
+                grid-area: header;
+            }
+            &:nth-child(2) {
+                grid-area: sidebar;
+            }
+            &:nth-child(3) {
+                grid-area: container;
+                background-color: green;
+            }
+        }
+    }
+}

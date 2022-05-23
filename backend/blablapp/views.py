@@ -409,6 +409,36 @@ def add_contact(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+# to clean ------------------------------------------------------------------ #
+@api_view(['GET', 'POST', 'PUT'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([permissions.IsAuthenticated])
+def user_contacts_api(request):
+
+    user_id = get_user_detail(request.user)['id']
+
+    if request.method == 'GET':
+        try:
+            mycontacts = models.Contact.objects.filter(Q(sender=user_id) | Q(
+                receiver=user_id)).distinct().filter(approved=True)
+            # filter(approved=True)
+        except mycontacts.DoesNotExit:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        res = serializers.ContactSerializer(mycontacts, many=True).data
+        friends_ids = [elem['receiver'] if elem['sender'] ==
+                       user_id else elem['receiver'] for elem in res]
+
+        try:
+            friends = models.MyUser.objects.filter(id__in=friends_ids)
+        except mycontacts.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        response = serializers.MyUserSerializer(friends, many=True)
+
+        return JsonResponse({"user_contact": response.data})
+
+
 # --------------------------------------------------------------------------- #
 # functions                                                                   #
 # --------------------------------------------------------------------------- #
