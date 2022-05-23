@@ -15,7 +15,7 @@ const ModalRoom = (props) => {
      * Mettre en place le css pour indiquer qu'on a rempli les champs par défauts mais qu'on peut les modifier
      * (input[description, title et maxPart] quand on choisit une story)
      */
-    const {step, setStep, backwardStep, input, setInput, handleChange} = props
+    const {step, setStep, backwardStep, input, setInput, handleChange, modal, setModal} = props
     const navigate = useNavigate();
     const { authTokens } = useContext(AuthContext);
     const [stories, setStories] = useState()
@@ -47,7 +47,6 @@ const ModalRoom = (props) => {
             alert('maximum players already achieved')
             return
         }
-        console.log(input.invitations)
 
         if (remove){
             invitations = invitations.filter((i) => i.id !== id)
@@ -59,11 +58,6 @@ const ModalRoom = (props) => {
         }
     }
     const [selectedStory, setSelectedStory] = useState()
-    // useState(() => 
-    //     input.story.id ? stories.filter((story) => story.id === input.story.id)[0]
-    //     : ''
-    // )
-    
 
     const handleSubmit = (e) => {
         e.preventDefault()
@@ -76,7 +70,7 @@ const ModalRoom = (props) => {
         })
         .then ((response) => {
             console.log(response)
-            navigate(`../rooms/${response.data.room.id}`, { replace: true });
+            navigate(`../rooms/${response.data.room.id}`, { state: {alreadyUser:true}, replace: true });
         })
 
         .catch((e) => console.log('error', e))
@@ -107,16 +101,42 @@ const ModalRoom = (props) => {
 
         fetch('get', "http://localhost:8000/api/stories", changeStoryState)
         fetch('get', `http://localhost:8000/api/user/contact_list/`, changeFriendsState)
-        return () => { request.cancel(); }
+        return () => { 
+            request.cancel();
+            // clearTimeout(timeoutId);
+        }
 // eslint-disable-next-line
     }, [])
 
+    useEffect( () => {
+        /**
+         * module pour pouvoir fermer le modal par un click en dehors ou la touche echap
+         */
+        const ignoreModal = document.getElementById('modal');        
+          const clickOutside = (e) => {
+            if (!ignoreModal.contains(e.target)) {
+              setModal(false)
+          }}
+          const pressEscape = (e) => {
+            if (e.key === 'Escape'){
+              setModal(false)
+            }
+          }
+          document.addEventListener('click', clickOutside);
+          document.addEventListener('keydown', pressEscape)
+          return () => {
+            document.removeEventListener('click', clickOutside)
+            document.removeEventListener('keydown', pressEscape)
+      }}, [modal, setModal])
+
+      const {story:{id:inputStoryId}} = input
+    
     useEffect(() => {
         if (stories === undefined) return
-        const selected = input.story.id ? stories.filter((story) => story.id === input.story.id)[0]
+        const selected = inputStoryId ? stories.filter((story) => story.id === inputStoryId)[0]
             : ''
         if (selected) setSelectedStory(selected)
-    }, [stories])
+    }, [stories, inputStoryId])
 
     useEffect(() => {
         console.log(selectedStory)
@@ -131,13 +151,14 @@ const ModalRoom = (props) => {
         console.log(friends)
     }, [friends])
 
+    const {invitations:friendsInputId} = input
     useEffect(() => {
-        console.log(input)
-    }, [input.maxParticipants])
+        console.log(friendsInputId)
+    },[friendsInputId])
 
   return (
   <>
-    <div className='modal-wrapper'>
+    <div className='modal-wrapper' onClick={(e) => e.stopPropagation()}>
       <div className='step divider'>
         {/* les 3 barres avec potentiel hover*/}
         <div className={`lateral-bar${step===0 ? '-active': ''}`} >_</div>
@@ -237,9 +258,10 @@ const ModalRoom = (props) => {
             <div className='chosenStory'>
                 Story: {selectedStory !== undefined && selectedStory.title}
             </div>
-            {friends !== undefined && friends.map((friend) => {
+            {friends !== undefined && friends.map((friend, index) => {
             return(
                 <button
+                key={index}
                 onClick={() => handleFriendsInvitations(friend.id)}
                 id={friend.id}
                 className={`friends-invitation-btn friend-${input.invitations.some((i) => i.id === friend.id)? 'selected' : 'not-selected'}`}>

@@ -103,6 +103,9 @@ DATABASES = {
     }
 }
 
+# engine = create_engine("sqlite+pysqlite:///ma_db.db")
+
+
 AUTH_USER_MODEL = 'blablapp.MyUser'
 
 # Password validation

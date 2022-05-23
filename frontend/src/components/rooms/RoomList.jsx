@@ -18,11 +18,12 @@ const RoomList = (props) => {
     
     const { authTokens, userId } = useContext(AuthContext);    
 
-    const [modal, setModal] = useState(false)
+    const [modal, setModal] = useState()
+    
     const handleModal = () => {
-        setModal(!modal)
-        return
+        setModal(true)
     }
+
     const [input, setInput] = useState({
       title: '',
       maxParticipants: '',
@@ -47,7 +48,6 @@ const RoomList = (props) => {
       }));
   }
 
-    const url_room_list = (userId) => `http://localhost:8000/api/room/${userId}/list/`
     const [roomList, setRoomList] = useState()
     const url_pubic_rooms = 'http://localhost:8000/api/room/publiclist/'
     const [publicList, setPublicList] = useState()
@@ -67,8 +67,6 @@ const RoomList = (props) => {
         }
 
         fetch()
-
-        return () => request.cancel()
         //eslint-disable-next-line
     }, [])
 
@@ -80,14 +78,15 @@ const RoomList = (props) => {
          */
         const request = axios.CancelToken.source()
         const fetch = async () => {
-            await axios({
-                url: url_room_list(userId),
-                method: 'GET',
-                headers: {Authorization: `Bearer ${authTokens.access}`},
-                cancelToken: request.token,
-            })
-            .then ((response) => {console.log(response); setRoomList(response.data)})
-            .catch((e) => console.log('error', e))
+          const url_room_list = (userId) => `http://localhost:8000/api/room/${userId}/list/`
+          await axios({
+              url: url_room_list(userId),
+              method: 'GET',
+              headers: {Authorization: `Bearer ${authTokens.access}`},
+              cancelToken: request.token,
+          })
+          .then ((response) => {console.log(response); setRoomList(response.data)})
+          .catch((e) => console.log('error', e))
         }
 
         fetch()
@@ -108,7 +107,11 @@ const RoomList = (props) => {
     useEffect( () => {
         console.log(publicList)
     }, [publicList])
-    
+
+    useEffect(() => {
+      console.log(modal)
+    },[modal])
+
   return (
       <>
 {/* ______private-room-wrapper */}
@@ -119,7 +122,7 @@ const RoomList = (props) => {
                 <>
                   <Link
                     key={index} className='private-card-link'
-                    to={`/rooms/${r.id}`}
+                    to={`/rooms/${r.room.id}`}
                     state = {{alreadyUser : true}}
   // const userId = useLocation()?.state?.user || 'INVITE';
 
@@ -134,14 +137,14 @@ const RoomList = (props) => {
             )
             })}
         </div>
+        </div>
 
-        <div className='create-room' onClick={handleModal}> 
-        {/**
+        <div className='modeal-create-room' id='modal' onClick={handleModal}> 
+        {/*
          * background '+' en image?
          */}
          <div style={{color:'red', fontSize:'20px'}}>+ Click here to show how to Add room</div>
-        </div>
-        {modal ?
+        {modal &&
         <ModalRoom
           step={step}
           setStep={setStep}
@@ -149,8 +152,9 @@ const RoomList = (props) => {
           input={input}
           setInput={setInput}
           handleChange={handleChange}
-        />
-        : ''}
+          setModal={setModal}
+          modal={modal}
+        />}
       </div>
 {/* ______ private-room-wrapper */}
 

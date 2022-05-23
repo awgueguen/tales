@@ -261,6 +261,18 @@ def instances_ingame(request):
 # ROOMS SETTINGS                                                              #
 # --------------------------------------------------------------------------- #
 
+@api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([permissions.IsAuthenticated])
+def get_room_participants(request, room_id):
+
+    # TODO:
+    try:
+        roomparticipants = models.RoomParticipant.objects.filter(Q(room=room_id)) # & Q(isAdmin=False)
+    except models.RoomParticipant.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    response = serializers.RoomParticipantCharaSerializer(roomparticipants, many=True).data
+    return Response(response, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
@@ -350,6 +362,42 @@ def get_public_rooms(request):
 
     return Response(data=room_response, status=status.HTTP_200_OK)
 
+@api_view(['GET', 'POST', 'PUT'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([permissions.IsAuthenticated])
+def create_roompart(request, room_id):
+
+    username = request.user
+    user = get_user_detail(username)
+
+    if request.method == 'GET':
+        print(f"\nuser_id: {user['id']}\n room_id: {room_id}\n")
+        roompart = get_room_participant_of_this_room(user['id'], room_id)
+        if type(roompart) is str:
+            return Response({'error': f"error: (createroom) user with id {user['id']} not found"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'user': user, 'roompart': roompart}, status=status.HTTP_200_OK)
+
+    if request.method == 'POST':
+        if not (nickname := request.data.get('nickname')):
+            nickname = user['nickname']
+        if not (character := request.data.get('character')):
+            character = 1
+        
+        roompart = serializers.RoomParticipantCharaSerializer(data={
+            'room': request.data['room'],
+            'user': user['id'],
+            'isAdmin': request.data['isAdmin'],
+            'nickname': nickname,
+            'character': character,
+        })
+        if roompart.is_valid():
+            roompart.save()
+            return Response({'user': user, 'roompart': roompart.data}, status=status.HTTP_201_CREATED)
+        else:
+            return Response({'err':  f"problem creating {user['username']}roomppart"}, status=status.HTTP_400_BAD_REQUEST)
+
+    if request.method == 'PUT':
+        return
 
 @api_view(['POST', 'PUT'])
 @authentication_classes([JWTAuthentication])
@@ -406,12 +454,23 @@ def create_room(request):
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([permissions.IsAuthenticated])
-def messages_api(request, room):
+def messages_api(request, room_id):
 
-    # TODO: all
+    # TODO: récup isAdmin depuis le sender de chaque message
+
+    username = request.user
+    user = get_user_detail(username)
 
     if request.method == 'GET':
-        return
+        # wanted_values = ['id', 'messageContent', 'image', 'createdAt', 'isTriggered', 'sender', 'room']
+        messages = models.Message.objects.filter(room=room_id, deleted=False)#.values(*wanted_values)
+        response = serializers.MessageSerializer(messages, many=True).data
+        print(f"\nresponse: {response}\n")
+        return Response({'messages' : response}, status=status.HTTP_200_OK)
+
+    if request.method == 'POST':
+
+        return Response({'message' : response}, status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])
@@ -500,7 +559,6 @@ def contacts_api(request, user_id):
 @api_view(['GET', 'POST', 'PUT'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([permissions.IsAuthenticated])
-# def user_contacts_api(request, user_id):
 def user_contacts_api(request):
 
     # TODO: all
@@ -514,7 +572,7 @@ def user_contacts_api(request):
             return Response(status=status.HTTP_404_NOT_FOUND)
 
         res = serializers.ContactSerializer(contacts, many=True).data
-        friends_ids = [elem['receiver'] if elem['sender'] == user_id else elem['receiver'] for elem in res]
+        friends_ids = [elem['receiver'] if elem['sender'] == user_id else elem['sender'] for elem in res]
         
         try:
             friends = models.MyUser.objects.filter(id__in=friends_ids)
@@ -604,9 +662,20 @@ def get_room_participants_by_user_id(user_id:int) -> 'list[OrderedDict]':
     try:
         rooms_participants_ = models.RoomParticipant.objects.filter(user_id=user_id)
     except models.RoomParticipant.DoesNotExist:
-        return f'error: user with id {user_id} not found'
+        return f'error: (get_by_id) user with id {user_id} not found'
     rooms_participants = serializers.RoomParticipantSerializer(rooms_participants_, many=True)
     return rooms_participants.data
+
+
+def get_room_participant_of_this_room(user_id:int, room_id:int) -> OrderedDict:
+    
+    try:
+        room_participant_ = models.RoomParticipant.objects.get(Q(room__id=room_id) & Q(user__id=user_id))
+    except models.RoomParticipant.DoesNotExist:
+        return f'error: (get_this_room) user with id {user_id} not found'
+    room_participant = serializers.RoomParticipantCharaSerializer(room_participant_)
+    return room_participant.data
+
 
 def get_room_participants_by_room_list(room_list:'list[int]') -> 'list[OrderedDict]':
 

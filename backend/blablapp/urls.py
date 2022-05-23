@@ -74,5 +74,9 @@ urlpatterns = [
     # à terme à fusionner avec le path d'Anicet
     path('user/<int:user_id>/tickbox/', views.tick_api),
     # gestion de la tickbox utilisateur -> just tickbox/
-    path('register/', views.register_user)
+    path('register/', views.register_user),
+
+    #room_part ____________________________________#
+    path('roompart/create/<int:room_id>', views.create_roompart),
+    path('roompart/list/<int:room_id>', views.get_room_participants),
 ]

@@ -150,8 +150,29 @@ class RoomParticipantSerializer(serializers.ModelSerializer):
         model = models.RoomParticipant
         fields = '__all__'
 
+class CharacterClassShortSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.CharacterClass
+        fields = ['id', 'name', 'atk', 'defense', 'hp']
+
+class CharacterShortSerializer(serializers.ModelSerializer):
+    characterClass = CharacterClassShortSerializer()
+    class Meta:
+        model = models.Character
+        fields = ['id', 'name', 'background', 'image', 'characterClass']
+
+class RoomParticipantCharaSerializer(serializers.ModelSerializer):
+    # ici on utilise un résumé de character mais en utilisant le vrai charactère on pourra 
+    # facilement avoir toutes les infos class, actions etc pour le mvp++
+    character = CharacterShortSerializer()
+    class Meta:
+        model = models.RoomParticipant
+        fields = ['id', 'user', 'character', 'isAdmin', 'nickname', 'hit']
+
 
 class MessageSerializer(serializers.ModelSerializer):
+    sender = MyUserSerializer()
+    # room = RoomSerializer()
     class Meta:
         model = models.Message
         fields = '__all__'

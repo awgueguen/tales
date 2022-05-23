@@ -9,17 +9,20 @@ import PrivateRoute from "@utils/PrivateRoute";
 import LoginPage from "@pages/LoginPage";
 import RegisterPage from "@pages/RegisterPage";
 import { AuthProvider } from "@context/AuthContext";
-/* chat ------------------------------------------------------- */
+/* dashboard ------------------------------------------------------- */
 import RoomList from '@components/rooms/RoomList';
 import CreateRoom from "@components/rooms/CreateRoom";
 import JoinRoom from "@components/rooms/JoinRoom";
-import ChatRoom from "@components/ChatRoom";
-import FriendList from '@components/FriendList'
+import ChatRoom from "@components/chatroom/ChatRoom";
+
+/* game ------------------------------------------------------- */
+import GamePage from '@pages/GamePage';
 /* friends ------------------------------------------------------- */
 import DisplayFriends from "@components/DisplayFriends";
 import AddFriends from "@components/AddFriends";
 
 const App = () => {
+
   return (
     <>
     <Router>
@@ -33,7 +36,9 @@ const App = () => {
               <Route path="/" element={<HomePage />} />
               {/* theo -------------------------------------------------------  */}
               <Route path="/rooms" element={<RoomList />} />
-              <Route path="/rooms/:roomId" element={<ChatRoom />} />
+              <Route path="/rooms/:roomId" element={<GamePage />} />
+              <Route path='room/game' element={<GamePage />} />
+              {/* à virer */}
               <Route path="/createroom" element={<CreateRoom />} />
               <Route path="/joinroom" element={<JoinRoom />} />
             </Route>

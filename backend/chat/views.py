@@ -27,7 +27,7 @@ def join(sid, message):
 
     # join room, on peut dans l'ui aller vers une autre page
     sio.enter_room(sid, message['room'])
-    sio.emit('my_response', data = {'data': 'Entered room: ' + message['room'], 'room': message['room'], 'date': message['date']}, room=sid)
+    sio.emit('my_response', data = {'data': 'Entered room: ' + message['room'], 'room': message['room'], 'date': message['date'], 'log': True}, room=sid)
 
 # ici on pourra mettre un msg à tlm room=rommmachin pour dire que untel s'est barré
 @sio.event()
@@ -47,7 +47,20 @@ def close_room(sid, message):
 @sio.event()
 def my_room_event(sid, message):
     print('message reçu serveur', message)
-    sio.emit('my_response', {'data': message['data'], 'date': message['date'], 'user': message['user'],}, room=message['room'])
+    if not (img := message.get('img')):
+        img = ''
+    sio.emit(
+        'my_response',
+        {
+            'data': message['data'],
+            'date': message['date'],
+            'user': message['user'],
+            'user_id': message['user_id'],
+            'is_admin': message['is_admin'],
+            'img': img,
+            'log': message['log'],
+        },
+        room=message['room'])
     print('msg emit à priori\n')
 
 
@@ -62,8 +75,8 @@ welcome_message = 'coucou'
 
 @sio.event()
 def connect(sid, environ):
-    print('\n', sid, 'sid on connexion\n')
-    sio.emit('my_response', {'data': f'{welcome_message}', 'count': 0}, room=sid )
+    # print('\n', sid, 'sid on connexion\n')
+    sio.emit('my_response', {'data': f'{welcome_message}', 'log': True, 'count': 0}, room=sid )
 
 
 @sio.event()
