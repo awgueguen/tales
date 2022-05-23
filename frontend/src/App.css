@@ -1,9 +1,14 @@
 @keyframes fade-in {
   0% {
     opacity: 0;
+    transform: translateX(200px);
+  }
+  75% {
+    opacity: 0.2;
   }
   100% {
     opacity: 1;
+    transform: translateX(0);
   }
 }
 @keyframes fade-out {
@@ -216,6 +221,15 @@ select {
   -moz-background-size: cover;
   -o-background-size: cover;
   background-size: cover;
+  image-rendering: -moz-crisp-edges;
+  /* Firefox */
+  image-rendering: -o-crisp-edges;
+  /* Opera */
+  image-rendering: -webkit-optimize-contrast;
+  /* Webkit (non-standard naming) */
+  image-rendering: crisp-edges;
+  -ms-interpolation-mode: nearest-neighbor;
+  /* IE (non-standard property) */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -396,6 +410,7 @@ input:not([type=checkbox]) {
   display: flex;
   align-items: center;
   gap: 1em;
+  padding: 0.5em;
 }
 .friend-card__image {
   width: 4.5rem;
@@ -410,6 +425,11 @@ input:not([type=checkbox]) {
   max-width: inherit;
   max-height: 100%;
   object-fit: cover;
+}
+.friend-card:hover {
+  background-color: hsl(0deg, 0%, 23%);
+  border-radius: 5px;
+  transition: background-color 150ms ease-in-out;
 }
 
 .contacts {

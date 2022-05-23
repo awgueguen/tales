@@ -10,6 +10,80 @@ from blablapp.models import CharacterClass, Character, Action, MyUser, Contact, 
 
 ACTIONS = ["Hide", "Search", "Charm", "Trap"]
 DEFAULT_ACTIONS = ["Attack", "Use", "Talk"]
+IMG_CHAR = [
+    "character-1.jpg",
+    "character-2.jpg",
+    "character-3.jpg",
+    "character-4.jpg",
+    "character-5.jpg",
+    "character-6.jpg",
+    "character-7.jpg",
+    "character-8.jpg",
+    "character-9.jpg",
+]
+
+IMG_ENT = [
+    "entity-1.jpg",
+    "entity-2.jpg",
+    "entity-3.jpg",
+    "entity-4.jpg",
+    "entity-5.jpg",
+]
+
+IMG_EVENT = [
+    "event-1.jpg",
+    "event-2.jpg",
+    "event-3.jpg",
+    "event-4.jpg",
+    "event-5.jpg",
+    "event-6.jpg",
+    "event-7.jpg",
+]
+
+IMG_MESS = [
+    "message-1.gif",
+    "message-2.jpg",
+    "message-3.jpg",
+    "message-4.gif",
+    "message-5.jpg",
+    "message-6.gif",
+    "message-7.jpg",
+    "message-8.jpg",
+    "message-9.jpg",
+    "message-10.jpg",
+    "message-11.jpg",
+    "message-12.jpg",
+    "message-13.jpg",
+    "message-14.jpg",
+    "message-15.jpg",
+]
+
+
+IMG_PROF = [
+    "default.jpg",
+    "default.jpg",
+    "profile-pic-1.png",
+    "profile-pic-2.png",
+    "profile-pic-3.jpg",
+    "profile-pic-4.jpg",
+    "profile-pic-5.png",
+    "profile-pic-6.jpg",
+    "profile-pic-7.jpg",
+    "profile-pic-8.jpg",
+    "profile-pic-9.png",
+    "profile-pic-10.jpg",
+    "profile-pic-11.png",
+]
+
+IMG_STORY = [
+    "story-1.jpg",
+    "story-2.jpg",
+    "story-3.jpg",
+    "story-4.jpg",
+    "story-5.png",
+    "story-6.jpg",
+    "story-7.jpg",
+]
 
 # blogs = Blog.objects.filter(author=author).values_list('id', flat=True)
 # action = Action.objects.get(title=action_sample) -> return trigger
@@ -30,6 +104,24 @@ def loadbar(iteration, total, decimals=1, length=100, fill='█'):
 class Provider(faker.providers.BaseProvider):
     def action_type(self):
         return self.random_element(ACTIONS)
+
+    def img_char(self):
+        return self.random_element(IMG_CHAR)
+
+    def img_ent(self):
+        return self.random_element(IMG_ENT)
+
+    def img_event(self):
+        return self.random_element(IMG_EVENT)
+
+    def img_mess(self):
+        return self.random_element(IMG_MESS)
+
+    def img_prof(self):
+        return self.random_element(IMG_PROF)
+
+    def img_story(self):
+        return self.random_element(IMG_STORY)
 
 
 class Command(BaseCommand):
@@ -115,6 +207,7 @@ class Command(BaseCommand):
             password = fake.password(length=12)
             f.write(f'Login: {login} // Password: {password}\r\n')
             user = MyUser.objects.create(
+                profile_pic=f'profile_pics/{fake.img_prof()}',
                 nickname=fake.user_name(),
                 birthdate=fake.past_date(),
                 is_superuser=False,
@@ -140,11 +233,11 @@ class Command(BaseCommand):
                 class_id = CharacterClass.objects.order_by("?").first()
 
                 Character.objects.create(
+                    image=fake.img_char(),
                     characterClass=class_id,
                     user=user,
                     name=fake.name(),
                     background=fake.text(max_nb_chars=400),
-                    image=fake.image_url(),
                     weapon=fake.color_name()
                 )
 
@@ -190,7 +283,7 @@ class Command(BaseCommand):
                 user=user,
                 title=story_title,
                 description=fake.sentence(nb_words=10),
-                image=fake.image_url(),
+                image=fake.img_story(),
                 optimalPlayers=random.randint(3, 6),
                 isPublic=fake.boolean(chance_of_getting_true=15),
                 trigger=f'{story_title[:4]}-{random.randint(1,99)}'
@@ -206,7 +299,7 @@ class Command(BaseCommand):
                     title=event_tittle,
                     description=fake.sentence(nb_words=10),
                     content=fake.paragraph(nb_sentences=5),
-                    image=fake.image_url(),
+                    image=fake.img_event(),
                     isPublic=fake.boolean(chance_of_getting_true=15),
                     trigger=f'{event_tittle[:4]}-{random.randint(1,99)}'
                 )
@@ -223,7 +316,6 @@ class Command(BaseCommand):
                 entity = Entity.objects.create(
                     user=user,
                     name=n[0],
-                    image=fake.image_url(),
                     hp=random.randint(1, 20),
                     atk=random.randint(1, 20),
                     defense=random.randint(1, 20),
@@ -316,6 +408,8 @@ class Command(BaseCommand):
                 is_triggered = False if whisper or quote else fake.boolean(
                     chance_of_getting_true=20)
 
+                random_nb = random.randint(1, 30)
+
                 message = Message.objects.create(
                     room=room,
                     sender=sender,
@@ -323,6 +417,7 @@ class Command(BaseCommand):
                     quoted=quote,
                     whispered=whisper,
                     isTriggered=is_triggered,
+                    image=fake.img_mess() if random_nb % 3 == 0 else ""
                 )
 
                 # whisper --------------------------------------------------- #
