@@ -1,6 +1,6 @@
 """WIP"""
 from collections import OrderedDict
-from django.http import JsonResponse
+# from django.http import JsonResponse
 from rest_framework import status, permissions
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.response import Response
@@ -187,7 +187,7 @@ def create_room(request):
             response = {'room': res.data}
 
         else:
-            return Response({'err': f'problem creating the room'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'err': 'problem creating the room'}, status=status.HTTP_400_BAD_REQUEST)
         mod = serializers.RoomParticipantSerializer(data={
             'room': res.data['id'],
             'user': moderator['id'],
@@ -200,7 +200,7 @@ def create_room(request):
             response['mod'] = mod.data
 
         else:
-            return Response({'err':  f'problem creating the mod'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'err':  'problem creating the mod'}, status=status.HTTP_400_BAD_REQUEST)
 
         response['players'] = []
         for elem in room['invitations']:
