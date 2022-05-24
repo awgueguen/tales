@@ -1,0 +1,32 @@
+@use "../abstracts" as *;
+
+.rooms {
+    padding-top: 1.5rem;
+}
+
+.inrooms {
+    &__container {
+        max-width: 1fr;
+        background-color: setcolor(background-color, 400);
+        border-radius: $corner;
+        padding: 1.5rem 1rem;
+
+        margin: 1rem 0 2rem;
+    }
+    &__cards {
+        display: grid;
+        gap: 1.5rem;
+        grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+    }
+}
+
+.public-rooms {
+    &__container {
+        margin: 1rem 0 2rem;
+    }
+    &__cards {
+        display: grid;
+        gap: 2rem;
+        grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+    }
+}

@@ -17,8 +17,6 @@ const Dashboard = () => {
     toogleContacts(!contacts);
   };
 
-  /* lifecycle ------------------------------------------------------------- */
-
   /* display --------------------------------------------------------------- */
 
   return (
@@ -27,7 +25,6 @@ const Dashboard = () => {
         <Header handleToogle={handleToogle} contacts={contacts} />
         <SideBar />
         <div className="dahsboard__container">
-          <Outlet />
           <Outlet />
         </div>
       </div>

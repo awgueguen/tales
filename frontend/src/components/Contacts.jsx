@@ -8,8 +8,8 @@ import axios from "axios";
 /* mui --------------------------------------------------------------------- */
 import CloseIcon from "@mui/icons-material/Close";
 /* components -------------------------------------------------------------- */
-import AddFriends from "./DisplayFriends/AddFriends";
-import FriendCard from "./DisplayFriends/FriendCard";
+import AddFriends from "./Contacts/AddFriends";
+import FriendCard from "./Contacts/FriendCard";
 
 const DisplayFriends = ({ contacts, handleToogle }) => {
   const URL = `http://127.0.0.1:8000/api/contacts/`;

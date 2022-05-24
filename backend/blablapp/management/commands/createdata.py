@@ -83,6 +83,16 @@ IMG_STORY = [
     "story-5.png",
     "story-6.jpg",
     "story-7.jpg",
+    "story-8.gif",
+    "story-9.jpg",
+    "story-10.jpg",
+    "story-11.jpg",
+    "story-12.jpg",
+    "story-13.jpg",
+    "story-14.jpg",
+    "story-15.jpg",
+    "story-16.jpg",
+    "story-17.jpg",
 ]
 
 # blogs = Blog.objects.filter(author=author).values_list('id', flat=True)
@@ -197,7 +207,7 @@ class Command(BaseCommand):
         # USER RELATED                                                        #
         # ------------------------------------------------------------------- #
 
-        user_input = int(input(">>> How many users: ") or "10")
+        user_input = int(input(">>> How many users: ") or "20")
         # user & tickbox ---------------------------------------------------- #
         loadbar(0, user_input)
         f = open("./blablapp/password.txt",
@@ -233,7 +243,7 @@ class Command(BaseCommand):
                 class_id = CharacterClass.objects.order_by("?").first()
 
                 Character.objects.create(
-                    image=fake.img_char(),
+                    image=f'characters/{fake.img_char()}',
                     characterClass=class_id,
                     user=user,
                     name=fake.name(),
@@ -283,8 +293,8 @@ class Command(BaseCommand):
                 user=user,
                 title=story_title,
                 description=fake.sentence(nb_words=10),
-                image=fake.img_story(),
-                optimalPlayers=random.randint(3, 6),
+                image=f'stories/{fake.img_story()}',
+                optimalPlayers=random.randint(3, 5),
                 isPublic=fake.boolean(chance_of_getting_true=15),
                 trigger=f'{story_title[:4]}-{random.randint(1,99)}'
             )
@@ -299,7 +309,7 @@ class Command(BaseCommand):
                     title=event_tittle,
                     description=fake.sentence(nb_words=10),
                     content=fake.paragraph(nb_sentences=5),
-                    image=fake.img_event(),
+                    image=f'events/{fake.img_event()}',
                     isPublic=fake.boolean(chance_of_getting_true=15),
                     trigger=f'{event_tittle[:4]}-{random.randint(1,99)}'
                 )
@@ -314,6 +324,7 @@ class Command(BaseCommand):
                         flag = False
 
                 entity = Entity.objects.create(
+                    image=f'entities/{fake.img_ent()}',
                     user=user,
                     name=n[0],
                     hp=random.randint(1, 20),
@@ -343,19 +354,19 @@ class Command(BaseCommand):
         # ROOM RELATED                                                        #
         # ------------------------------------------------------------------- #
 
-        room_input = int(input(">>> How many rooms: ") or "20")
+        room_input = int(input(">>> How many rooms: ") or "15")
         # room -------------------------------------------------------------- #
         loadbar(0, room_input)
         for i in range(room_input):
             story_id = Story.objects.order_by('?').first()
 
-            random_void = random.randint(0, 2)
+            random_void = random.randint(1, 3)
 
             room = Room.objects.create(
                 story=story_id,
                 title=fake.sentence(nb_words=3, variable_nb_words=False),
                 maxParticipants=story_id.optimalPlayers,
-                isPublic=fake.boolean(chance_of_getting_true=25)
+                isPublic=fake.boolean(chance_of_getting_true=45)
             )
 
             user_ids = MyUser.objects.filter(~Q(id=story_id.user.id)).order_by(
@@ -417,7 +428,7 @@ class Command(BaseCommand):
                     quoted=quote,
                     whispered=whisper,
                     isTriggered=is_triggered,
-                    image=fake.img_mess() if random_nb % 3 == 0 else ""
+                    image=f'messages/{fake.img_mess()}' if random_nb % 3 == 0 else ""
                 )
 
                 # whisper --------------------------------------------------- #

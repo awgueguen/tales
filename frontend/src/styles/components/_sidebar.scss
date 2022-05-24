@@ -1,11 +1,23 @@
 @use "../abstracts" as *;
 
 .sidebar {
+    padding-right: 2rem;
     ul {
         color: setcolor(text-dk, 300);
 
         .active {
             color: setcolor(text-dk, 500);
         }
+
+        li:hover:not(.active) {
+            color: setcolor(text-dk, 500);
+            transition: color 100ms ease-in;
+        }
+    }
+
+    &__rooms {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
     }
 }

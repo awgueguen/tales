@@ -25,19 +25,11 @@ const AddFriends = ({ input, handleChange, contactList, add }) => {
   }, [input]);
   /* methods --------------------------------------------------------------- */
 
-  /**
-   * Check if the input is already a friend.
-   * @returns {boolean}
-   */
   const compareFriends = () => {
     const friends = contactList;
     return friends?.some(({ username }) => username.toLowerCase() === input.toLowerCase());
   };
 
-  /**
-   * Check if the input exist in the db.
-   * @returns {Promise}
-   */
   const checkContactExistence = async () => {
     const request = await axios({
       method: "GET",
@@ -48,10 +40,6 @@ const AddFriends = ({ input, handleChange, contactList, add }) => {
     return request.statusText !== "Not Found";
   };
 
-  /**
-   * Add a new contact entry to the db.
-   * @param {string} input
-   */
   const addFriendToContact = async (input) => {
     const request = await axios({
       method: "POST",

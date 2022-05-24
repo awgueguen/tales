@@ -1,13 +1,13 @@
 /**
- * WIP
+ * * CLEAN CODE
  */
 /* gobal ------------------------------------------------------------------- */
 import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import AuthContext from "@context/AuthContext";
 
-/* mui --------------------------------------------------------------------- */
 /* context & components ---------------------------------------------------- */
+import QuickCards from "./SideBar/QuickMenu";
 
 /* ------------------------------------------------------------------------- */
 /* render                                                                    */
@@ -40,9 +40,7 @@ const SideBar = () => {
       </nav>
       <h5>QUICK ACCESS</h5>
       <nav className="sidebar__rooms">
-        <ul>
-          <li>MAP with Link to rooms</li>
-        </ul>
+        <QuickCards />
       </nav>
     </div>
   );

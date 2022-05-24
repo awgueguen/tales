@@ -40,9 +40,13 @@ ul {
     padding: 0;
     list-style-type: none;
     font-weight: 300;
+
+    .active {
+        font-weight: 500;
+    }
 }
 
-li[class^="icon__"]::before {
+[class^="icon__"]::before {
     font-family: "Material Icons";
     font-size: 1.7em;
 }
@@ -83,4 +87,14 @@ form {
 
 .contacts__add ~ span {
     font-size: 0.8rem;
+}
+
+.public-rooms-card ul {
+    font-size: clamp(0.7rem, 1.5vw, 0.9rem);
+}
+
+.sidebar__quickcard {
+    span {
+        font-size: 0.9rem;
+    }
 }

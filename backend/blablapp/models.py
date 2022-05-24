@@ -288,10 +288,11 @@ class Room(models.Model):
     story = models.ForeignKey(
         Story, on_delete=models.RESTRICT, related_name="room")
     title = models.CharField(max_length=30)
-    createdAt = models.DateTimeField(auto_now_add=True, editable=False)
-    editedAt = models.DateTimeField(auto_now=True)
+    description = models.TextField(help_text="Not Required", blank=True)
     maxParticipants = models.PositiveIntegerField(
         verbose_name="Maximum Participants")
+    createdAt = models.DateTimeField(auto_now_add=True, editable=False)
+    editedAt = models.DateTimeField(auto_now=True)
     isPublic = models.BooleanField(
         verbose_name="Room visibility", help_text="Change room visibility", default=False)
     isClosed = models.BooleanField(
@@ -301,6 +302,20 @@ class Room(models.Model):
         ordering = ["-isPublic", "createdAt"]
         verbose_name = "Room"
         verbose_name_plural = "Rooms"
+
+    def save(self, *args, **kwargs):
+
+        if kwargs.get('description'):
+            self.description = kwargs.get('description')
+        elif not self.description:
+            self.description = self.story.description
+
+        if kwargs.get('maxParticipants'):
+            self.maxParticipants = kwargs.get('maxParticipants')
+        elif not self.maxParticipants:
+            self.maxParticipants = self.story.optimalPlayers
+
+        super().save(*args, **kwargs)
 
 
 class RoomParticipant(models.Model):
@@ -324,9 +339,12 @@ class RoomParticipant(models.Model):
     active = models.BooleanField(default=True)
 
     def save(self, *args, **kwargs):
-        if self.nickname is None:
+
+        if kwargs.get('nickname'):
+            self.nickname = kwargs.get('nickname')
+        elif not self.nickname:
             self.nickname = self.user.nickname
-        super(RoomParticipant, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     class Meta:
         verbose_name = "Room Participant"

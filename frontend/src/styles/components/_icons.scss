@@ -1,4 +1,4 @@
-li[class^="icon__"]::before {
+[class^="icon__"]::before {
     margin-right: 25px;
     vertical-align: middle;
 }
@@ -12,6 +12,15 @@ li[class^="icon__"]::before {
     }
     &__characters::before {
         content: "\e84e";
+    }
+    &__seat::before {
+        content: "\efed";
+    }
+    &__story::before {
+        content: "\e411";
+    }
+    &__dm::before {
+        content: "\ea3e";
     }
     &__add-friend::after {
         content: "\e7fe";

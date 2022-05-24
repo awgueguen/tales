@@ -74,6 +74,7 @@ class StoryModalSerializer(serializers.ModelSerializer):
 
 
 class RoomSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = models.Room
         fields = '__all__'
@@ -105,6 +106,24 @@ class QuoteSerializer(serializers.ModelSerializer):
 
 # Serialization allows complex data (querysets, model) to be converted into native Python data.
 # These can be easily converted JSON.
+
+# --------------------------------------------------------------------------- #
+# rooms                                                                       #
+# --------------------------------------------------------------------------- #
+
+class StoryQuickSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Story
+        fields = ['id', 'image']
+
+
+class RoomQuickSerializer(serializers.ModelSerializer):
+    story = StoryQuickSerializer()
+
+    class Meta:
+        model = models.Room
+        fields = ['id', 'title', "story"]
+
 
 # --------------------------------------------------------------------------- #
 # token customizations                                                        #
@@ -155,7 +174,6 @@ class ContactSerializer(serializers.ModelSerializer):
 
 
 class EntityInstanceTriggers(serializers.ModelSerializer):
-    entity = EntitySerializer()
 
     class Meta:
         model = models.EntityInstance

@@ -8,9 +8,8 @@ import ConnectPage from "@pages/ConnectPage";
 import PrivateRoute from "@utils/PrivateRoute";
 import { AuthProvider } from "@context/AuthContext";
 /* chat ------------------------------------------------------- */
-import RoomList from "@components/Rooms/RoomList";
+import Rooms from "@components/Rooms";
 import CreateRoom from "@components/Rooms/CreateRoom";
-import JoinRoom from "@components/Rooms/JoinRoom";
 import ChatRoom from "@components/ChatRoom";
 
 const App = () => {
@@ -22,10 +21,9 @@ const App = () => {
             <Routes>
               <Route path="/" element={<PrivateRoute />}>
                 <Route path="/" element={<Dashboard />}>
-                  <Route path="/" element={<RoomList />} />
+                  <Route path="/" element={<Rooms />} />
                   <Route path="/rooms/:roomId" element={<ChatRoom />} />
                   <Route path="/createroom" element={<CreateRoom />} />
-                  <Route path="/joinroom" element={<JoinRoom />} />
                 </Route>
               </Route>
               <Route path="/welcome" element={<ConnectPage />} />
