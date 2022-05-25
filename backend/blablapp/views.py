@@ -451,15 +451,15 @@ def create_room(request):
         return
 
 
-@api_view(['GET'])
+@api_view(['GET', 'POST'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([permissions.IsAuthenticated])
 def messages_api(request, room_id):
 
     # TODO: récup isAdmin depuis le sender de chaque message
 
-    username = request.user
-    user = get_user_detail(username)
+    # username = request.user
+    # user = get_user_detail(username)
 
     if request.method == 'GET':
         # wanted_values = ['id', 'messageContent', 'image', 'createdAt', 'isTriggered', 'sender', 'room']
@@ -469,9 +469,36 @@ def messages_api(request, room_id):
         return Response({'messages' : response}, status=status.HTTP_200_OK)
 
     if request.method == 'POST':
+        # TODO : ajouter whisper, img, etc..
+        print('requestdata', request.data)
+        messageContent = request.data['messageContent']
+        # user_id = request.data['sender']
+        # room_id = request.data['room']
+        user = models.MyUser.objects.get(id=request.data['sender'])
+        room = models.Room.objects.get(id=int(request.data['room']))
 
-        return Response({'message' : response}, status=status.HTTP_200_OK)
+        sender = serializers.MyUserSerializer(user).data
+        room = serializers.RoomSerializer(room).data
 
+        print(f"\nuser: {sender}\nroom: {room}\n")
+        ser = serializers.PostedMessageSerializer(data={'sender': sender['id'], 'room': room['id'], 'messageContent': messageContent})
+        if ser.is_valid():
+            ser.save()
+            return Response({'message' : ser.data}, status=status.HTTP_201_CREATED)
+        print('ser', ser.data)
+        return Response(ser.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+
+#  sender = models.MyUser.objects.get(username=request.user)
+
+#         receiver = serializers.MyUserSerializer(receiver).data['id']
+#         sender = serializers.MyUserSerializer(sender).data['id']
+      
+#         serializer = serializers.ContactSerializer(data={'sender': sender, 'receiver': receiver, 'approved': True})   
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data, status=status.HTTP_201_CREATED)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
 @authentication_classes([JWTAuthentication])

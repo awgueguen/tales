@@ -13,6 +13,12 @@ const ChatInput = (props) => {
           placeholder="Write message..."
           className="new-message-input-field"
         />
+        {/* newMessage.content et newMessage.img et tester si on a ajouté une img mvp+*/}
+        {/* <input
+          value={newMessage.img}
+          onChange={msgChange}
+          className="new-img-input-field"
+        /> */}
       </div>
       <button onClick={submitMessage} className="send-message-button">
         Send

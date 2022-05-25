@@ -240,7 +240,7 @@ const ModalRoom = (props) => {
                 />
                 <div className='checkbox-public'>
                 Do you want to make the room public ?
-                <input name='ispublic' type='checkbox' checked={input.ispublic} onChange={handleChange}/>
+                <input name='isPublic' type='checkbox' checked={input.isPublic} onChange={handleChange}/>
                 </div>
                 <img src={selectedStory.img} alt={`${selectedStory.title} img`}/>
                 <button className='invitations-step-btn' onClick={() => setStep(2)}> {'>'}INVITATIONS</button>

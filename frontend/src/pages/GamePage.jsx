@@ -125,8 +125,7 @@ const GamePage = () => {
 
   const submitMessage = () => {
     /**
-     * utilise le hook pour poster les message via socket et dans la dB
-     * POST les msg dans la dB, minimum info : date, content, nick, userId, room
+     * utilise le hook pour poster les message via socket
      * userId permet de retrouver plus simplement si l'utilisateur est ou non le proprio d'un msg
      */
     console.log(newMessage)

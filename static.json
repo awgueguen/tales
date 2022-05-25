@@ -1,11 +1,19 @@
-{
+{  "root": "build/",
+    "routes": {
+      "/**": "index.html"
+    },
     "proxy": {
-      "/backend": {
+      "/api": {
         "target": "http://localhost:8000",
         "pathRewrite": {
-          "^/backend": "/"
+          "^/api": "/"
         }
       }
-    }
+    },
+    "proxies": {
+        "/api/": {
+          "origin": "${API_URL}"
+        }
+      }
   }
  

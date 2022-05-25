@@ -24,15 +24,15 @@ const useChat = (roomId, nickname) => {
   }
   const [messages, setMessages] = useState([]);
   const socketRef = useRef();
-  const [loadedMessage, setLoadedMessage] = useState()
+  // const [loadedMessage, setLoadedMessage] = useState()
 
   useEffect(() => {
     socketRef.current = socketIOClient(ENDPOINT);
     /**
-     * fetch de la db pour charger les msg à mettre ici ?
      * Cette page se recharge à chaque fois qu'on change un charactere donc il faut fetch la dB
      * seulement quand on change de room/de joueurs ou qu'on a une déconnexion ?
      */
+
     socketRef.current.emit("join", {room: roomId, date: dateTranslator(), log: true});
     socketRef.current.on(LISTENER_EVENT, (message) => {
       /**
@@ -50,11 +50,10 @@ const useChat = (roomId, nickname) => {
     });
 
     const request = axios.CancelToken.source()
-       const fetch = async (method, url, changeState, data=null) => {
+       const fetch = async (method, url, changeState) => {
         await axios({
             url: url,
             method: method,
-            data: data,
             headers: {Authorization: `Bearer ${authTokens.access}`},
             cancelToken: request.token,
         })
@@ -67,7 +66,6 @@ const useChat = (roomId, nickname) => {
     
     const changeMessage = (response) => {
       for (let message of response.data.messages){
-        console.log(message.createdAt)
         const incomingMessage = {
           data: message.messageContent,
           date: dateTranslator(message.createdAt),
@@ -78,9 +76,7 @@ const useChat = (roomId, nickname) => {
           isAdmin: message.is_admin,
         }
       setMessages((prev) => [...prev, incomingMessage])
-    }
-      // setMessages((messages) => [...messages, incomingMessage])
-    }
+    }}
     fetch('GET', url, changeMessage)
     // method, url, changeState, data?
     return () => {
@@ -90,9 +86,18 @@ const useChat = (roomId, nickname) => {
   }, [roomId, nickname]);
 
   const sendMessage = (messageBody, nickname, isAdmin) => {
-    /* __________
-        ajouter ici le record dans la db ?
-    __________*/ 
+    /**
+     * fonction appellée en appuyant sur Send dans l'inputMsg
+     * 
+     * TODO: réflechir à mettre le fetch dans un useEffect 
+     * avec par exemple un state qui s'incrémente au moment d'un emit
+     * et un useEffect qui prend ce state en array dependency
+     * 
+     * Est-il utile de créer une nouvelle valeur à extraire du hook genre postMessage
+     * pour le distinguer du sendMessage ??
+     */
+
+      // ________________ envoi socket
 
       socketRef.current.emit(EMIT_EVENT, {
         data: messageBody,
@@ -103,6 +108,33 @@ const useChat = (roomId, nickname) => {
         date: dateTranslator(),
         room: roomId
     });
+
+
+    // ______________ 'POST' dans la dB
+      const data = {
+        // il faudra ici ajouter l'image dès qu'on l'aura récuperé
+        sender: userId,
+        room: roomId,
+        messageContent: messageBody,
+        // image: 
+      }
+      const isSuccesfullyPosted = (response) => {
+        console.log(response)
+      }
+      const fetch = async (method, url, changeState, data) => {
+        await axios({
+            url: url,
+            method: method,
+            data: data,
+            headers: {Authorization: `Bearer ${authTokens.access}`},
+        })
+        .then ((response) => {
+            changeState(response)
+        })
+        .catch((e) => console.log('error', e))
+      }
+    const url = `http://127.0.0.1:8000/api/room-${roomId}/messages/`;
+    fetch('POST', url, isSuccesfullyPosted, data)
   };
 
   return { messages, sendMessage };

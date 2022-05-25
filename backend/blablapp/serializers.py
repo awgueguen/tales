@@ -177,6 +177,10 @@ class MessageSerializer(serializers.ModelSerializer):
         model = models.Message
         fields = '__all__'
 
+class PostedMessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Message
+        fields = '__all__'
 
 class WhisperSerializer(serializers.ModelSerializer):
     class Meta:

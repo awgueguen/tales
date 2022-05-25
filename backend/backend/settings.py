@@ -193,9 +193,9 @@ CORS_ALLOW_METHODS = [
 # --------------------------------------------------------------------------- #
 # django_heroku.settings(locals(), allowed_hosts=False)
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-import dj_database_url
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# import dj_database_url
+# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-# ça ça mparait à chier mais à suivre
-DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
+# # ça ça mparait à chier mais à suivre
+# DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)

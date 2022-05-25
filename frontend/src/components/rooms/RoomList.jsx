@@ -31,7 +31,7 @@ const RoomList = (props) => {
       img: '',
       invitations: [],
       story: {id: '', title: ''},
-      ispublic: true
+      isPublic: true
   });
   const handleChange = (e) => {
       const {name, type} = e.target
