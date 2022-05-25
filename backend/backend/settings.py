@@ -15,7 +15,7 @@ SECRET_KEY = 'django-insecure-5=&g$z5p&tbekg86dc5vestupeyzu+eu*91z#gay!$y5rcu*b^
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'dungeon-mate.herokuapp.com']
 
 
 INSTALLED_APPS = [
@@ -58,6 +58,7 @@ SIMPLE_JWT = {
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
+'whitenoise.middleware.WhiteNoiseMiddleware',
 
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -102,6 +103,9 @@ DATABASES = {
         'PORT': '5432',
     }
 }
+
+# engine = create_engine("sqlite+pysqlite:///ma_db.db")
+
 
 AUTH_USER_MODEL = 'blablapp.MyUser'
 
@@ -187,3 +191,11 @@ CORS_ALLOW_METHODS = [
 # --------------------------------------------------------------------------- #
 # USER SETTINGS                                                               #
 # --------------------------------------------------------------------------- #
+# django_heroku.settings(locals(), allowed_hosts=False)
+
+# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# import dj_database_url
+# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+# # ça ça mparait à chier mais à suivre
+# DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)

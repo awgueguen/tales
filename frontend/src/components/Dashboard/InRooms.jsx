@@ -16,7 +16,7 @@ const InRooms = ({ rooms, ...props }) => {
         <div className="inrooms__cards">
           {rooms
             ? rooms.map((room, id) => (
-                <Link to={`/rooms/${room.id}`} key={id} className="link" state={{ participant: true }}>
+                <Link to={`/rooms/${room.room.id}`} key={id} className="link" state={{ alreadyUser: true }}>
                   <InRoomCard room={room.room} admin={room.isAdmin} />
                 </Link>
               ))

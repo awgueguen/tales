@@ -23,7 +23,7 @@ const PublicRooms = ({ rooms }) => {
                       <PublicCard room={room} />
                     </div>
                   ) : (
-                    <Link to={`/rooms/${room.id}`} key={id} className="link" state={{ participant: false }}>
+                    <Link to={`/rooms/${room.id}`} key={id} className="link" state={{ alreadyUser: false }}>
                       <PublicCard room={room} />
                     </Link>
                   )

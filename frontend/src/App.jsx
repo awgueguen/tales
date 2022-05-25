@@ -7,12 +7,13 @@ import Dashboard from "@utils/Dashboard";
 import ConnectPage from "@pages/ConnectPage";
 import PrivateRoute from "@utils/PrivateRoute";
 import { AuthProvider } from "@context/AuthContext";
-/* chat ------------------------------------------------------- */
+/* dashboard ------------------------------------------------------- */
 import Rooms from "@components/Rooms";
-import CreateRoom from "@components/Rooms/CreateRoom";
-import ChatRoom from "@components/ChatRoom";
+/* game ------------------------------------------------------- */
+import GamePage from '@pages/GamePage';
 
 const App = () => {
+
   return (
     <>
       <Router>
@@ -22,8 +23,7 @@ const App = () => {
               <Route path="/" element={<PrivateRoute />}>
                 <Route path="/" element={<Dashboard />}>
                   <Route path="/" element={<Rooms />} />
-                  <Route path="/rooms/:roomId" element={<ChatRoom />} />
-                  <Route path="/createroom" element={<CreateRoom />} />
+                  <Route path="/rooms/:roomId" element={<GamePage />} />
                 </Route>
               </Route>
               <Route path="/welcome" element={<ConnectPage />} />

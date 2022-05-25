@@ -45,7 +45,7 @@ urlpatterns = [
     # associer des instances à une room & les personaliser
     # path('room-<int:room_id>/characters/', views.characters_ingame),
     # accèder aux personnages de la room
-    # path('room-<int:room_id>/messages/', views.messages_api),
+    path('room-<int:room_id>/messages/', views.messages_api),
     # récupérer les messages associées à une room
     # path('room-<int:room_id>/post/', views.post_message),
     # envoyer un message depuis / vers la room
@@ -78,5 +78,17 @@ urlpatterns = [
     # checkContactExistance, addFriendToContact
     path('contacts/add/', views.add_contact),
 
+# __________merge depuis theo _________________
+    # user related ---------------------------------------------------------- #
+    # path('user/<str:username>/add', views.add_user_api),
+    # profil utilisateur -> just myprofile
+    # path('user/<int:user_id>/contacts/', views.contacts_api),
+    # gestion des contacts utilisateurs -> just contacts/
+    path('user/contact_list/', views.user_contacts_api),
+    # gestion des contacts utilisateurs -> contacts d'un user spécifique
+    # à terme à fusionner avec le path d'Anicet
 
+    #room_part ____________________________________#
+    path('roompart/create/<int:room_id>', views.create_roompart),
+    path('roompart/list/<int:room_id>', views.get_room_participants),
 ]

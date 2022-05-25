@@ -8,6 +8,8 @@ module.exports = function override(config) {
     "@styles": "src/styles",
     "@utils": "src/utils",
     "@context": "src/context",
+    
+    "@chatroom": 'src/components/chatroom',
   })(config);
 
   return config;
