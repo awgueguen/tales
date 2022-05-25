@@ -558,7 +558,7 @@ input:not([type=checkbox]) {
 .public-rooms-card__full .public-rooms-card__img::after {
   position: absolute;
   bottom: 0.5rem;
-  right: 0.7rem;
+  right: 0.6rem;
   font-weight: 700;
   background: hsl(0deg, 0%, 14%);
   border-radius: 10px;

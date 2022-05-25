@@ -59,7 +59,7 @@ const AddFriends = ({ input, handleChange, contactList, add }) => {
       if (contact_exist && !contact_in_list) {
         const request = await addFriendToContact(input);
         if (request) {
-          setValid("Friend added !");
+          setValid("Invitiation sent !");
         } else {
           setError(message.error);
         }
