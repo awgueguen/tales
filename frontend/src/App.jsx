@@ -30,7 +30,7 @@ const App = () => {
             <Route path="/" element={<PrivateRoute />}>
               {/* anicet -------------------------------------------------------  */}
               <Route path="/displayFriends" element={<DisplayFriends />} />
-              <Route path="/displayAccount" element={<DisplayAccount />} />
+              {/* <Route path="/displayAccount" element={<DisplayAccount />} /> */}
               {/* Alexis -------------------------------------------------------  */}
               <Route path="/" element={<HomePage />} />
               {/* theo -------------------------------------------------------  */}

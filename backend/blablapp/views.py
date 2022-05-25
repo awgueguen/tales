@@ -459,7 +459,23 @@ def users_api(request, user_id):
     if request.method == 'GET':
         users = models.MyUser.objects.get(id=user_id)
         res = serializers.MyUserSerializer(users)
-        return JsonResponse({"users": res.data})
+        print('>>>>>>>>>>>>>>>>>>>>>>><',res.data)
+        return JsonResponse({"users": res.data})    
+    
+    # if request.method == 'PUT':
+    #     user = models.MyUser.objects.get(users=request)
+    #     user.field = data
+    #     user.save()
+
+    #     # users = models.MyUser.objects.get(id=user_id)
+    #     # print(users, 'users')
+    #     # serializer = serializers.MyUserSerializer(data=request.data)
+    #     # print(request.data, '>>>>>>request.data')
+    #         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    
+
 
 # --------------------------------------------------------------------------- #
 # FROM RELATED                                                                #
