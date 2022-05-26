@@ -23,14 +23,13 @@ class MyTokenObtainPairView(TokenObtainPairView):
 
     serializer_class = serializers.MyTokenObtainPairSerializer
 
-
-# @api_view(['POST'])
-# def register_user(request):
-#     serializer = serializers.RegisterSerializer(data=request.data)
-#     if serializer.is_valid():
-#         serializer.save()
-#         return Response(serializer.data, status=status.HTTP_201_CREATED)
-#     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+@api_view(['POST'])
+def register_user(request):
+    serializer = serializers.RegisterSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 # @api_view(['GET', 'POST', 'PUT'])
@@ -242,7 +241,8 @@ def create_roompart(request, room_id):
             roompart.save()
             print('_______________user crée___________')
             print(f"roompart.data after serializer: {roompart.data}\n\n\n")
-            return Response({'user': user, 'roompart': roompart.data}, status=status.HTTP_201_CREATED)
+            room_part = get_room_participant_of_this_room(request.data['user'], int(request.data['room']))
+            return Response({'user': user, 'roompart': room_part}, status=status.HTTP_201_CREATED)
         else:
             print('___________________________', roompart)
             return Response({'err':  f"problem creating {user['username']} roomppart"}, status=status.HTTP_400_BAD_REQUEST)
@@ -352,6 +352,18 @@ def post_message(request):
         return
     # TODO: Whisper & Quote views ?
 
+@api_view(['POST'])
+def background_check(request):
+
+    email, username = request.data['email'], request.data['username']
+    _email = models.MyUser.objects.filter(email=email)
+    _username = models.MyUser.objects.filter(username=username)
+    response = {'email': True, 'username': True}
+    if len(_email) > 0:
+        response['email'] = False
+    if len(_username) > 0:
+        response['username'] = False
+    return Response(data=response, status=status.HTTP_200_OK)
 
 @api_view(['PUT', 'DELETE'])
 @authentication_classes([JWTAuthentication])

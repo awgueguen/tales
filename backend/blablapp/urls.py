@@ -71,11 +71,8 @@ urlpatterns = [
     # path('user/<int:user_id>/', views.users_api),
     # path('characters/', views.characters_api),
     # path('user/<int:user_id>/tickbox/', views.tick_api),
-    # path('register/', views.register_user),
-
-    # theo ------------------------------------------------------------------ #
-    path('user/contact_list/', views.user_contacts_api),
-
+    path('register/', views.register_user),
+    path('background_check/', views.background_check),
     # * CLEAN
 
     # ----------------------------------------------------------------------- #

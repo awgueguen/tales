@@ -93,9 +93,21 @@ const GamePage = () => {
 }, []) 
 
   useEffect(() => {
+    let name, atk, hp, defense, weapon
     console.log(userDetail)
     if (userDetail.roompart.nickname === 'waiting') return
-    const {name, atk, hp, defense, weapon} = userDetail.roompart.character.characterClass
+    if (userDetail.roompart.isAdmin){
+      ({name, atk, hp, defense, weapon} = {
+        name: null,
+        atk: null,
+        hp: null,
+        defense:null,
+        weapon:null,
+      })
+    }
+    else{
+      ({name, atk, hp, defense, weapon} = userDetail.roompart.character.characterClass)
+    }
     const {isAdmin, nickname} = userDetail.roompart
     setCharacterDetail({
         isAdmin: isAdmin,
