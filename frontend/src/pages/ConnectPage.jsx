@@ -3,8 +3,8 @@
  */
 /* global ------------------------------------------------------------------ */
 import React, { useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-
+import { useNavigate, Link } from "react-router-dom";
+import axios from 'axios'
 /* context & components ---------------------------------------------------- */
 import AuthContext from "@context/AuthContext";
 import Login from "@components/ConnectPage/Login";
@@ -19,15 +19,24 @@ const ConnectPage = () => {
     password: "",
     passwordConfirmation: "",
     email: "",
-    rgpd: "",
+    rgpd: false,
   });
 
-  const handleChange = (e) => {
+  const handleChange = (e, check=null) => {
+    
+    if (check){
+      setRegister((oldState) => ({
+        ...oldState,
+        rgpd: !oldState.rgpd
+    }));
+    return
+  }
     if (e.target.parentElement.name === "connect") {
       setLogin((oldState) => ({ ...oldState, [e.target.name]: e.target.value }));
     } else if (e.target.parentElement.name === "register") {
       setRegister((oldState) => ({
         ...oldState,
+        // [e.target.name]: e.target.type === "checkbox" ? e.target.checked : e.target.value,
         [e.target.name]: e.target.type === "checkbox" ? e.target.checked : e.target.value,
       }));
     }
@@ -43,6 +52,7 @@ const ConnectPage = () => {
     if (origin) {
       loginUser({ ...login });
     } else {
+      // ici on ouvre le modal qui affiche la suite ou on navigate vers une autre page?
       console.log("register");
     }
   };
@@ -50,11 +60,12 @@ const ConnectPage = () => {
   /* lifecycle ------------------------------------------------------------- */
   let { loginUser, username } = useContext(AuthContext);
   const navigate = useNavigate();
-
+  const request = axios.CancelToken.source();
   useEffect(() => {
     if (username) {
       navigate("/");
     }
+    return request.cancel();
     // eslint-disable-next-line
   }, []);
 
@@ -70,12 +81,16 @@ const ConnectPage = () => {
           {origin ? (
             <Login values={login} handleChange={handleChange} handleSubmit={handleSubmit} />
           ) : (
-            <Register values={register} handleChange={handleChange} handleSubmit={handleSubmit} />
+            <Register values={register} handleChange={handleChange} handleSubmit={handleSubmit} request={request}/>
           )}
           <div id="connect__button">
-            <button onClick={handleSubmit} className="btn-primary">
-              {origin ? "LOGIN" : "REGISTER"}
-            </button>
+            {origin ?
+            <button onClick={handleSubmit} className="btn-primary">LOGIN</button>
+              // {/* {origin ? "LOGIN" : "REGISTER"} */}
+            :
+            <Link to='/welcome/last-step' state={{ inputs: register }}> <button className='btn-primary'>REGISTER</button>
+            </Link>
+            }
             <span>
               {origin ? "not registered yet?" : "already a member?"}{" "}
               {origin ? (

@@ -20,7 +20,7 @@ import InRooms from "./Dashboard/InRooms";
 
 const Rooms = (props) => {
   /* global ---------------------------------------------------------------- */
-  const { authTokens } = useContext(AuthContext);
+  const { authTokens, userId } = useContext(AuthContext);
   const URL_ROOM_IN = "http://localhost:8000/api/room/inroom_list/";
   const URL_PUBLIC_ROOM = "http://localhost:8000/api/room/public_list/";
 
@@ -115,7 +115,7 @@ const Rooms = (props) => {
   return (
     <div className="rooms">
       <InRooms rooms={inRoomList} />
-      <PublicRooms rooms={publicList} />
+      <PublicRooms rooms={publicList} userId={userId}/>
     </div>
   );
 };
