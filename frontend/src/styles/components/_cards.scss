@@ -1,255 +1,263 @@
 @use "../abstracts" as *;
 
 .friend-card {
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 1em;
-
-  &__image {
-    width: 4.5rem;
-    aspect-ratio: 1/1;
-    border-radius: $corner * 2;
-
-    overflow: hidden;
-
+    cursor: pointer;
     display: flex;
     align-items: center;
-    justify-content: center;
+    gap: 1em;
 
-    img {
-      height: 100%;
-      width: 100%;
-      object-fit: cover;
-      @include image-full;
+    &__image {
+        width: 4.5rem;
+        aspect-ratio: 1/1;
+        border-radius: $corner * 2;
+
+        overflow: hidden;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        img {
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
+            @include image-full;
+        }
     }
-  }
+    &__details {
+        @include flex-column-center;
+        align-items: flex-start;
+        gap: 0;
+    }
+    &__username {
+        color: setcolor(text-dk, 300);
+    }
 
-  &:hover {
-    background-color: setcolor(background-color, 200);
-    border-radius: $corner * 2;
+    &:hover {
+        background-color: setcolor(background-color, 300);
+        border-radius: $corner * 2;
 
-    transition: background-color 150ms ease-in-out;
-  }
+        transition: background-color 150ms ease-in-out;
+    }
 }
 
 .inrooms-card {
-  min-width: 15rem;
-  min-height: 22.5rem;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-
-  &__img {
-    position: relative;
-
-    width: 100%;
-    aspect-ratio: 2/3;
-    border-radius: $corner;
+    min-width: 15rem;
+    min-height: 22.5rem;
     overflow: hidden;
-
-    img {
-      height: 100%;
-      width: 100%;
-      object-fit: cover;
-      @include image-full;
-    }
-  }
-
-  &__label {
-    color: setcolor(text-wh, 300);
-    position: absolute;
-
-    height: 2rem;
-    bottom: 1rem;
-
-    width: 100%;
-    @include flex-center;
-
-    background-color: setcolor(alert, 400);
-  }
-
-  &__hover {
-    height: 100%;
-    position: absolute;
-    top: 0;
-
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
+    gap: 0.5rem;
 
-    background: rgb(0, 0, 0);
-    background: linear-gradient(
-      20deg,
-      rgba(0, 0, 0, 0.9) 0%,
-      rgba(0, 0, 0, 0.7) 20%,
-      rgba(0, 0, 0, 0.3) 100%
-    );
-    opacity: 0;
-    padding: 2rem 1rem;
-  }
+    &__img {
+        position: relative;
 
-  &:hover &__hover {
-    z-index: 1;
-    animation: fade-in 150ms ease-in;
-    transform: scale(1.025);
-    transition: transform 150ms ease-in;
-    opacity: 1;
-  }
+        width: 100%;
+        aspect-ratio: 2/3;
+        border-radius: $corner;
+        overflow: hidden;
 
-  &__add {
-    height: 100%;
-    background-color: setcolor(background-color, 400);
-    border-radius: $corner;
+        img {
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
+            @include image-full;
+        }
+    }
 
-    border: 5px dashed setcolor(background-color, 200);
+    &__label {
+        color: setcolor(text-wh, 300);
+        position: absolute;
 
-    @include flex-center;
-  }
+        height: 2rem;
+        bottom: 1rem;
+
+        width: 100%;
+        @include flex-center;
+
+        background-color: setcolor(alert, 400);
+    }
+
+    &__hover {
+        height: 100%;
+        position: absolute;
+        top: 0;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+
+        background: rgb(0, 0, 0);
+        background: linear-gradient(
+            20deg,
+            rgba(0, 0, 0, 0.9) 0%,
+            rgba(0, 0, 0, 0.7) 20%,
+            rgba(0, 0, 0, 0.3) 100%
+        );
+        opacity: 0;
+        padding: 2rem 1rem;
+    }
+
+    &:hover &__hover {
+        z-index: 1;
+        animation: fade-in 150ms ease-in;
+        transform: scale(1.025);
+        transition: transform 150ms ease-in;
+        opacity: 1;
+    }
+
+    &__add {
+        height: 100%;
+        background-color: setcolor(background-color, 400);
+        border-radius: $corner;
+
+        border: 5px dashed setcolor(background-color, 200);
+
+        @include flex-center;
+    }
 }
 
 .public-rooms-card {
-  &__full {
-    .public-rooms-card {
-      &__img {
-        z-index: 0;
+    &__full {
+        .public-rooms-card {
+            &__img {
+                z-index: 0;
 
-        img {
-          filter: grayscale(70%);
-        }
+                img {
+                    filter: grayscale(70%);
+                }
 
-        &::before {
-          z-index: 1;
-          position: absolute;
-          content: "";
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background: rgba(0, 0, 0, 0.233);
+                &::before {
+                    z-index: 1;
+                    position: absolute;
+                    content: "";
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0, 0, 0, 0.233);
+                }
+                &::after {
+                    position: absolute;
+                    bottom: 0.5rem;
+                    right: 0.6rem;
+                    font-weight: 700;
+                    background: setcolor(background-color, 400);
+                    border-radius: 10px;
+                    padding: 0.5rem 0.8rem;
+                    content: "FULL";
+                }
+            }
+            &__title {
+                color: setcolor(text-dk, 300);
+            }
+            &__hover {
+                display: none;
+            }
         }
-        &::after {
-          position: absolute;
-          bottom: 0.5rem;
-          right: 0.6rem;
-          font-weight: 700;
-          background: setcolor(background-color, 400);
-          border-radius: 10px;
-          padding: 0.5rem 0.8rem;
-          content: "FULL";
-        }
-      }
-      &__title {
-        color: setcolor(text-dk, 300);
-      }
-      &__hover {
-        display: none;
-      }
     }
-  }
 
-  min-width: 15rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  height: 100%;
-
-  > *:last-child {
-    flex: 1;
-
+    min-width: 15rem;
     display: flex;
     flex-direction: column;
-  }
-
-  &__img {
-    width: 100%;
-    aspect-ratio: 1/1;
-    border-radius: $corner;
-    overflow: hidden;
-    position: relative;
-
-    img {
-      height: 100%;
-      width: 100%;
-      object-fit: cover;
-      @include image-full;
-    }
-  }
-
-  &__hover {
-    opacity: 0;
-
-    position: absolute;
-    background: rgb(0, 0, 0);
-    background: linear-gradient(
-      20deg,
-      rgba(0, 0, 0, 0.9) 0%,
-      rgba(0, 0, 0, 0.7) 20%,
-      rgba(0, 0, 0, 0.5) 100%
-    );
+    gap: 0.5rem;
     height: 100%;
-    top: 0;
 
-    border-radius: $corner;
-    padding: 1rem;
+    > *:last-child {
+        flex: 1;
 
-    li::before {
-      margin-right: 0.5rem;
-      color: setcolor(alert, 400);
+        display: flex;
+        flex-direction: column;
     }
-  }
 
-  &:not(.public-rooms-card__full .public-rooms-card) {
-    img: {
-      filter: contrast(200%);
+    &__img {
+        width: 100%;
+        aspect-ratio: 1/1;
+        border-radius: $corner;
+        overflow: hidden;
+        position: relative;
+
+        img {
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
+            @include image-full;
+        }
     }
-  }
 
-  &:not(.public-rooms-card__full .public-rooms-card) &__title p {
-    flex: 1;
-    color: setcolor(text-dk, 400);
-    margin-top: 7px;
-    border-radius: $corner;
-    background-color: setcolor(background-color, 400);
-  }
+    &__hover {
+        opacity: 0;
 
-  &:hover:not(.public-rooms-card__full .public-rooms-card) &__hover {
-    opacity: 1;
-    animation: fade-in 150ms ease-in;
-  }
-  p {
-    padding: 0.7rem;
-  }
-  h5 {
-    margin: 0;
-  }
+        position: absolute;
+        background: rgb(0, 0, 0);
+        background: linear-gradient(
+            20deg,
+            rgba(0, 0, 0, 0.9) 0%,
+            rgba(0, 0, 0, 0.7) 20%,
+            rgba(0, 0, 0, 0.5) 100%
+        );
+        height: 100%;
+        top: 0;
+
+        border-radius: $corner;
+        padding: 1rem;
+
+        li::before {
+            margin-right: 0.5rem;
+            color: setcolor(alert, 400);
+        }
+    }
+
+    &:not(.public-rooms-card__full .public-rooms-card) {
+        img: {
+            filter: contrast(200%);
+        }
+    }
+
+    &:not(.public-rooms-card__full .public-rooms-card) &__title p {
+        flex: 1;
+        color: setcolor(text-dk, 400);
+        margin-top: 7px;
+        border-radius: $corner;
+        background-color: setcolor(background-color, 400);
+    }
+
+    &:hover:not(.public-rooms-card__full .public-rooms-card) &__hover {
+        opacity: 1;
+        animation: fade-in 150ms ease-in;
+    }
+    p {
+        padding: 0.7rem;
+    }
+    h5 {
+        margin: 0;
+    }
 }
 
 .sidebar__quickcard {
-  &__img {
-    width: 100%;
-    aspect-ratio: 1/0.4;
-    border-radius: $corner;
-    overflow: hidden;
+    &__img {
+        width: 100%;
+        aspect-ratio: 1/0.4;
+        border-radius: $corner;
+        overflow: hidden;
 
-    img {
-      height: 100%;
-      width: 100%;
-      object-fit: cover;
-      @include image-full;
+        img {
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
+            @include image-full;
+        }
     }
-  }
-  span {
-    color: setcolor(text-dk, 400);
-  }
-  &:hover {
     span {
-      color: setcolor(text-dk, 500);
-      transition: color 150ms ease-in;
+        color: setcolor(text-dk, 400);
     }
-    img {
-      filter: contrast(115%);
+    &:hover {
+        span {
+            color: setcolor(text-dk, 500);
+            transition: color 150ms ease-in;
+        }
+        img {
+            filter: contrast(115%);
+        }
     }
-  }
 }

@@ -37,12 +37,6 @@ class MyUserSerializer(serializers.ModelSerializer):
                   'email', 'nickname',  'profile_pic', 'id']
 
 
-class TickboxSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.Tickbox
-        fields = '__all__'
-
-
 class EntitySerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Entity
@@ -58,12 +52,6 @@ class EntityInstanceSerializer(serializers.ModelSerializer):
 class EventSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Event
-        fields = '__all__'
-
-
-class StorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.Story
         fields = '__all__'
 
 
@@ -85,40 +73,49 @@ class RoomParticipantSerializer(serializers.ModelSerializer):
         model = models.RoomParticipant
         fields = '__all__'
 
+
 class CharacterClassShortSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.CharacterClass
         fields = ['id', 'name', 'atk', 'defense', 'hp']
 
+
 class CharacterShortSerializer(serializers.ModelSerializer):
     characterClass = CharacterClassShortSerializer()
+
     class Meta:
         model = models.Character
         fields = ['id', 'name', 'background', 'image', 'characterClass']
 
+
 class RoomParticipantCharaSerializer(serializers.ModelSerializer):
-    # ici on utilise un résumé de character mais en utilisant le vrai charactère on pourra 
+    # ici on utilise un résumé de character mais en utilisant le vrai charactère on pourra
     # facilement avoir toutes les infos class, actions etc pour le mvp++
     character = CharacterShortSerializer()
+
     class Meta:
         model = models.RoomParticipant
         fields = ['id', 'user', 'character', 'isAdmin', 'nickname', 'hit']
-    
+
     # def save(self, **kwargs):
 
     #     return super().save(*kwargs)
 
+
 class MessageSerializer(serializers.ModelSerializer):
     sender = MyUserSerializer()
     # room = RoomSerializer()
+
     class Meta:
         model = models.Message
         fields = '__all__'
+
 
 class PostedMessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Message
         fields = '__all__'
+
 
 class WhisperSerializer(serializers.ModelSerializer):
     class Meta:
@@ -184,6 +181,12 @@ class RegisterSerializer(serializers.ModelSerializer):
         myUser.save()
         return myUser
 
+
+class TickboxSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Tickbox
+        fields = '__all__'
+
 # --------------------------------------------------------------------------- #
 # contacts serializers                                                        #
 # --------------------------------------------------------------------------- #
@@ -194,6 +197,25 @@ class ContactSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Contact
         fields = ['sender', 'receiver', 'approved']
+
+
+class ContactUserSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.MyUser
+        fields = ['username', 'nickname', 'id', 'profile_pic']
+
+
+# --------------------------------------------------------------------------- #
+# assets                                                                      #
+# --------------------------------------------------------------------------- #
+
+
+class StorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Story
+        fields = ['id', 'title', 'user', 'description',
+                  'image', 'optimalPlayers', 'isPublic', 'trigger']
 
 
 # --------------------------------------------------------------------------- #

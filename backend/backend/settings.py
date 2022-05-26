@@ -38,11 +38,18 @@ INSTALLED_APPS = [
 # REST SETTINGS ------------------------------------------------------------- #
 
 REST_FRAMEWORK = {
-
     'DEFAULT_AUTHENTIFICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
 
-    ]
+    ],
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle'
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '100/day',
+        'user': '1000/day'
+    }
 }
 # JWT SETTINGS -------------------------------------------------------------- #
 
@@ -52,13 +59,14 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=90),
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': True,
+    'UPDATE_LAST_LOGIN': True,
 }
 
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
-'whitenoise.middleware.WhiteNoiseMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

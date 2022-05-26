@@ -23,6 +23,16 @@
     }
 }
 
+@keyframes slide-in {
+    0% {
+        transform: translateY(30%);
+    }
+
+    100% {
+        transform: translateY(0);
+    }
+}
+
 @keyframes icon-error {
     0% {
         transform: translateX(0px);

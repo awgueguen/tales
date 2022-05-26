@@ -46,14 +46,15 @@ ul {
     }
 }
 
-[class^="icon__"]::before {
-    font-family: "Material Icons";
-    font-size: 1.7em;
-}
-
-span[class^="icon__"] {
-    font-family: "Material Icons";
-    font-size: 1.7em;
+[class^="icon__"] {
+    &::before {
+        font-family: "Material Icons";
+        font-size: 1.7em;
+    }
+    &::after {
+        font-family: "Material Icons";
+        font-size: 1.7em;
+    }
 }
 
 .link {
@@ -83,6 +84,11 @@ form {
         font-weight: 500;
         font-size: 0.8rem;
     }
+}
+
+.btn-text-only {
+    font-size: 0.8rem;
+    text-transform: uppercase;
 }
 
 .contacts__add ~ span {

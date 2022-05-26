@@ -28,3 +28,18 @@
     image-rendering: crisp-edges;
     -ms-interpolation-mode: nearest-neighbor; /* IE (non-standard property) */
 }
+
+@mixin scrollbars {
+    // For Google Chrome
+    &::-webkit-scrollbar {
+        width: 0.7rem;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: setcolor(background-color, 200);
+    }
+
+    &::-webkit-scrollbar-track {
+        background: setcolor(background-color, 400);
+    }
+}

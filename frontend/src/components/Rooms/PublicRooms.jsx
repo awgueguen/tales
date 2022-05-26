@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 /* components -------------------------------------------------------------- */
 import PublicCard from "./PublicCard";
 
-const PublicRooms = ({ rooms }) => {
+const PublicRooms = ({ rooms, userId }) => {
   return (
     <>
       <h4>PUBLIC ROOMS</h4>
@@ -16,6 +16,7 @@ const PublicRooms = ({ rooms }) => {
         <div className="public-rooms__cards">
           {rooms
             ? rooms
+                .filter((room) => !room.participants.some((participant) => participant.user === userId))
                 .sort((i, j) => j.maxParticipants - j.participants.length - (i.maxParticipants - i.participants.length))
                 .map((room, id) =>
                   room.participants.length === room.maxParticipants ? (

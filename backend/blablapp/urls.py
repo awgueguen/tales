@@ -31,10 +31,12 @@ urlpatterns = [
     # path('assets/classes/', views.classes_api),
     # naviguer dans les classes existantes
 
+    # * CLEAN
+    path('assets/stories/', views.stories_api),
+
     # ----------------------------------------------------------------------- #
     # ROOM                                                                    #
     # ----------------------------------------------------------------------- #
-    path('room/create/', views.create_room),
     # création d'une room
     # path('room/list/<int:user_id>', views.get_user_rooms),
 
@@ -45,20 +47,23 @@ urlpatterns = [
     # associer des instances à une room & les personaliser
     # path('room-<int:room_id>/characters/', views.characters_ingame),
     # accèder aux personnages de la room
-    path('room-<int:room_id>/messages/', views.messages_api),
     # récupérer les messages associées à une room
     # path('room-<int:room_id>/post/', views.post_message),
     # envoyer un message depuis / vers la room
 
-    # * CLEAN
+    # theo ------------------------------------------------------------------ #
+    path('room/create/', views.create_room),
+    path('room-<int:room_id>/messages/', views.messages_api),
 
-    #
+    path('roompart/list/<int:room_id>', views.get_room_participants),
+    path('roompart/create/<int:room_id>', views.create_roompart),
+
+    # * CLEAN
     path('room/quick_access', views.quick_access),
     # fetchPublicRooom
     path('room/public_list/', views.get_public_rooms),
     # fetchRoomParticipants
     path('room/inroom_list/', views.get_user_rooms_list),
-
 
     # ----------------------------------------------------------------------- #
     # USER                                                                    #
@@ -67,6 +72,10 @@ urlpatterns = [
     # path('characters/', views.characters_api),
     # path('user/<int:user_id>/tickbox/', views.tick_api),
     # path('register/', views.register_user),
+
+    # theo ------------------------------------------------------------------ #
+    path('user/contact_list/', views.user_contacts_api),
+
     # * CLEAN
 
     # ----------------------------------------------------------------------- #
@@ -74,21 +83,17 @@ urlpatterns = [
     # ----------------------------------------------------------------------- #
     # * CLEAN
     # Contacts
-    path('contacts/', views.contacts),
+    path('contacts/', views.contacts_api),
     # checkContactExistance, addFriendToContact
     path('contacts/add/', views.add_contact),
 
-# __________merge depuis theo _________________
+    # __________merge depuis theo _________________
     # user related ---------------------------------------------------------- #
     # path('user/<str:username>/add', views.add_user_api),
     # profil utilisateur -> just myprofile
     # path('user/<int:user_id>/contacts/', views.contacts_api),
     # gestion des contacts utilisateurs -> just contacts/
-    path('user/contact_list/', views.user_contacts_api),
     # gestion des contacts utilisateurs -> contacts d'un user spécifique
     # à terme à fusionner avec le path d'Anicet
 
-    #room_part ____________________________________#
-    path('roompart/create/<int:room_id>', views.create_roompart),
-    path('roompart/list/<int:room_id>', views.get_room_participants),
 ]

@@ -1,0 +1,122 @@
+@use "../abstracts" as *;
+
+.addroom {
+    &__progression {
+        position: relative;
+        width: 2em;
+        height: 4px;
+        margin-top: -5px;
+        background-color: setcolor(text-dk, 300);
+        transition: background-color 200ms ease-in;
+
+        &::before,
+        &::after {
+            content: "";
+            position: absolute;
+            width: 2em;
+            height: 4px;
+            background-color: setcolor(text-dk, 300);
+            transition: background-color 250ms ease-in-out;
+        }
+
+        &::before {
+            left: -2.5em;
+        }
+
+        &::after {
+            right: -2.5em;
+        }
+
+        &.step-one::before {
+            background-color: setcolor(alert, 500);
+        }
+        &.step-two {
+            background-color: setcolor(alert, 500);
+        }
+        &.step-three::after {
+            background-color: setcolor(alert, 500);
+        }
+    }
+
+    &__container {
+        h5,
+        h4 {
+            margin: 0;
+        }
+
+        @include scrollbars;
+        overflow-x: hidden;
+        overflow-y: scroll;
+        background-color: setcolor(background-color, 500);
+        border: none;
+        padding: 1.2rem 1.5rem;
+
+        color: setcolor(text-dk, 500);
+
+        width: min(100vw - 5rem, 30rem);
+        aspect-ratio: 1 / 1.5;
+        box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3);
+        opacity: 0;
+
+        &::backdrop {
+            background: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            @supports (-moz-appearance: none) {
+                opacity: 1;
+            }
+        }
+
+        &[open] {
+            animation: slide-in 600ms forwards, fade-in 500ms forwards;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+
+            gap: 1rem;
+
+            &::backdrop {
+                animation: fade-in 500ms forwards;
+            }
+        }
+
+        [class^="icon__"]::after {
+            color: white;
+        }
+    }
+    &__header {
+        width: 100%;
+
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    &__title {
+        text-align: center;
+    }
+    &__stories {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    &__invitations {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0rem 0.5rem;
+
+        .btn-text-only:hover {
+            color: setcolor(text-dk, 400);
+            text-decoration-line: line-through;
+        }
+    }
+
+    &__friends {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    &__input {
+        @include flex-column-center;
+    }
+}

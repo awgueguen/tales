@@ -34,6 +34,7 @@ const DisplayFriends = ({ contacts, handleToogle }) => {
         headers: { Authorization: "Bearer " + authTokens.access },
       })
         .then((response) => {
+          console.log(response.data);
           setContactList(response.data);
         })
         .catch((error) => console.log(error));
@@ -61,7 +62,7 @@ const DisplayFriends = ({ contacts, handleToogle }) => {
               .filter((user) => user.nickname.startsWith(input.toLocaleLowerCase()))
               .map((user, i) => (
                 <li key={i}>
-                  <FriendCard profilePic={user.profile_pic} nickname={user.nickname} />
+                  <FriendCard profilePic={user.profile_pic} nickname={user.nickname} username={user.username} />
                 </li>
               ))}
         </ul>

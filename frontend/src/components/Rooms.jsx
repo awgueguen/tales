@@ -1,32 +1,28 @@
 /**
- * WIP
+ * * CLEAN CODE
  */
 /* global ------------------------------------------------------------------ */
 import React, { useState, useEffect, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import AuthContext from "@context/AuthContext";
 import axios from "axios";
 
 /* components -------------------------------------------------------------- */
 
-import PublicRooms from "./Dashboard/PublicRooms";
-import InRooms from "./Dashboard/InRooms";
-
-/**
- * TODO :
- * adapter les Link (?)
- * associer les characters à l'id deja récup (useEffect l.52)
- *  quand on rejoint une room publique ouvrir un mini modèle pour personnaliser son chara/nickname... (mvp+)
- */
+import PublicRooms from "./Rooms/PublicRooms";
+import InRooms from "./Rooms/InRooms";
 
 const Rooms = (props) => {
   /* global ---------------------------------------------------------------- */
-  const { authTokens } = useContext(AuthContext);
+  const { authTokens, userId } = useContext(AuthContext);
   const URL_ROOM_IN = "http://localhost:8000/api/room/inroom_list/";
   const URL_PUBLIC_ROOM = "http://localhost:8000/api/room/public_list/";
+  const URL_CREATE = "http://127.0.0.1:8000/api/room/create/";
 
   /* states ---------------------------------------------------------------- */
   const [inRoomList, setInRoomList] = useState();
   const [publicList, setPublicList] = useState();
+  const navigate = useNavigate();
 
   /* lifecycle ------------------------------------------------------------- */
   useEffect(function fetchPublicRooms() {
@@ -72,50 +68,69 @@ const Rooms = (props) => {
   }, []);
 
   /* modal ----------------------------------------------------------------- */
-  const [modal, setModal] = useState(false);
+  const inputModel = {
+    title: "",
+    maxParticipants: "",
+    description: "",
+    invitations: [],
+    story: { id: "", title: "", description: "", maxPlayers: "" },
+    isPublic: false,
+    step: 0,
+  };
+  const [modalInput, setModalInput] = useState(inputModel);
 
   const handleModal = () => {
-    setModal(!modal);
+    const modal = document.querySelector(".addroom__container");
+    if (modal.hasAttribute("open")) {
+      modal.close();
+    } else {
+      modal.showModal();
+      if (modalInput.step === 0) {
+        setModalInput({ ...modalInput, step: 1 });
+      }
+    }
   };
 
   const handleChange = (e) => {
     const { name, type } = e.target;
-    // const file = e.target?.files
     const value = type === "checkbox" ? e.target.checked : e.target.value;
-    // if (name === "story"){
-    //     setInput({...input, story: stories.filter((s) => s.id === value)[0]})
-    //     return
-    // }
-    setInput((prevState) => ({
+    setModalInput((prevState) => ({
       ...prevState,
-      //   ...(e.target.type === 'file' && {'files': e.target.files}), // pour ajoùter une img
       [name]: value,
     }));
   };
 
-  const inputModel = {
-    title: "",
-    maxParticipants: "",
-    story_description: "",
-    invitations: [],
-    story: { id: "", title: "" },
-    isPublic: true,
-  };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const data = { room: { ...modalInput, story: modalInput.story.id } };
+    delete data.room.step;
 
-  const [input, setInput] = useState({ inputModel });
+    axios({
+      url: URL_CREATE,
+      method: "POST",
+      data: { ...data },
+      headers: { Authorization: `Bearer ${authTokens.access}` },
+    })
+      .then((response) => {
+        navigate(`../rooms/${response.data.room.id}`, { state: { alreadyUser: true }, replace: true });
+      })
 
-  const [step, setStep] = useState(0);
-  const backwardStep = () => {
-    setStep(step - 1);
+      .catch((e) => console.log("error", e));
   };
-  /* make one */
 
   /* display --------------------------------------------------------------- */
 
   return (
     <div className="rooms">
-      <InRooms rooms={inRoomList} />
-      <PublicRooms rooms={publicList} />
+      <InRooms
+        rooms={inRoomList}
+        handleModal={handleModal}
+        handleChange={handleChange}
+        handleSubmit={handleSubmit}
+        setModalInput={setModalInput}
+        modalInput={modalInput}
+      />
+      <PublicRooms rooms={publicList} userId={userId} />
     </div>
   );
 };

@@ -1,6 +1,11 @@
-[class^="icon__"]::before {
-    margin-right: 25px;
-    vertical-align: middle;
+[class^="icon__"] {
+    &::before {
+        margin-right: 25px;
+        vertical-align: middle;
+    }
+    &::after {
+        vertical-align: middle;
+    }
 }
 
 .icon {
@@ -22,7 +27,14 @@
     &__dm::before {
         content: "\ea3e";
     }
+    &__selected::before {
+        content: "\f230";
+    }
+
     &__add-friend::after {
         content: "\e7fe";
+    }
+    &__edit::after {
+        content: "\e745";
     }
 }

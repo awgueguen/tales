@@ -1,10 +1,12 @@
 """WIP"""
 from collections import OrderedDict
+from django.db.models import Q
 from django.http import JsonResponse
+from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import status, permissions
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.response import Response
-from django.db.models import Q
+from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.views import TokenObtainPairView
 
@@ -17,7 +19,10 @@ from blablapp import models
 # --------------------------------------------------------------------------- #
 
 class MyTokenObtainPairView(TokenObtainPairView):
+    throttle_classes = [UserRateThrottle, AnonRateThrottle]
+
     serializer_class = serializers.MyTokenObtainPairSerializer
+
 
 # @api_view(['POST'])
 # def register_user(request):
@@ -111,6 +116,7 @@ def quick_access(request):
 
     return Response(data=rooms.data, status=status.HTTP_200_OK)
 
+
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([permissions.IsAuthenticated])
@@ -118,12 +124,15 @@ def get_room_participants(request, room_id):
 
     # TODO:
     try:
-        roomparticipants = models.RoomParticipant.objects.filter(Q(room=room_id)) # & Q(isAdmin=False)
+        roomparticipants = models.RoomParticipant.objects.filter(
+            Q(room=room_id))  # & Q(isAdmin=False)
     except models.RoomParticipant.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
-    response = serializers.RoomParticipantCharaSerializer(roomparticipants, many=True).data
+    response = serializers.RoomParticipantCharaSerializer(
+        roomparticipants, many=True).data
     print(response)
     return Response(response, status=status.HTTP_200_OK)
+
 
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
@@ -182,6 +191,7 @@ def get_public_rooms(request):
 
     return Response(data=room_response, status=status.HTTP_200_OK)
 
+
 @api_view(['GET', 'POST', 'PUT'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([permissions.IsAuthenticated])
@@ -201,11 +211,11 @@ def create_roompart(request, room_id):
         print('allo?', request.data)
         if not (nickname := request.data.get('nickname')):
             nickname = user['nickname']
-        if not (character_id := request.data.get('character')): #id du chara
+        if not (character_id := request.data.get('character')):  # id du chara
             # models.Character.objects.get(id=character)
             character_id = 1
         # character = models.Character.objects.get(id=character_id)
-        
+
         print(f"\nnickname: {nickname}\ncharacter: {character_id}\n")
         roompart = serializers.RoomParticipantSerializer(data={
             'room': int(request.data['room']),
@@ -240,12 +250,11 @@ def create_roompart(request, room_id):
     if request.method == 'PUT':
         return
 
+
 @api_view(['POST', 'PUT'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([permissions.IsAuthenticated])
 def create_room(request):
-
-    # TODO: PUT (penser à trier le dict request.data['room'] for x in [champs_desirés] ou serializerPut ?)
 
     room = request.data['room']
 
@@ -263,8 +272,6 @@ def create_room(request):
             'user': moderator['id'],
             'isAdmin': True,
             'nickname': moderator['nickname'],
-            # 'character': 1,
-            # 'character': None,
         })
         if mod.is_valid():
             mod.save()
@@ -279,7 +286,6 @@ def create_room(request):
                 'room': res.data['id'],
                 'user': elem['id'],
                 'nickname': elem['nickname'],
-                'character': 1,
             })
             if player.is_valid():
                 player.save()
@@ -288,9 +294,6 @@ def create_room(request):
                 return Response({'err': f"player {elem['username']} couldn't be created"}, status=status.HTTP_400_BAD_REQUEST)
 
         return Response(response, status=status.HTTP_201_CREATED)
-
-    if request.method == 'PUT':
-        return
 
 
 @api_view(['GET', 'POST'])
@@ -305,9 +308,10 @@ def messages_api(request, room_id):
 
     if request.method == 'GET':
         # wanted_values = ['id', 'messageContent', 'image', 'createdAt', 'isTriggered', 'sender', 'room']
-        messages = models.Message.objects.filter(room=room_id, deleted=False)#.values(*wanted_values)
+        messages = models.Message.objects.filter(
+            room=room_id, deleted=False)  # .values(*wanted_values)
         response = serializers.MessageSerializer(messages, many=True).data
-        return Response({'messages' : response}, status=status.HTTP_200_OK)
+        return Response({'messages': response}, status=status.HTTP_200_OK)
 
     if request.method == 'POST':
         # TODO : ajouter whisper, img, etc..
@@ -318,19 +322,20 @@ def messages_api(request, room_id):
         room = models.Room.objects.get(id=int(request.data['room']))
         sender = serializers.MyUserSerializer(user).data
         room = serializers.RoomSerializer(room).data
-        ser = serializers.PostedMessageSerializer(data={'sender': sender['id'], 'room': room['id'], 'messageContent': messageContent})
+        ser = serializers.PostedMessageSerializer(
+            data={'sender': sender['id'], 'room': room['id'], 'messageContent': messageContent})
         if ser.is_valid():
             ser.save()
-            return Response({'message' : ser.data}, status=status.HTTP_201_CREATED)
+            return Response({'message': ser.data}, status=status.HTTP_201_CREATED)
         return Response(ser.errors, status=status.HTTP_400_BAD_REQUEST)
-        
+
 
 #  sender = models.MyUser.objects.get(username=request.user)
 
 #         receiver = serializers.MyUserSerializer(receiver).data['id']
 #         sender = serializers.MyUserSerializer(sender).data['id']
-      
-#         serializer = serializers.ContactSerializer(data={'sender': sender, 'receiver': receiver, 'approved': True})   
+
+#         serializer = serializers.ContactSerializer(data={'sender': sender, 'receiver': receiver, 'approved': True})
 #         if serializer.is_valid():
 #             serializer.save()
 #             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -365,6 +370,24 @@ def edit_messages(request):
 # USER SETTINGS                                                               #
 # --------------------------------------------------------------------------- #
 
+# --------------------------------------------------------------------------- #
+# ASSSETS                                                                     #
+# --------------------------------------------------------------------------- #
+
+@api_view(['GET', 'PUT', 'DELETE'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([permissions.IsAuthenticated])
+def stories_api(request):
+
+    if request.method == 'GET':
+        stories = models.Story.objects.all()
+        res = serializers.StoryModalSerializer(stories, many=True)
+        return Response(data=res.data, status=status.HTTP_200_OK)
+
+    if request.method == 'PUT':
+        return
+    if request.method == 'DELETE':
+        return
 
 # --------------------------------------------------------------------------- #
 # CONTACTS                                                                    #
@@ -374,7 +397,7 @@ def edit_messages(request):
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([permissions.IsAuthenticated])
-def contacts(request):
+def contacts_api(request):
     """OK"""
     user = request.user
     contact_list = models.Contact.objects.filter(
@@ -383,7 +406,7 @@ def contacts(request):
     receiver = contact_list.values_list('receiver__id', flat=True)
     contact_list = models.MyUser.objects.filter(
         Q(id__in=sender) | Q(id__in=receiver), ~Q(username=user))
-    res = serializers.MyUserSerializer(contact_list, many=True)
+    res = serializers.ContactUserSerializer(contact_list, many=True)
     return Response(data=res.data, status=status.HTTP_200_OK)
 
 
@@ -416,29 +439,31 @@ def add_contact(request):
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        
+
 
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([permissions.IsAuthenticated])
 def user_contacts_api(request):
-# util par theo à clean potentiellement?
+    # util par theo à clean potentiellement?
     # TODO: all
     user_id = get_user_detail(request.user)['id']
-    
+
     if request.method == 'GET':
         try:
-            contacts = models.Contact.objects.filter(Q(sender=user_id) | Q(receiver=user_id)).distinct().filter(approved=True)
+            contacts_list = models.Contact.objects.filter(Q(sender=user_id) | Q(
+                receiver=user_id)).distinct().filter(approved=True)
             # filter(approved=True)
-        except models.Contact.DoesNotExit:
+        except ObjectDoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
-        res = serializers.ContactSerializer(contacts, many=True).data
-        friends_ids = [elem['receiver'] if elem['sender'] == user_id else elem['sender'] for elem in res]
-        
+        res = serializers.ContactSerializer(contacts_list, many=True).data
+        friends_ids = [elem['receiver'] if elem['sender']
+                       == user_id else elem['sender'] for elem in res]
+
         try:
             friends = models.MyUser.objects.filter(id__in=friends_ids)
-        except models.User.DoesNotExist:
+        except models.MyUser.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
         response = serializers.MyUserSerializer(friends, many=True)
@@ -478,21 +503,24 @@ def get_room_participants_by_user_id(user_id: int) -> 'list[OrderedDict]':
             user_id=user_id)
     except models.RoomParticipant.DoesNotExist:
         return f'error: (get_by_id) user with id {user_id} not found'
-    rooms_participants = serializers.RoomParticipantSerializer(rooms_participants_, many=True)
+    rooms_participants = serializers.RoomParticipantSerializer(
+        rooms_participants_, many=True)
     return rooms_participants.data
 
 
-def get_room_participant_of_this_room(user_id:int, room_id:int) -> OrderedDict:
-    
+def get_room_participant_of_this_room(user_id: int, room_id: int) -> OrderedDict:
+
     try:
-        room_participant_ = models.RoomParticipant.objects.get(Q(room__id=room_id) & Q(user__id=user_id))
+        room_participant_ = models.RoomParticipant.objects.get(
+            Q(room__id=room_id) & Q(user__id=user_id))
     except models.RoomParticipant.DoesNotExist:
         return f'error: (get_this_room) user with id {user_id} not found'
-    room_participant = serializers.RoomParticipantCharaSerializer(room_participant_)
+    room_participant = serializers.RoomParticipantCharaSerializer(
+        room_participant_)
     return room_participant.data
 
 
-def get_room_participants_by_room_list(room_list:'list[int]') -> 'list[OrderedDict]':
+def get_room_participants_by_room_list(room_list: 'list[int]') -> 'list[OrderedDict]':
 
     try:
         rooms_participants_ = models.RoomParticipant.objects.filter(

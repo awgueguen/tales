@@ -1,19 +1,16 @@
 import React, { Fragment } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-/* components -------------------------------------------------------------- */
 /* layout ------------------------------------------------------------------ */
 import Dashboard from "@utils/Dashboard";
 /* authentifications ------------------------------------------------------- */
 import ConnectPage from "@pages/ConnectPage";
 import PrivateRoute from "@utils/PrivateRoute";
 import { AuthProvider } from "@context/AuthContext";
-/* dashboard ------------------------------------------------------- */
+/* outlet ------------------------------------------------------------------ */
 import Rooms from "@components/Rooms";
-/* game ------------------------------------------------------- */
-import GamePage from '@pages/GamePage';
+import GamePage from "@pages/GamePage";
 
 const App = () => {
-
   return (
     <>
       <Router>

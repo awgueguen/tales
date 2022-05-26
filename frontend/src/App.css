@@ -14,6 +14,14 @@
     opacity: 0;
   }
 }
+@keyframes slide-in {
+  0% {
+    transform: translateY(30%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
 @keyframes icon-error {
   0% {
     transform: translateX(0px);
@@ -100,8 +108,7 @@ ul .active {
   font-family: "Material Icons";
   font-size: 1.7em;
 }
-
-span[class^=icon__] {
+[class^=icon__]::after {
   font-family: "Material Icons";
   font-size: 1.7em;
 }
@@ -132,6 +139,11 @@ form {
 .btn-primary ~ span {
   font-weight: 500;
   font-size: 0.8rem;
+}
+
+.btn-text-only {
+  font-size: 0.8rem;
+  text-transform: uppercase;
 }
 
 .contacts__add ~ span {
@@ -389,34 +401,142 @@ select {
   transition: background-color 350ms;
 }
 
-.btn-close {
+.btn-secondary {
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: none;
+  border-radius: 5px;
+}
+.btn-secondary:hover, .btn-secondary:focus {
+  background-color: hsl(0deg, 0%, 100%);
+  transition: background-color 350ms;
+}
+
+.btn-close,
+.btn-back {
   cursor: pointer;
   background: none;
   color: hsl(0deg, 0%, 100%);
   border: none;
-  margin-right: -10px;
+  margin: 0px -10px;
+  transition: all 100ms ease-in;
 }
-.btn-close:hover .btn-close__icon {
+.btn-close:hover .btn-close__icon,
+.btn-close:hover .btn-back__icon,
+.btn-back:hover .btn-close__icon,
+.btn-back:hover .btn-back__icon {
   transform: rotate(1.25turn);
   transition: transform 700ms ease-in-out;
 }
+.btn-close.inactive,
+.btn-back.inactive {
+  cursor: default;
+  color: hsl(0deg, 0%, 54%);
+}
 
-input {
+.btn-story {
+  background: none;
+  border: none;
+  color: hsl(0deg, 0%, 100%);
+}
+.btn-story__image {
+  cursor: pointer;
+  width: 100%;
+  aspect-ratio: 1/0.33;
+  border-radius: 5px;
+  overflow: hidden;
+}
+.btn-story__image img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  image-rendering: -moz-crisp-edges;
+  /* Firefox */
+  image-rendering: -o-crisp-edges;
+  /* Opera */
+  image-rendering: -webkit-optimize-contrast;
+  /* Webkit (non-standard naming) */
+  image-rendering: crisp-edges;
+  -ms-interpolation-mode: nearest-neighbor;
+  /* IE (non-standard property) */
+}
+.btn-story__image:hover img {
+  filter: contrast(115%);
+}
+.btn-story__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-top: 0.3rem;
+}
+.btn-story__description {
+  text-align: left;
+  color: hsl(0deg, 0%, 60%);
+}
+
+.btn-friend {
+  cursor: pointer;
+  position: relative;
+  background: none;
+  border: none;
+  color: hsl(0deg, 0%, 100%);
+}
+.btn-friend > span {
+  color: hsl(0deg, 100%, 68%);
+  position: absolute;
+  right: 0;
+  height: inherit;
+  top: 1.5rem;
+  opacity: 0;
+}
+.btn-friend.selected > span {
+  animation: fade-in 250ms forwards;
+}
+.btn-friend.selected .friend-card {
+  background-color: hsl(0deg, 0%, 14%);
+  border-radius: 5px;
+}
+.btn-friend.selected .friend-card:hover {
+  background-color: hsl(0deg, 0%, 9%);
+  transition: background-color 350ms;
+}
+
+.btn-text-only {
+  cursor: pointer;
+  background: none;
+  border: none;
+  color: hsl(140deg, 75%, 63%);
+}
+
+input,
+textarea {
   color: white;
-  padding: 0.7rem 0.6rem;
   outline: 0;
   background: none;
+  padding: 0.7rem 0.6rem;
   border-width: 0 0 1px;
   border-color: hsl(0deg, 0%, 60%);
   transition: background-color 150ms ease-in;
 }
-input::placeholder {
+input::placeholder,
+textarea::placeholder {
   color: hsl(0deg, 0%, 54%);
   padding: 0.4rem;
 }
-input:hover, input:focus {
+input:hover, input:focus,
+textarea:hover,
+textarea:focus {
   background-color: hsla(0deg, 0%, 0%, 0.308);
   transition: background-color 150ms ease-in;
+}
+
+textarea {
+  width: 100%;
+  resize: none;
 }
 
 input:not([type=checkbox]) {
@@ -426,6 +546,35 @@ input:not([type=checkbox]) {
 .input-checkbox {
   display: flex;
   gap: 0.5rem;
+}
+
+.input-default::placeholder {
+  color: hsl(0deg, 0%, 60%);
+}
+
+.addroom__input-field {
+  position: relative;
+}
+.addroom__input-field input ~ span {
+  position: absolute;
+  right: 0;
+  top: 5px;
+}
+.addroom__input-field textarea ~ span {
+  position: absolute;
+  right: 0;
+  bottom: 10px;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
 }
 
 .friend-card {
@@ -457,8 +606,19 @@ input:not([type=checkbox]) {
   -ms-interpolation-mode: nearest-neighbor;
   /* IE (non-standard property) */
 }
+.friend-card__details {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2rem;
+  align-items: flex-start;
+  gap: 0;
+}
+.friend-card__username {
+  color: hsl(0deg, 0%, 54%);
+}
 .friend-card:hover {
-  background-color: hsl(0deg, 0%, 23%);
+  background-color: hsl(0deg, 0%, 18%);
   border-radius: 10px;
   transition: background-color 150ms ease-in-out;
 }
@@ -723,6 +883,9 @@ input:not([type=checkbox]) {
   margin-right: 25px;
   vertical-align: middle;
 }
+[class^=icon__]::after {
+  vertical-align: middle;
+}
 
 .icon__room::before {
   content: "\eb4f";
@@ -742,8 +905,14 @@ input:not([type=checkbox]) {
 .icon__dm::before {
   content: "\ea3e";
 }
+.icon__selected::before {
+  content: "\f230";
+}
 .icon__add-friend::after {
   content: "\e7fe";
+}
+.icon__edit::after {
+  content: "\e745";
 }
 
 .header {
@@ -804,25 +973,117 @@ input:not([type=checkbox]) {
   gap: 1rem;
 }
 
-.limite_composant {
-  border: 2px solid black;
-  padding-bottom: 20px;
+.addroom__progression {
+  position: relative;
+  width: 2em;
+  height: 4px;
+  margin-top: -5px;
+  background-color: hsl(0deg, 0%, 54%);
+  transition: background-color 200ms ease-in;
 }
-
-.my-message{
-  border-left: 5px solid blue;
-  padding-left: 400px;
+.addroom__progression::before, .addroom__progression::after {
+  content: "";
+  position: absolute;
+  width: 2em;
+  height: 4px;
+  background-color: hsl(0deg, 0%, 54%);
+  transition: background-color 250ms ease-in-out;
 }
-.received-message{
-  border-left: 5px solid red;
+.addroom__progression::before {
+  left: -2.5em;
 }
-
-.admin-message{
-  border-right: 5px solid black;
+.addroom__progression::after {
+  right: -2.5em;
 }
-.my-message, .received-message, .admin-message{
-  margin: 5px;
+.addroom__progression.step-one::before {
+  background-color: hsl(140deg, 93%, 60%);
 }
-/* "my-message" : "received-message" */
+.addroom__progression.step-two {
+  background-color: hsl(140deg, 93%, 60%);
+}
+.addroom__progression.step-three::after {
+  background-color: hsl(140deg, 93%, 60%);
+}
+.addroom__container {
+  overflow-x: hidden;
+  overflow-y: scroll;
+  background-color: hsl(0deg, 0%, 9%);
+  border: none;
+  padding: 1.2rem 1.5rem;
+  color: hsl(0deg, 0%, 100%);
+  width: min(100vw - 5rem, 30rem);
+  aspect-ratio: 1/1.5;
+  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+}
+.addroom__container h5,
+.addroom__container h4 {
+  margin: 0;
+}
+.addroom__container::-webkit-scrollbar {
+  width: 0.7rem;
+}
+.addroom__container::-webkit-scrollbar-thumb {
+  background: hsl(0deg, 0%, 23%);
+}
+.addroom__container::-webkit-scrollbar-track {
+  background: hsl(0deg, 0%, 14%);
+}
+.addroom__container::backdrop {
+  background: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+}
+@supports (-moz-appearance: none) {
+  .addroom__container::backdrop {
+    opacity: 1;
+  }
+}
+.addroom__container[open] {
+  animation: slide-in 600ms forwards, fade-in 500ms forwards;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.addroom__container[open]::backdrop {
+  animation: fade-in 500ms forwards;
+}
+.addroom__container [class^=icon__]::after {
+  color: white;
+}
+.addroom__header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.addroom__title {
+  text-align: center;
+}
+.addroom__stories {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+.addroom__invitations {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0rem 0.5rem;
+}
+.addroom__invitations .btn-text-only:hover {
+  color: hsl(0deg, 0%, 60%);
+  text-decoration-line: line-through;
+}
+.addroom__friends {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+.addroom__input {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2rem;
+}
 
 /*# sourceMappingURL=App.css.map */

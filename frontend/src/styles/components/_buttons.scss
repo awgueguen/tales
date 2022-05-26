@@ -7,7 +7,7 @@
     transition: background-color 350ms ease-in;
 
     border: 0px;
-    border-radius: 5px;
+    border-radius: $corner;
 
     padding: 0.7rem;
 
@@ -28,17 +28,118 @@
     }
 }
 
-.btn-close {
+.btn-secondary {
+    cursor: pointer;
+    @include flex-center;
+    gap: 1rem;
+    padding: 1rem;
+
+    border: none;
+    border-radius: $corner;
+    background-color: setcolor(secondary, 300);
+
+    &:hover,
+    &:focus {
+        background-color: setcolor(secondary, 500);
+        transition: background-color 350ms;
+    }
+}
+
+.btn-close,
+.btn-back {
     cursor: pointer;
 
     background: none;
     color: setcolor(text-dk, 500);
     border: none;
+    margin: 0px -10px;
 
-    margin-right: -10px;
+    transition: all 100ms ease-in;
 
     &:hover &__icon {
         transform: rotate(1.25turn);
         transition: transform 700ms ease-in-out;
     }
+
+    &.inactive {
+        cursor: default;
+        color: setcolor(text-dk, 300);
+    }
+}
+
+.btn-story {
+    background: none;
+    border: none;
+    color: setcolor(text-dk, 500);
+
+    &__image {
+        cursor: pointer;
+        width: 100%;
+        aspect-ratio: 1/0.33;
+        border-radius: $corner;
+        overflow: hidden;
+
+        img {
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
+            @include image-full;
+        }
+        &:hover {
+            img {
+                filter: contrast(115%);
+            }
+        }
+    }
+    &__header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+
+        margin-top: 0.3rem;
+    }
+    &__description {
+        text-align: left;
+        color: setcolor(text-dk, 400);
+    }
+}
+
+.btn-friend {
+    cursor: pointer;
+    position: relative;
+    background: none;
+    border: none;
+    color: setcolor(text-dk, 500);
+
+    > span {
+        color: setcolor(error, 500);
+        position: absolute;
+        right: 0;
+        height: inherit;
+        top: 1.5rem;
+        opacity: 0;
+        // animation: fade-out 100ms forwards;
+    }
+
+    &.selected {
+        > span {
+            animation: fade-in 250ms forwards;
+        }
+        .friend-card {
+            background-color: setcolor(background-color, 400);
+            border-radius: $corner;
+            &:hover {
+                background-color: setcolor(background-color, 500);
+                transition: background-color 350ms;
+            }
+        }
+    }
+}
+
+.btn-text-only {
+    cursor: pointer;
+    background: none;
+    border: none;
+    color: setcolor(alert, 400);
+
 }

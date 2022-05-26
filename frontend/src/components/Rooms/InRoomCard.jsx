@@ -15,7 +15,7 @@ const InRoomCard = ({ room, admin }) => {
         <div className="inrooms-card__img">
           <img src={storyImage} alt={storyTitle} />
           <div className="inrooms-card__hover">
-            <h4>{storyTitle}</h4>
+            {/* <h4>{storyTitle}</h4> */}
             <p>{description}</p>
           </div>
           {admin ? (

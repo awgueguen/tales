@@ -1,12 +1,12 @@
 @use "../abstracts" as *;
 
-input {
+input,
+textarea {
     color: white;
-
-    padding: 0.7rem 0.6rem;
 
     outline: 0;
     background: none;
+    padding: 0.7rem 0.6rem;
 
     border-width: 0 0 1px;
     border-color: setcolor(text-dk, 400);
@@ -24,6 +24,11 @@ input {
     }
 }
 
+textarea {
+    width: 100%;
+    resize: none;
+}
+
 input:not([type="checkbox"]) {
     width: 100%;
 }
@@ -33,4 +38,35 @@ input:not([type="checkbox"]) {
         display: flex;
         gap: 0.5rem;
     }
+}
+
+.input-default {
+    &::placeholder {
+        color: setcolor(text-dk, 400);
+    }
+}
+
+.addroom__input-field {
+    position: relative;
+    input ~ span {
+        position: absolute;
+        right: 0;
+        top: 5px;
+    }
+    textarea ~ span {
+        position: absolute;
+        right: 0;
+        bottom: 10px;
+    }
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+    -moz-appearance: textfield;
 }

@@ -7,8 +7,9 @@ import { Link } from "react-router-dom";
 
 /* components -------------------------------------------------------------- */
 import InRoomCard from "./InRoomCard";
+import AddRoomModal from "./AddRoomModal";
 
-const InRooms = ({ rooms, ...props }) => {
+const InRooms = ({ rooms, handleModal, ...props }) => {
   return (
     <>
       <h4>MY ROOMS</h4>
@@ -23,7 +24,10 @@ const InRooms = ({ rooms, ...props }) => {
             : "Loading..."}
           <div className="inrooms-card">
             <div className="inrooms-card__add">
-              <h5>CREATE NEW ROOM</h5>
+              <button className="btn-text-only" onClick={handleModal}>
+                <h5>CREATE NEW ROOM</h5>
+              </button>
+              <AddRoomModal handleModal={handleModal} {...props} />
             </div>
           </div>
         </div>
