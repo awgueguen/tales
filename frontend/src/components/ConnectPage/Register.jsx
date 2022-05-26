@@ -5,7 +5,7 @@
 import React, { useEffect, useState } from "react";
 import axios from 'axios';
 
-const Register = ({ values, handleChange, handleSubmit, request }) => {
+const Register = ({ values, handleChange, handleSubmit, request, setNextStep }) => {
 
   /**
    * TODO: 
@@ -19,7 +19,7 @@ const Register = ({ values, handleChange, handleSubmit, request }) => {
   const { username, password, passwordConfirmation, email, rgpd } = values;
   const [diffPassword, setDiffPassword] = useState(false)
   const [emptyFields, setEmptyFields] = useState(false)
-  const [nextStep, setNextStep] = useState(false)
+  
   const errorMessages = {
     password: "This password isn't secure enough",
     email: "This mail is already used",
@@ -29,25 +29,29 @@ const Register = ({ values, handleChange, handleSubmit, request }) => {
   }
   const [formError, setFormError] = useState({
     password: {
-      status: false,
+      status: true,
       empty: false,
     },
     email: {
-      status: false,
+      status: true,
       empty: false,
     },
     username: {
-      status: false,
+      status: true,
       empty: false,
     },
     rgpd: {
-      status: false,
+      status: true,
     },
     empty: {
-      status: false
+      status: true
     }})
-
+    const doubleCheck = (e) => {
+      checkForm();
+      handleChange(e);
+    }
   const checkForm = () => {
+    console.log('test', rgpd)
     let errorWithInput = []
     const newFormError = {...formError}
     /* empty check________________________________________________*/
@@ -73,8 +77,6 @@ const Register = ({ values, handleChange, handleSubmit, request }) => {
         newFormError.password.status = false
 
       }
-        console.log(rgpd)
-
       if (!rgpd){
         // setFormError((prev) => ({...prev, rgpd: {...prev.rgpd, status: true}}))
         newFormError.rgpd.status = true
@@ -98,17 +100,13 @@ const Register = ({ values, handleChange, handleSubmit, request }) => {
               const {email, username} = response.data
               if (email) {
                 newFormError.email.status = false
-                errorWithInput.push(false)
               }else {
                 newFormError.email.status = true
-                errorWithInput.push(true)
               }
               if (username) {
                 newFormError.username.status = false
-                errorWithInput.push(true)
               } else {
                 newFormError.username.status = true
-                errorWithInput.push(false)
               }
             })
             .catch((e) => console.log("error", e));
@@ -120,6 +118,8 @@ const Register = ({ values, handleChange, handleSubmit, request }) => {
       
     }
     useEffect( () => {
+      checkPasswords()
+      console.log(Object.keys(formError))
       const fields = Object.keys(formError).map((i) => formError[i].status)
       console.log('fields', fields)
       if (fields.some((field) => field) || diffPassword) {setNextStep(false); return}
@@ -140,22 +140,21 @@ const Register = ({ values, handleChange, handleSubmit, request }) => {
   return (
     <>
       <form name="register" onSubmit={handleSubmit}>
-        <input value={username} onChange={handleChange} type="text" name="username"
+        <input value={username} onChange={doubleCheck} type="text" name="username"
           placeholder="username" />
-        <input value={password} onChange={handleChange} type="password" name="password"
+        <input value={password} onChange={doubleCheck} type="password" name="password"
           placeholder="password" onBlur={checkPasswords}/>
-        <input value={passwordConfirmation} onChange={handleChange} type="password"
+        <input value={passwordConfirmation} onChange={doubleCheck} type="password"
           name="passwordConfirmation" placeholder="re-type password"
           onBlur={checkPasswords}/>
         {diffPassword ? <p>Passwords are not the same</p> : ''}
-        <input value={email} onChange={handleChange} type="email" name="email" placeholder="email" />
-        <label className="input-checkbox">
-          <input checked={rgpd} type="checkbox" name="rgpd" onChange={(e) => handleChange(e, 'check')}/>I agree with the terms and conditions.
+        <input value={email} onChange={doubleCheck} type="email" name="email" placeholder="email" />
+        <label className="input-checkbox" name='register'>
+          <input checked={rgpd} type="checkbox" name="rgpd" onChange={(e) => {handleChange(e, 'check'); checkForm()}}/>I agree with the terms and conditions.
         </label>
-        <div></div>
-        <div onClick={checkForm}>click to test</div> {/* nth chilf 6 display: none pk ? */}
+        {/* <div onClick={checkForm}>click to test</div> nth chilf 6 display: none pk ? */}
 
-        {/* <input type="submit" /> */}
+        <input type="submit" />
       </form>
     </>
   );

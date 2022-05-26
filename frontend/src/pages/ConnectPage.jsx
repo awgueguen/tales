@@ -14,6 +14,7 @@ const ConnectPage = () => {
   /* form handling --------------------------------------------------------- */
   const [origin, setOrigin] = useState(true);
   const [login, setLogin] = useState({ username: "", password: "" });
+  const [nextStep, setNextStep] = useState(false)
   const [register, setRegister] = useState({
     username: "",
     password: "",
@@ -24,19 +25,20 @@ const ConnectPage = () => {
 
   const handleChange = (e, check=null) => {
     
-    if (check){
-      setRegister((oldState) => ({
-        ...oldState,
-        rgpd: !oldState.rgpd
-    }));
-    return
-  }
+  //   if (check){
+  //     setRegister((oldState) => ({
+  //       ...oldState,
+  //       rgpd: !oldState.rgpd
+  //   }));
+  //   return
+  // }
+  console.log(e.target)
     if (e.target.parentElement.name === "connect") {
       setLogin((oldState) => ({ ...oldState, [e.target.name]: e.target.value }));
-    } else if (e.target.parentElement.name === "register") {
+    } else if (e.target.parentElement.name === "register" || e.target.type === "checkbox" ) {
+      console.log('target')
       setRegister((oldState) => ({
         ...oldState,
-        // [e.target.name]: e.target.type === "checkbox" ? e.target.checked : e.target.value,
         [e.target.name]: e.target.type === "checkbox" ? e.target.checked : e.target.value,
       }));
     }
@@ -53,7 +55,12 @@ const ConnectPage = () => {
       loginUser({ ...login });
     } else {
       // ici on ouvre le modal qui affiche la suite ou on navigate vers une autre page?
+      if (!nextStep) {
       console.log("register");
+      return
+      }
+      console.log('succes')
+      navigate('/welcome/last-step', {state:{ inputs: register }})
     }
   };
 
@@ -81,16 +88,12 @@ const ConnectPage = () => {
           {origin ? (
             <Login values={login} handleChange={handleChange} handleSubmit={handleSubmit} />
           ) : (
-            <Register values={register} handleChange={handleChange} handleSubmit={handleSubmit} request={request}/>
+            <Register values={register} handleChange={handleChange} handleSubmit={handleSubmit} request={request} setNextStep={setNextStep}/>
           )}
           <div id="connect__button">
-            {origin ?
-            <button onClick={handleSubmit} className="btn-primary">LOGIN</button>
-              // {/* {origin ? "LOGIN" : "REGISTER"} */}
-            :
-            <Link to='/welcome/last-step' state={{ inputs: register }}> <button className='btn-primary'>REGISTER</button>
-            </Link>
-            }
+            <button onClick={handleSubmit} className="btn-primary">
+              {origin ? "LOGIN" : "REGISTER"}
+            </button>
             <span>
               {origin ? "not registered yet?" : "already a member?"}{" "}
               {origin ? (
