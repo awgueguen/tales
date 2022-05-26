@@ -18,14 +18,12 @@
         justify-content: center;
 
         img {
-            height: 100%;
-            width: 100%;
-            object-fit: cover;
-            @include image-full;
+            @include image-cover;
         }
     }
     &__details {
         @include flex-column-center;
+
         align-items: flex-start;
         gap: 0;
     }
@@ -35,6 +33,7 @@
 
     &:hover {
         background-color: setcolor(background-color, 300);
+
         border-radius: $corner * 2;
 
         transition: background-color 150ms ease-in-out;
@@ -51,31 +50,25 @@
 
     &__img {
         position: relative;
-
         width: 100%;
         aspect-ratio: 2/3;
         border-radius: $corner;
         overflow: hidden;
 
         img {
-            height: 100%;
-            width: 100%;
-            object-fit: cover;
-            @include image-full;
+            @include image-cover;
         }
     }
 
     &__label {
+        @include flex-center;
         color: setcolor(text-wh, 300);
-        position: absolute;
+        background-color: setcolor(alert, 400);
 
+        position: absolute;
         height: 2rem;
         bottom: 1rem;
-
         width: 100%;
-        @include flex-center;
-
-        background-color: setcolor(alert, 400);
     }
 
     &__hover {
@@ -100,24 +93,30 @@
 
     &:hover &__hover {
         z-index: 1;
-        animation: fade-in 150ms ease-in;
         transform: scale(1.025);
-        transition: transform 150ms ease-in;
         opacity: 1;
+
+        transition: transform 150ms ease-in;
+        animation: fade-in 150ms ease-in;
     }
 
     &__add {
-        height: 100%;
-        background-color: setcolor(background-color, 400);
-        border-radius: $corner;
-
-        border: 5px dashed setcolor(background-color, 200);
-
         @include flex-center;
+        background-color: setcolor(background-color, 400);
+
+        height: 100%;
+        border-radius: $corner;
+        border: 5px dashed setcolor(background-color, 200);
     }
 }
 
 .public-rooms-card {
+    min-width: 15rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    height: 100%;
+
     &__full {
         .public-rooms-card {
             &__img {
@@ -138,11 +137,12 @@
                     background: rgba(0, 0, 0, 0.233);
                 }
                 &::after {
+                    background: setcolor(background-color, 400);
+
                     position: absolute;
                     bottom: 0.5rem;
                     right: 0.6rem;
                     font-weight: 700;
-                    background: setcolor(background-color, 400);
                     border-radius: 10px;
                     padding: 0.5rem 0.8rem;
                     content: "FULL";
@@ -157,15 +157,8 @@
         }
     }
 
-    min-width: 15rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    height: 100%;
-
     > *:last-child {
         flex: 1;
-
         display: flex;
         flex-direction: column;
     }
@@ -178,16 +171,12 @@
         position: relative;
 
         img {
-            height: 100%;
-            width: 100%;
-            object-fit: cover;
-            @include image-full;
+            @include image-cover;
         }
     }
 
     &__hover {
         opacity: 0;
-
         position: absolute;
         background: rgb(0, 0, 0);
         background: linear-gradient(
@@ -198,13 +187,13 @@
         );
         height: 100%;
         top: 0;
-
         border-radius: $corner;
         padding: 1rem;
 
         li::before {
-            margin-right: 0.5rem;
             color: setcolor(alert, 400);
+
+            margin-right: 0.5rem;
         }
     }
 
@@ -215,15 +204,17 @@
     }
 
     &:not(.public-rooms-card__full .public-rooms-card) &__title p {
-        flex: 1;
+        background-color: setcolor(background-color, 400);
         color: setcolor(text-dk, 400);
+
+        flex: 1;
         margin-top: 7px;
         border-radius: $corner;
-        background-color: setcolor(background-color, 400);
     }
 
     &:hover:not(.public-rooms-card__full .public-rooms-card) &__hover {
         opacity: 1;
+
         animation: fade-in 150ms ease-in;
     }
     p {
@@ -242,10 +233,7 @@
         overflow: hidden;
 
         img {
-            height: 100%;
-            width: 100%;
-            object-fit: cover;
-            @include image-full;
+            @include image-cover;
         }
     }
     span {
@@ -254,6 +242,7 @@
     &:hover {
         span {
             color: setcolor(text-dk, 500);
+
             transition: color 150ms ease-in;
         }
         img {

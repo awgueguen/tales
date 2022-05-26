@@ -15,24 +15,19 @@
         gap: 1rem;
 
         li {
-            cursor: pointer;
+            background-color: setcolor(background-color, 300);
 
+            cursor: pointer;
             width: 3.5rem;
             aspect-ratio: 1/1;
             border-radius: 50%;
-
-            background-color: setcolor(background-color, 300);
             overflow: hidden;
-
             display: flex;
             align-items: center;
             justify-content: center;
 
             img {
-                height: 100%;
-                width: 100%;
-                object-fit: cover;
-                @include image-full;
+                @include image-cover;
             }
         }
     }

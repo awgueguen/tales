@@ -4,7 +4,8 @@
     min-height: 100vh;
     background: url("../media/static/landing_background.png") no-repeat center
         center fixed;
-    @include image-cover;
+    @include image-background;
+
     display: flex;
     justify-content: center;
     align-items: center;
@@ -12,9 +13,7 @@
     &__container {
         display: flex;
         flex-direction: column;
-
         aspect-ratio: 1 / 0.55;
-
         align-items: stretch;
     }
 
@@ -30,7 +29,6 @@
 
         border-top-left-radius: $corner;
         border-top-right-radius: $corner;
-
         flex: 1;
         background-color: white;
         padding: 1em;
@@ -40,13 +38,13 @@
 
         border-bottom-right-radius: $corner;
         border-bottom-left-radius: $corner;
-
         flex: 2;
         background-color: hsla(0, 0%, 11%, 0.726);
         padding: 4rem;
 
         form[name="connect"] {
             @include flex-column-center;
+
             gap: 1rem;
 
             > * {

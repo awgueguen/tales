@@ -2,24 +2,26 @@
 
 input,
 textarea {
-    color: white;
+    border-color: setcolor(text-dk, 400);
 
+    color: white;
     outline: 0;
     background: none;
     padding: 0.7rem 0.6rem;
-
     border-width: 0 0 1px;
-    border-color: setcolor(text-dk, 400);
+
     transition: background-color 150ms ease-in;
 
     &::placeholder {
         color: setcolor(text-dk, 300);
+
         padding: 0.4rem;
     }
 
     &:hover,
     &:focus {
         background-color: hsla(0, 0%, 0%, 0.308);
+
         transition: background-color 150ms ease-in;
     }
 }

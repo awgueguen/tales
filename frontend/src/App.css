@@ -104,20 +104,7 @@ ul .active {
   font-weight: 500;
 }
 
-[class^=icon__]::before {
-  font-family: "Material Icons";
-  font-size: 1.7em;
-}
-[class^=icon__]::after {
-  font-family: "Material Icons";
-  font-size: 1.7em;
-}
-
-.link {
-  text-decoration: none;
-  color: inherit;
-}
-
+/* form -------------------------------------------------------------------- */
 input,
 .input {
   letter-spacing: 0.05rem;
@@ -132,6 +119,7 @@ form {
   font-size: 0.8rem;
 }
 
+/* button ------------------------------------------------------------------ */
 .btn-primary {
   font-weight: 500;
   font-size: 1.1rem;
@@ -146,6 +134,23 @@ form {
   text-transform: uppercase;
 }
 
+/* icons ------------------------------------------------------------------- */
+[class^=icon__]::before {
+  font-family: "Material Icons";
+  font-size: 1.7em;
+}
+[class^=icon__]::after {
+  font-family: "Material Icons";
+  font-size: 1.7em;
+}
+
+/* router ------------------------------------------------------------------ */
+.link {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* specifics --------------------------------------------------------------- */
 .contacts__add ~ span {
   font-size: 0.8rem;
 }
@@ -358,8 +363,8 @@ select {
 }
 
 .inrooms__container {
-  max-width: 1fr;
   background-color: hsl(0deg, 0%, 14%);
+  max-width: 1fr;
   border-radius: 5px;
   padding: 1.5rem 1rem;
   margin: 1rem 0 2rem;
@@ -379,13 +384,16 @@ select {
   grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
 }
 
-.btn-primary {
+button {
   cursor: pointer;
+}
+
+.btn-primary {
   background-color: hsl(140deg, 75%, 63%);
-  transition: background-color 350ms ease-in;
   border: 0px;
   border-radius: 5px;
   padding: 0.7rem;
+  transition: background-color 350ms ease-in;
 }
 .btn-primary ~ span {
   color: hsl(0deg, 0%, 54%);
@@ -402,7 +410,6 @@ select {
 }
 
 .btn-secondary {
-  cursor: pointer;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -418,9 +425,8 @@ select {
 
 .btn-close,
 .btn-back {
-  cursor: pointer;
-  background: none;
   color: hsl(0deg, 0%, 100%);
+  background: none;
   border: none;
   margin: 0px -10px;
   transition: all 100ms ease-in;
@@ -434,17 +440,16 @@ select {
 }
 .btn-close.inactive,
 .btn-back.inactive {
-  cursor: default;
   color: hsl(0deg, 0%, 54%);
+  cursor: default;
 }
 
 .btn-story {
+  color: hsl(0deg, 0%, 100%);
   background: none;
   border: none;
-  color: hsl(0deg, 0%, 100%);
 }
 .btn-story__image {
-  cursor: pointer;
   width: 100%;
   aspect-ratio: 1/0.33;
   border-radius: 5px;
@@ -474,23 +479,22 @@ select {
   margin-top: 0.3rem;
 }
 .btn-story__description {
-  text-align: left;
   color: hsl(0deg, 0%, 60%);
+  text-align: left;
 }
 
 .btn-friend {
-  cursor: pointer;
+  color: hsl(0deg, 0%, 100%);
   position: relative;
   background: none;
   border: none;
-  color: hsl(0deg, 0%, 100%);
 }
 .btn-friend > span {
   color: hsl(0deg, 100%, 68%);
   position: absolute;
   right: 0;
-  height: inherit;
   top: 1.5rem;
+  height: inherit;
   opacity: 0;
 }
 .btn-friend.selected > span {
@@ -506,20 +510,19 @@ select {
 }
 
 .btn-text-only {
-  cursor: pointer;
+  color: hsl(140deg, 75%, 63%);
   background: none;
   border: none;
-  color: hsl(140deg, 75%, 63%);
 }
 
 input,
 textarea {
+  border-color: hsl(0deg, 0%, 60%);
   color: white;
   outline: 0;
   background: none;
   padding: 0.7rem 0.6rem;
   border-width: 0 0 1px;
-  border-color: hsl(0deg, 0%, 60%);
   transition: background-color 150ms ease-in;
 }
 input::placeholder,
@@ -653,15 +656,15 @@ input[type=number] {
   /* IE (non-standard property) */
 }
 .inrooms-card__label {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   color: hsl(0deg, 0%, 16%);
+  background-color: hsl(140deg, 75%, 63%);
   position: absolute;
   height: 2rem;
   bottom: 1rem;
   width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: hsl(140deg, 75%, 63%);
 }
 .inrooms-card__hover {
   height: 100%;
@@ -677,19 +680,19 @@ input[type=number] {
 }
 .inrooms-card:hover .inrooms-card__hover {
   z-index: 1;
-  animation: fade-in 150ms ease-in;
   transform: scale(1.025);
-  transition: transform 150ms ease-in;
   opacity: 1;
+  transition: transform 150ms ease-in;
+  animation: fade-in 150ms ease-in;
 }
 .inrooms-card__add {
-  height: 100%;
-  background-color: hsl(0deg, 0%, 14%);
-  border-radius: 5px;
-  border: 5px dashed hsl(0deg, 0%, 23%);
   display: flex;
   justify-content: center;
   align-items: center;
+  background-color: hsl(0deg, 0%, 14%);
+  height: 100%;
+  border-radius: 5px;
+  border: 5px dashed hsl(0deg, 0%, 23%);
 }
 
 .public-rooms-card {
@@ -716,11 +719,11 @@ input[type=number] {
   background: rgba(0, 0, 0, 0.233);
 }
 .public-rooms-card__full .public-rooms-card__img::after {
+  background: hsl(0deg, 0%, 14%);
   position: absolute;
   bottom: 0.5rem;
   right: 0.6rem;
   font-weight: 700;
-  background: hsl(0deg, 0%, 14%);
   border-radius: 10px;
   padding: 0.5rem 0.8rem;
   content: "FULL";
@@ -768,18 +771,18 @@ input[type=number] {
   padding: 1rem;
 }
 .public-rooms-card__hover li::before {
-  margin-right: 0.5rem;
   color: hsl(140deg, 75%, 63%);
+  margin-right: 0.5rem;
 }
 .public-rooms-card:not(.public-rooms-card__full .public-rooms-card) {
   img-filter: contrast(200%);
 }
 .public-rooms-card:not(.public-rooms-card__full .public-rooms-card) .public-rooms-card__title p {
-  flex: 1;
+  background-color: hsl(0deg, 0%, 14%);
   color: hsl(0deg, 0%, 60%);
+  flex: 1;
   margin-top: 7px;
   border-radius: 5px;
-  background-color: hsl(0deg, 0%, 14%);
 }
 .public-rooms-card:hover:not(.public-rooms-card__full .public-rooms-card) .public-rooms-card__hover {
   opacity: 1;
@@ -824,13 +827,13 @@ input[type=number] {
 }
 
 .contacts {
-  position: fixed;
   background-color: hsl(0deg, 0%, 14%);
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+  position: fixed;
   top: 0;
   right: -17rem;
   height: 100%;
   width: 17rem;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -849,8 +852,8 @@ input[type=number] {
   gap: 1em;
 }
 .contacts__add {
-  cursor: pointer;
   background-color: hsl(0deg, 0%, 18%);
+  cursor: pointer;
   padding: 0rem 1rem;
   border-radius: 5px;
   display: flex;
@@ -929,11 +932,11 @@ input[type=number] {
   gap: 1rem;
 }
 .header__menu > ul li {
+  background-color: hsl(0deg, 0%, 18%);
   cursor: pointer;
   width: 3.5rem;
   aspect-ratio: 1/1;
   border-radius: 50%;
-  background-color: hsl(0deg, 0%, 18%);
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -974,19 +977,19 @@ input[type=number] {
 }
 
 .addroom__progression {
+  background-color: hsl(0deg, 0%, 54%);
   position: relative;
   width: 2em;
   height: 4px;
   margin-top: -5px;
-  background-color: hsl(0deg, 0%, 54%);
   transition: background-color 200ms ease-in;
 }
 .addroom__progression::before, .addroom__progression::after {
+  background-color: hsl(0deg, 0%, 54%);
   content: "";
   position: absolute;
   width: 2em;
   height: 4px;
-  background-color: hsl(0deg, 0%, 54%);
   transition: background-color 250ms ease-in-out;
 }
 .addroom__progression::before {
@@ -1005,20 +1008,16 @@ input[type=number] {
   background-color: hsl(140deg, 93%, 60%);
 }
 .addroom__container {
+  background-color: hsl(0deg, 0%, 9%);
+  color: hsl(0deg, 0%, 100%);
   overflow-x: hidden;
   overflow-y: scroll;
-  background-color: hsl(0deg, 0%, 9%);
   border: none;
   padding: 1.2rem 1.5rem;
-  color: hsl(0deg, 0%, 100%);
   width: min(100vw - 5rem, 30rem);
   aspect-ratio: 1/1.5;
   box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3);
   opacity: 0;
-}
-.addroom__container h5,
-.addroom__container h4 {
-  margin: 0;
 }
 .addroom__container::-webkit-scrollbar {
   width: 0.7rem;
@@ -1028,6 +1027,10 @@ input[type=number] {
 }
 .addroom__container::-webkit-scrollbar-track {
   background: hsl(0deg, 0%, 14%);
+}
+.addroom__container h5,
+.addroom__container h4 {
+  margin: 0;
 }
 .addroom__container::backdrop {
   background: rgba(0, 0, 0, 0.5);
@@ -1039,11 +1042,11 @@ input[type=number] {
   }
 }
 .addroom__container[open] {
-  animation: slide-in 600ms forwards, fade-in 500ms forwards;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   gap: 1rem;
+  animation: slide-in 600ms forwards, fade-in 500ms forwards;
 }
 .addroom__container[open]::backdrop {
   animation: fade-in 500ms forwards;

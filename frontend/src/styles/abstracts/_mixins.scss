@@ -15,18 +15,22 @@
 }
 
 @mixin image-cover {
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
-    background-size: cover;
-}
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
 
-@mixin image-full {
     image-rendering: -moz-crisp-edges; /* Firefox */
     image-rendering: -o-crisp-edges; /* Opera */
     image-rendering: -webkit-optimize-contrast; /* Webkit (non-standard naming) */
     image-rendering: crisp-edges;
     -ms-interpolation-mode: nearest-neighbor; /* IE (non-standard property) */
+}
+
+@mixin image-background {
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
 }
 
 @mixin scrollbars {

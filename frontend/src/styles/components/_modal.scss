@@ -2,20 +2,24 @@
 
 .addroom {
     &__progression {
+        background-color: setcolor(text-dk, 300);
+
         position: relative;
         width: 2em;
         height: 4px;
         margin-top: -5px;
-        background-color: setcolor(text-dk, 300);
+
         transition: background-color 200ms ease-in;
 
         &::before,
         &::after {
+            background-color: setcolor(text-dk, 300);
+
             content: "";
             position: absolute;
             width: 2em;
             height: 4px;
-            background-color: setcolor(text-dk, 300);
+
             transition: background-color 250ms ease-in-out;
         }
 
@@ -39,40 +43,40 @@
     }
 
     &__container {
-        h5,
-        h4 {
-            margin: 0;
-        }
-
         @include scrollbars;
-        overflow-x: hidden;
-        overflow-y: scroll;
         background-color: setcolor(background-color, 500);
-        border: none;
-        padding: 1.2rem 1.5rem;
-
         color: setcolor(text-dk, 500);
 
+        overflow-x: hidden;
+        overflow-y: scroll;
+        border: none;
+        padding: 1.2rem 1.5rem;
         width: min(100vw - 5rem, 30rem);
         aspect-ratio: 1 / 1.5;
         box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3);
         opacity: 0;
 
+        h5,
+        h4 {
+            margin: 0;
+        }
+
         &::backdrop {
             background: rgba(0, 0, 0, 0.5);
             opacity: 0;
+
             @supports (-moz-appearance: none) {
                 opacity: 1;
             }
         }
 
         &[open] {
-            animation: slide-in 600ms forwards, fade-in 500ms forwards;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-
             gap: 1rem;
+
+            animation: slide-in 600ms forwards, fade-in 500ms forwards;
 
             &::backdrop {
                 animation: fade-in 500ms forwards;
@@ -85,7 +89,6 @@
     }
     &__header {
         width: 100%;
-
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -106,6 +109,7 @@
 
         .btn-text-only:hover {
             color: setcolor(text-dk, 400);
+
             text-decoration-line: line-through;
         }
     }

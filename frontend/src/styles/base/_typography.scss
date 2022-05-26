@@ -46,21 +46,7 @@ ul {
     }
 }
 
-[class^="icon__"] {
-    &::before {
-        font-family: "Material Icons";
-        font-size: 1.7em;
-    }
-    &::after {
-        font-family: "Material Icons";
-        font-size: 1.7em;
-    }
-}
-
-.link {
-    text-decoration: none;
-    color: inherit;
-}
+/* form -------------------------------------------------------------------- */
 
 input,
 .input {
@@ -76,6 +62,7 @@ form {
     font-size: 0.8rem;
 }
 
+/* button ------------------------------------------------------------------ */
 .btn-primary {
     font-weight: 500;
     font-size: 1.1rem;
@@ -90,6 +77,27 @@ form {
     font-size: 0.8rem;
     text-transform: uppercase;
 }
+/* icons ------------------------------------------------------------------- */
+
+[class^="icon__"] {
+    &::before {
+        font-family: "Material Icons";
+        font-size: 1.7em;
+    }
+    &::after {
+        font-family: "Material Icons";
+        font-size: 1.7em;
+    }
+}
+
+/* router ------------------------------------------------------------------ */
+
+.link {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* specifics --------------------------------------------------------------- */
 
 .contacts__add ~ span {
     font-size: 0.8rem;

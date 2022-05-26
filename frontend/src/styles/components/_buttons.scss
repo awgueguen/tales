@@ -1,15 +1,17 @@
 @use "../abstracts" as *;
 
-.btn-primary {
+button {
     cursor: pointer;
+}
 
+.btn-primary {
     background-color: setcolor(alert, 400);
-    transition: background-color 350ms ease-in;
 
     border: 0px;
     border-radius: $corner;
-
     padding: 0.7rem;
+
+    transition: background-color 350ms ease-in;
 
     ~ span {
         color: setcolor(text-dk, 300);
@@ -24,33 +26,33 @@
     &:hover,
     &:focus {
         background-color: setcolor(alert, 500);
+
         transition: background-color 350ms;
     }
 }
 
 .btn-secondary {
-    cursor: pointer;
     @include flex-center;
+    background-color: setcolor(secondary, 300);
+
     gap: 1rem;
     padding: 1rem;
-
     border: none;
     border-radius: $corner;
-    background-color: setcolor(secondary, 300);
 
     &:hover,
     &:focus {
         background-color: setcolor(secondary, 500);
+
         transition: background-color 350ms;
     }
 }
 
 .btn-close,
 .btn-back {
-    cursor: pointer;
+    color: setcolor(text-dk, 500);
 
     background: none;
-    color: setcolor(text-dk, 500);
     border: none;
     margin: 0px -10px;
 
@@ -58,32 +60,31 @@
 
     &:hover &__icon {
         transform: rotate(1.25turn);
+
         transition: transform 700ms ease-in-out;
     }
 
     &.inactive {
-        cursor: default;
         color: setcolor(text-dk, 300);
+
+        cursor: default;
     }
 }
 
 .btn-story {
-    background: none;
-    border: none;
     color: setcolor(text-dk, 500);
 
+    background: none;
+    border: none;
+
     &__image {
-        cursor: pointer;
         width: 100%;
         aspect-ratio: 1/0.33;
         border-radius: $corner;
         overflow: hidden;
 
         img {
-            height: 100%;
-            width: 100%;
-            object-fit: cover;
-            @include image-full;
+            @include image-cover;
         }
         &:hover {
             img {
@@ -99,26 +100,27 @@
         margin-top: 0.3rem;
     }
     &__description {
-        text-align: left;
         color: setcolor(text-dk, 400);
+
+        text-align: left;
     }
 }
 
 .btn-friend {
-    cursor: pointer;
+    color: setcolor(text-dk, 500);
+
     position: relative;
     background: none;
     border: none;
-    color: setcolor(text-dk, 500);
 
     > span {
         color: setcolor(error, 500);
+
         position: absolute;
         right: 0;
-        height: inherit;
         top: 1.5rem;
+        height: inherit;
         opacity: 0;
-        // animation: fade-out 100ms forwards;
     }
 
     &.selected {
@@ -127,9 +129,12 @@
         }
         .friend-card {
             background-color: setcolor(background-color, 400);
+
             border-radius: $corner;
+
             &:hover {
                 background-color: setcolor(background-color, 500);
+
                 transition: background-color 350ms;
             }
         }
@@ -137,9 +142,8 @@
 }
 
 .btn-text-only {
-    cursor: pointer;
-    background: none;
-    border: none;
     color: setcolor(alert, 400);
 
+    background: none;
+    border: none;
 }

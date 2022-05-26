@@ -6,11 +6,11 @@
 
 .inrooms {
     &__container {
-        max-width: 1fr;
         background-color: setcolor(background-color, 400);
+
+        max-width: 1fr;
         border-radius: $corner;
         padding: 1.5rem 1rem;
-
         margin: 1rem 0 2rem;
     }
     &__cards {
