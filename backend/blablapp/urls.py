@@ -55,10 +55,13 @@ urlpatterns = [
     path('room/create/', views.create_room),
     path('room-<int:room_id>/messages/', views.messages_api),
 
-    path('roompart/list/<int:room_id>', views.get_room_participants),
-    path('roompart/create/<int:room_id>', views.create_roompart),
 
     # * CLEAN
+    path('roompart/list/<int:room_id>', views.roomparticipants_api),
+    path('roompart/create/', views.roomparticipants_api),
+    # connectAPI
+    path('room-<int:room_id>/', views.get_a_room),
+    # fetchQuickRooms
     path('room/quick_access', views.quick_access),
     # fetchPublicRooom
     path('room/public_list/', views.get_public_rooms),
@@ -69,11 +72,12 @@ urlpatterns = [
     # USER                                                                    #
     # ----------------------------------------------------------------------- #
     # path('user/<int:user_id>/', views.users_api),
-    # path('characters/', views.characters_api),
     # path('user/<int:user_id>/tickbox/', views.tick_api),
     path('register/', views.register_user),
     path('background_check/', views.background_check),
     # * CLEAN
+    # getCharacters
+    path('characters/', views.characters_api),
 
     # ----------------------------------------------------------------------- #
     # CONTACTS                                                                #

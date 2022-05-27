@@ -85,7 +85,8 @@ class CharacterShortSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Character
-        fields = ['id', 'name', 'background', 'image', 'characterClass']
+        fields = ['id', 'name', 'background',
+                  'image', 'characterClass', 'weapon']
 
 
 class RoomParticipantCharaSerializer(serializers.ModelSerializer):
@@ -150,9 +151,15 @@ class RoomQuickSerializer(serializers.ModelSerializer):
         fields = ['id', 'title', "story"]
 
 
+class ParticipantPutSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.RoomParticipant
+        fields = ["nickname", "character"]
+
 # --------------------------------------------------------------------------- #
 # token customizations                                                        #
 # --------------------------------------------------------------------------- #
+
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod

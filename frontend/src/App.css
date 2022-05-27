@@ -351,7 +351,7 @@ select {
 .dashboard__grid {
   display: grid;
   grid-template-areas: "header header header" "sidebar container container" "sidebar container container";
-  grid-template-columns: 15rem auto;
+  grid-template-columns: 15rem 1fr 1fr;
 }
 .dashboard__grid > *:nth-child(1) {
   grid-area: header;
@@ -843,6 +843,59 @@ input[type=number] {
   filter: contrast(115%);
 }
 
+.duat__card {
+  min-width: 20rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+.duat__card p {
+  color: hsl(0deg, 0%, 60%);
+}
+.duat__card .btn-text-only {
+  background-color: hsl(0deg, 0%, 9%);
+  height: 2rem;
+  width: 100%;
+  margin-top: auto;
+}
+.duat__card .btn-text-only:hover {
+  background: hsl(0deg, 0%, 18%);
+}
+.duat__description {
+  display: flex;
+  justify-content: space-between;
+}
+.duat__stats {
+  background-color: hsl(0deg, 0%, 9%);
+  width: 100%;
+  aspect-ratio: 1/0.1;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  gap: 2rem;
+}
+.duat__img {
+  width: 100%;
+  aspect-ratio: 1/1.72;
+  border-radius: 5px;
+  overflow: hidden;
+}
+.duat__img img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  image-rendering: -moz-crisp-edges;
+  /* Firefox */
+  image-rendering: -o-crisp-edges;
+  /* Opera */
+  image-rendering: -webkit-optimize-contrast;
+  /* Webkit (non-standard naming) */
+  image-rendering: crisp-edges;
+  -ms-interpolation-mode: nearest-neighbor;
+  /* IE (non-standard property) */
+}
+
 .contacts {
   background-color: hsl(0deg, 0%, 14%);
   position: fixed;
@@ -1038,6 +1091,7 @@ input[type=number] {
 }
 .addroom__container::-webkit-scrollbar {
   width: 0.7rem;
+  height: 0.7rem;
 }
 .addroom__container::-webkit-scrollbar-thumb {
   background: hsl(0deg, 0%, 23%);
@@ -1104,6 +1158,41 @@ input[type=number] {
   flex-direction: column;
   justify-content: center;
   gap: 2rem;
+}
+
+.duat {
+  padding-top: 1.5rem;
+}
+.duat__container {
+  background-color: hsl(0deg, 0%, 14%);
+  padding: 1.5rem;
+  margin: 1rem 0 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+.duat__cards {
+  display: flex;
+  gap: 1.5rem;
+  overflow-x: scroll;
+}
+.duat__cards::-webkit-scrollbar {
+  width: 0.7rem;
+  height: 0.7rem;
+}
+.duat__cards::-webkit-scrollbar-thumb {
+  background: hsl(0deg, 0%, 9%);
+}
+.duat__cards::-webkit-scrollbar-track {
+  background: hsl(0deg, 0%, 18%);
+}
+.duat .btn-primary {
+  text-transform: uppercase;
+}
+.duat .btn-primary.disable {
+  background-color: hsl(0deg, 0%, 23%);
+  color: hsl(0deg, 0%, 60%);
+  cursor: default;
 }
 
 /*# sourceMappingURL=App.css.map */

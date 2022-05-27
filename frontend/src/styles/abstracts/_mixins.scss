@@ -33,10 +33,11 @@
     background-size: cover;
 }
 
-@mixin scrollbars {
+@mixin scrollbar-dark {
     // For Google Chrome
     &::-webkit-scrollbar {
         width: 0.7rem;
+        height: 0.7rem;
     }
 
     &::-webkit-scrollbar-thumb {
@@ -45,5 +46,21 @@
 
     &::-webkit-scrollbar-track {
         background: setcolor(background-color, 400);
+    }
+}
+
+@mixin scrollbar-light {
+    // For Google Chrome
+    &::-webkit-scrollbar {
+        width: 0.7rem;
+        height: 0.7rem;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: setcolor(background-color, 500);
+    }
+
+    &::-webkit-scrollbar-track {
+        background: setcolor(background-color, 300);
     }
 }

@@ -1,0 +1,30 @@
+@use "../abstracts" as *;
+
+.duat {
+    padding-top: 1.5rem;
+
+    &__container {
+        background-color: setcolor(background-color, 400);
+
+        padding: 1.5rem;
+        margin: 1rem 0 2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+    &__cards {
+        @include scrollbar-light;
+        display: flex;
+        gap: 1.5rem;
+        overflow-x: scroll;
+    }
+    .btn-primary {
+        text-transform: uppercase;
+    }
+
+    .btn-primary.disable {
+        background-color: setcolor(background-color, 200);
+        color: setcolor(text-dk, 400);
+        cursor: default;
+    }
+}

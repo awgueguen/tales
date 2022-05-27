@@ -32,7 +32,7 @@ const AddRoom = (props) => {
 
     const fetchModalData = async (url, setFunction) => {
       await axios({
-        url: url,
+        url,
         method: "GET",
         headers: { Authorization: `Bearer ${authTokens.access}` },
         cancelToken: request.token,

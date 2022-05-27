@@ -264,3 +264,55 @@
         }
     }
 }
+
+.duat {
+    &__card {
+        min-width: 20rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+
+        margin-bottom: 2rem;
+
+        p {
+            color: setcolor(text-dk, 400);
+        }
+
+        .btn-text-only {
+            background-color: setcolor(background-color, 500);
+            height: 2rem;
+            width: 100%;
+            margin-top: auto;
+
+            &:hover {
+                background: setcolor(background-color, 300);
+            }
+        }
+    }
+
+    &__description {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    &__stats {
+        background-color: setcolor(background-color, 500);
+        width: 100%;
+        aspect-ratio: 1/0.1;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        gap: 2rem;
+    }
+
+    &__img {
+        width: 100%;
+        aspect-ratio: 1/1.72;
+        border-radius: $corner;
+        overflow: hidden;
+
+        img {
+            @include image-cover;
+        }
+    }
+}

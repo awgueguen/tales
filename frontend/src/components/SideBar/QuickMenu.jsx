@@ -45,7 +45,7 @@ const QuickCards = () => {
     <>
       {rooms
         ? rooms.map((room, id) => (
-            <Link to={`/rooms/${room.id}`} key={id} className="link" state={{ alreadyUser: true }}>
+            <Link to={`/rooms/${room.id}`} key={id} className="link">
               <QuickCard room={room} />
             </Link>
           ))

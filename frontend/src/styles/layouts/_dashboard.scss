@@ -14,7 +14,7 @@
             "header header header"
             "sidebar container container"
             "sidebar container container";
-        grid-template-columns: 15rem auto;
+        grid-template-columns: 15rem 1fr 1fr;
 
         > * {
             &:nth-child(1) {

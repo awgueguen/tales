@@ -24,7 +24,7 @@ const PublicRooms = ({ rooms, userId }) => {
                       <PublicCard room={room} />
                     </div>
                   ) : (
-                    <Link to={`/rooms/${room.id}`} key={id} className="link" state={{ alreadyUser: false }}>
+                    <Link to={`/rooms/${room.id}`} key={id} className="link">
                       <PublicCard room={room} />
                     </Link>
                   )
