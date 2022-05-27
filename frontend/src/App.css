@@ -345,13 +345,15 @@ select {
 #dashboard {
   min-height: 100vh;
   background-color: hsl(0deg, 0%, 9%);
-  padding: 0.5rem 2rem;
 }
 
 .dashboard__grid {
   display: grid;
   grid-template-areas: "header header header" "sidebar container container" "sidebar container container";
   grid-template-columns: 15rem 1fr 1fr;
+  grid-template-rows: 5rem auto;
+  min-height: 100vh;
+  padding: 0.5rem 2rem 1.7rem;
 }
 .dashboard__grid > *:nth-child(1) {
   grid-area: header;
@@ -361,6 +363,8 @@ select {
 }
 .dashboard__grid > *:nth-child(3) {
   grid-area: container;
+  min-height: 1fr;
+  background-color: hsl(0deg, 0%, 14%);
 }
 
 .rooms {
@@ -387,6 +391,32 @@ select {
   display: grid;
   gap: 2rem;
   grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+}
+
+#game-engine {
+  max-width: 100%;
+  max-height: 100%;
+  margin-top: 1.5rem;
+  display: grid;
+  grid-template-areas: "sidebar header header" "sidebar container infos" "sidebar container infos";
+  grid-template-columns: 30rem 1fr 10rem;
+  gap: 1rem;
+}
+#game-engine > *:nth-child(1) {
+  grid-area: sidebar;
+  background-color: green;
+}
+#game-engine > *:nth-child(2) {
+  grid-area: header;
+  background-color: red;
+}
+#game-engine > *:nth-child(3) {
+  grid-area: container;
+  background-color: blue;
+}
+#game-engine > *:nth-child(4) {
+  grid-area: infos;
+  background-color: rgb(255, 153, 0);
 }
 
 button {

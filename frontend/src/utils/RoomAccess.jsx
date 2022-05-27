@@ -7,7 +7,6 @@ import AuthContext from "@context/AuthContext";
 import CharacterCard from "@components/RoomAccess/CharacterCard";
 
 const RoomAccess = () => {
-  // choix du perso via ce module
   /* states ---------------------------------------------------------------- */
   const [loading, setLoading] = useState(true);
   const [room, setRoom] = useState();
@@ -117,10 +116,7 @@ const RoomAccess = () => {
         </div>
       </div>
     ) : (
-      <>
-        "Loading..."
-        <pre>{JSON.stringify(participants, null, 2)}</pre>
-      </>
+      "Loading..."
     )
   ) : (
     <Outlet />

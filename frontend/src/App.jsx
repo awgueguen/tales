@@ -12,6 +12,7 @@ import RoomAccess from "./utils/RoomAccess";
 /* outlet ------------------------------------------------------------------ */
 import Rooms from "@pages/Rooms";
 import GamePage from "@pages/GamePage";
+import GameEngine from "@pages/GameEngine";
 
 const App = () => {
   return (
@@ -24,6 +25,8 @@ const App = () => {
                 <Route path="/" element={<Dashboard />}>
                   <Route path="/" element={<Rooms />} />
                   <Route path="/" element={<RoomAccess />}>
+                    <Route path="/test/:roomId" element={<GameEngine />} />
+
                     <Route path="/rooms/:roomId" element={<GamePage />} />
                   </Route>
                 </Route>

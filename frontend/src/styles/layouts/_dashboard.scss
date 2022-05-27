@@ -3,8 +3,6 @@
 #dashboard {
     min-height: 100vh;
     background-color: setcolor(background-color, 500);
-
-    padding: 0.5rem 2rem;
 }
 
 .dashboard {
@@ -15,6 +13,9 @@
             "sidebar container container"
             "sidebar container container";
         grid-template-columns: 15rem 1fr 1fr;
+        grid-template-rows: 5rem auto;
+        min-height: 100vh;
+        padding: 0.5rem 2rem 1.7rem;
 
         > * {
             &:nth-child(1) {
@@ -25,6 +26,8 @@
             }
             &:nth-child(3) {
                 grid-area: container;
+                min-height: 1fr;
+                background-color: setcolor(background-color, 400);
             }
         }
     }

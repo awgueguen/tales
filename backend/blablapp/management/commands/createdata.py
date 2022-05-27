@@ -346,7 +346,7 @@ class Command(BaseCommand):
                 quote = False if whisper else fake.boolean(
                     chance_of_getting_true=10)
                 is_triggered = False if whisper or quote else fake.boolean(
-                    chance_of_getting_true=20)
+                    chance_of_getting_true=10)
 
                 random_nb = random.randint(1, 30)
 
