@@ -4,11 +4,11 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import Dashboard from "@utils/Dashboard";
 /* authentifications ------------------------------------------------------- */
 import ConnectPage from "@pages/ConnectPage";
-import ModalRegister from '@components/ConnectPage/ModalRegister'
+import ModalRegister from "@components/ConnectPage/ModalRegister";
 import PrivateRoute from "@utils/PrivateRoute";
 import { AuthProvider } from "@context/AuthContext";
 /* outlet ------------------------------------------------------------------ */
-import Rooms from "@components/Rooms";
+import Rooms from "@pages/Rooms";
 import GamePage from "@pages/GamePage";
 
 const App = () => {
@@ -26,7 +26,7 @@ const App = () => {
               </Route>
               <Route path="/welcome" element={<ConnectPage />} />
               {/* il faudra rendre cette route privée et uniquement accessible via le link de connectPage */}
-              <Route path="/welcome/last-step" element ={<ModalRegister />} />
+              <Route path="/welcome/last-step" element={<ModalRegister />} />
               <Route path="*" element={<Navigate to="/" />} />
             </Routes>
           </Fragment>

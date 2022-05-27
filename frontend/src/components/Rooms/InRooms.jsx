@@ -22,14 +22,14 @@ const InRooms = ({ rooms, handleModal, ...props }) => {
                 </Link>
               ))
             : "Loading..."}
-          <div className="inrooms-card">
+          <div className="inrooms-card" onClick={handleModal}>
             <div className="inrooms-card__add">
-              <button className="btn-text-only" onClick={handleModal}>
+              <button className="btn-text-only">
                 <h5>CREATE NEW ROOM</h5>
               </button>
-              <AddRoomModal handleModal={handleModal} {...props} />
             </div>
           </div>
+          <AddRoomModal handleModal={handleModal} {...props} />
         </div>
       </div>
     </>

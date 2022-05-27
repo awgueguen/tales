@@ -103,6 +103,11 @@ form {
     font-size: 0.8rem;
 }
 
+.inrooms-card__add::after {
+    font-family: "Material Icons";
+    font-size: 1.7em;
+}
+
 .public-rooms-card ul {
     font-size: clamp(0.7rem, 1.5vw, 0.9rem);
 }

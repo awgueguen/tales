@@ -3,7 +3,7 @@
  */
 /* global ------------------------------------------------------------------ */
 import React, { useState, useContext, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import axios from "axios";
 import AuthContext from "@context/AuthContext";
 
@@ -18,24 +18,28 @@ const QuickCards = () => {
   const URL = "http://localhost:8000/api/room/quick_access";
   const { authTokens } = useContext(AuthContext);
   const [rooms, setRooms] = useState();
+  let location = useLocation();
 
-  useEffect(function fetchQuickRooms() {
-    const request = axios.CancelToken.source();
-    const fetch = async () => {
-      await axios({
-        url: URL,
-        method: "GET",
-        headers: { Authorization: `Bearer ${authTokens.access}` },
-        cancelToken: request.token,
-      })
-        .then((response) => setRooms(response.data))
-        .catch((e) => console.log("error", e));
-    };
+  useEffect(
+    function fetchQuickRooms() {
+      const request = axios.CancelToken.source();
+      const fetch = async () => {
+        await axios({
+          url: URL,
+          method: "GET",
+          headers: { Authorization: `Bearer ${authTokens.access}` },
+          cancelToken: request.token,
+        })
+          .then((response) => setRooms(response.data))
+          .catch((e) => console.log("error", e));
+      };
 
-    fetch();
+      fetch();
 
-    return () => request.cancel();
-  }, []);
+      return () => request.cancel();
+    },
+    [location]
+  );
 
   return (
     <>

@@ -9,8 +9,8 @@ import axios from "axios";
 
 /* components -------------------------------------------------------------- */
 
-import PublicRooms from "./Rooms/PublicRooms";
-import InRooms from "./Rooms/InRooms";
+import PublicRooms from "@components/Rooms/PublicRooms";
+import InRooms from "@components/Rooms/InRooms";
 
 const Rooms = (props) => {
   /* global ---------------------------------------------------------------- */

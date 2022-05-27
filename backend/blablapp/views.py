@@ -19,9 +19,10 @@ from blablapp import models
 # --------------------------------------------------------------------------- #
 
 class MyTokenObtainPairView(TokenObtainPairView):
-    throttle_classes = [UserRateThrottle, AnonRateThrottle]
+    # throttle_classes = [UserRateThrottle, AnonRateThrottle]
 
     serializer_class = serializers.MyTokenObtainPairSerializer
+
 
 @api_view(['POST'])
 def register_user(request):
@@ -241,7 +242,8 @@ def create_roompart(request, room_id):
             roompart.save()
             print('_______________user crée___________')
             print(f"roompart.data after serializer: {roompart.data}\n\n\n")
-            room_part = get_room_participant_of_this_room(request.data['user'], int(request.data['room']))
+            room_part = get_room_participant_of_this_room(
+                request.data['user'], int(request.data['room']))
             return Response({'user': user, 'roompart': room_part}, status=status.HTTP_201_CREATED)
         else:
             print('___________________________', roompart)
@@ -352,6 +354,7 @@ def post_message(request):
         return
     # TODO: Whisper & Quote views ?
 
+
 @api_view(['POST'])
 def background_check(request):
 
@@ -364,6 +367,7 @@ def background_check(request):
     if len(_username) > 0:
         response['username'] = False
     return Response(data=response, status=status.HTTP_200_OK)
+
 
 @api_view(['PUT', 'DELETE'])
 @authentication_classes([JWTAuthentication])

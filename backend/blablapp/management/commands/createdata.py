@@ -1,104 +1,33 @@
 """CLEAN CODE"""
+
 import contextlib
 import os
 import random
+from pathlib import Path
 from django.core.management.base import BaseCommand
 from django.db.models import Q
 from faker import Faker
 import faker.providers
 from blablapp.models import CharacterClass, Character, Action, MyUser, Contact, Tickbox, Entity, EntityInstance, Event, Story, Room, RoomParticipant, Message, Whisper, Quote  # pylint: disable=import-error
 
+
+APP_URL = Path(__file__).resolve().parent.parent.parent.parent.parent
+
+
 ACTIONS = ["Hide", "Search", "Charm", "Trap"]
 DEFAULT_ACTIONS = ["Attack", "Use", "Talk"]
-IMG_CHAR = [
-    "character-1.jpg",
-    "character-2.jpg",
-    "character-3.jpg",
-    "character-4.jpg",
-    "character-5.jpg",
-    "character-6.jpg",
-    "character-7.jpg",
-    "character-8.jpg",
-    "character-9.jpg",
-]
 
-IMG_ENT = [
-    "entity-1.jpg",
-    "entity-2.jpg",
-    "entity-3.jpg",
-    "entity-4.jpg",
-    "entity-5.jpg",
-]
-
-IMG_EVENT = [
-    "event-1.jpg",
-    "event-2.jpg",
-    "event-3.jpg",
-    "event-4.jpg",
-    "event-5.jpg",
-    "event-6.jpg",
-    "event-7.jpg",
-]
-
-IMG_MESS = [
-    "message-1.gif",
-    "message-2.jpg",
-    "message-3.jpg",
-    "message-4.gif",
-    "message-5.jpg",
-    "message-6.gif",
-    "message-7.jpg",
-    "message-8.jpg",
-    "message-9.jpg",
-    "message-10.jpg",
-    "message-11.jpg",
-    "message-12.jpg",
-    "message-13.jpg",
-    "message-14.jpg",
-    "message-15.jpg",
-]
-
-
-IMG_PROF = [
-    "default.jpg",
-    "default.jpg",
-    "profile-pic-1.png",
-    "profile-pic-2.png",
-    "profile-pic-3.jpg",
-    "profile-pic-4.jpg",
-    "profile-pic-5.png",
-    "profile-pic-6.jpg",
-    "profile-pic-7.jpg",
-    "profile-pic-8.jpg",
-    "profile-pic-9.png",
-    "profile-pic-10.jpg",
-    "profile-pic-11.png",
-]
-
-IMG_STORY = [
-    "story-1.jpg",
-    "story-2.jpg",
-    "story-3.jpg",
-    "story-4.jpg",
-    "story-5.png",
-    "story-6.jpg",
-    "story-7.jpg",
-    "story-8.gif",
-    "story-9.jpg",
-    "story-10.jpg",
-    "story-11.jpg",
-    "story-12.jpg",
-    "story-13.jpg",
-    "story-14.jpg",
-    "story-15.jpg",
-    "story-16.jpg",
-    "story-17.jpg",
-]
 
 # blogs = Blog.objects.filter(author=author).values_list('id', flat=True)
 # action = Action.objects.get(title=action_sample) -> return trigger
 # action.id -> return action_id
 # user_id = MyUser.objects.order_by("?").values('id', 'characters')
+
+
+def images_list(folder_name):
+    """Return a list of images in a folder"""
+    return [f for f in os.listdir(os.path.join(APP_URL, 'frontend', 'media', folder_name))
+            if os.path.isfile(os.path.join(APP_URL, 'frontend', 'media', folder_name, f))]
 
 
 def loadbar(iteration, total, decimals=1, length=100, fill='█'):
@@ -116,22 +45,22 @@ class Provider(faker.providers.BaseProvider):
         return self.random_element(ACTIONS)
 
     def img_char(self):
-        return self.random_element(IMG_CHAR)
+        return self.random_element(images_list('characters'))
 
     def img_ent(self):
-        return self.random_element(IMG_ENT)
+        return self.random_element(images_list('entities'))
 
     def img_event(self):
-        return self.random_element(IMG_EVENT)
+        return self.random_element(images_list('events'))
 
     def img_mess(self):
-        return self.random_element(IMG_MESS)
+        return self.random_element(images_list('messages'))
 
     def img_prof(self):
-        return self.random_element(IMG_PROF)
+        return self.random_element(images_list('profile_pics'))
 
     def img_story(self):
-        return self.random_element(IMG_STORY)
+        return self.random_element(images_list('stories'))
 
 
 class Command(BaseCommand):

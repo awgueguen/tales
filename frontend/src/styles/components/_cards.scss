@@ -102,11 +102,25 @@
 
     &__add {
         @include flex-center;
-        background-color: setcolor(background-color, 400);
+        background-color: setcolor(background-color, 300);
+        border: 5px dashed setcolor(background-color, 200);
 
         height: 100%;
         border-radius: $corner;
-        border: 5px dashed setcolor(background-color, 200);
+        position: relative;
+
+        &::after {
+            background: setcolor(background-color, 400);
+
+            cursor: pointer;
+            position: absolute;
+            bottom: 0.5rem;
+            right: 0.6rem;
+            font-weight: 700;
+            border-radius: 10px;
+            padding: 0.5rem 0.8rem;
+            content: "\e145";
+        }
     }
 }
 
