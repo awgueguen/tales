@@ -24,19 +24,10 @@ const ConnectPage = () => {
   });
 
   const handleChange = (e, check=null) => {
-    
-  //   if (check){
-  //     setRegister((oldState) => ({
-  //       ...oldState,
-  //       rgpd: !oldState.rgpd
-  //   }));
-  //   return
-  // }
-  console.log(e.target)
     if (e.target.parentElement.name === "connect") {
       setLogin((oldState) => ({ ...oldState, [e.target.name]: e.target.value }));
-    } else if (e.target.parentElement.name === "register" || e.target.type === "checkbox" ) {
-      console.log('target')
+    } else if (e.target.parentElement.name === "register" || e.target.name === "rgpd" ) {
+      // faudra sûrement modifier ça
       setRegister((oldState) => ({
         ...oldState,
         [e.target.name]: e.target.type === "checkbox" ? e.target.checked : e.target.value,

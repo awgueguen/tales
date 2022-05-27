@@ -1102,4 +1102,26 @@ input[type=number] {
   gap: 2rem;
 }
 
+.limite_composant {
+  border: 2px solid black;
+  padding-bottom: 20px;
+}
+
+.my-message{
+  border-left: 5px solid blue;
+  padding-left: 400px;
+}
+.received-message{
+  border-left: 5px solid red;
+}
+
+.admin-message{
+  border-right: 5px solid black;
+}
+.my-message, .received-message, .admin-message{
+  margin: 5px;
+}
+/* "my-message" : "received-message" */
+
 /*# sourceMappingURL=App.css.map */
+
