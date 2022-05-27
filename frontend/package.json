@@ -1,5 +1,5 @@
 {
-    "name": "donjon_et_couillon",
+    "name": "tale_it",
     "version": "0.1.0",
     "private": true,
     "proxy": "http://localhost:8000",
