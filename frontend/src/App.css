@@ -364,7 +364,6 @@ select {
 .dashboard__grid > *:nth-child(3) {
   grid-area: container;
   min-height: 1fr;
-  background-color: hsl(0deg, 0%, 14%);
 }
 
 .rooms {

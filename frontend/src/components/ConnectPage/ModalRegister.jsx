@@ -5,6 +5,11 @@ const ModalRegister = (props) => {
     // const {first_name, last_name, nickname, birthdate, img, handleChange} = props
     const inputs = {...useLocation()?.state?.inputs}
     console.log(inputs)
+    const handleDate = () => {
+      /**
+       * fonction de transfo des dates, return format = yyyy-mm-dd
+       */
+    }
     const handleChange = (e) => {
         const {name, value} = e.target
         if (name !== 'birthdate'){

@@ -51,7 +51,6 @@ const Register = ({ values, handleChange, handleSubmit, request, setNextStep }) 
       handleChange(e);
     }
   const checkForm = () => {
-    console.log('test', rgpd)
     let errorWithInput = []
     const newFormError = {...formError}
     /* empty check________________________________________________*/
@@ -114,17 +113,13 @@ const Register = ({ values, handleChange, handleSubmit, request, setNextStep }) 
         fetch();
       }
       setFormError(newFormError)
-      console.log(errorWithInput)
       
     }
     useEffect( () => {
       checkPasswords()
-      console.log(Object.keys(formError))
       const fields = Object.keys(formError).map((i) => formError[i].status)
-      console.log('fields', fields)
       if (fields.some((field) => field) || diffPassword) {setNextStep(false); return}
       else setNextStep(true)
-      console.log('nextstep')
     }, [formError])
 
     const checkPasswords = () => {
@@ -133,10 +128,7 @@ const Register = ({ values, handleChange, handleSubmit, request, setNextStep }) 
       if (password !==  passwordConfirmation) setDiffPassword(true)
       else setDiffPassword(false)
     }
-  // useEffect(() => {
-  //   console.log('x')
-  //   return request.cancel();
-  // }, [])
+
   return (
     <>
       <form name="register" onSubmit={handleSubmit}>
@@ -152,7 +144,6 @@ const Register = ({ values, handleChange, handleSubmit, request, setNextStep }) 
         <label className="input-checkbox" name='register'>
           <input checked={rgpd} type="checkbox" name="rgpd" onChange={(e) => {handleChange(e, 'check'); checkForm()}}/>I agree with the terms and conditions.
         </label>
-        {/* <div onClick={checkForm}>click to test</div> nth chilf 6 display: none pk ? */}
 
         <input type="submit" />
       </form>
@@ -163,10 +154,10 @@ const Register = ({ values, handleChange, handleSubmit, request, setNextStep }) 
 export default Register;
 
 /* RGPD tickbox “J'atteste de l'exactitude des informations fournies et
-accepte le traitement de mes données personnelles par *nom de l'entreprise* pour les fins de fonctionnement normal du service et statistiques dans les
+accepte le traitement de mes données personnelles par Tale It &copy pour les fins de fonctionnement normal du service et statistiques dans les
 conditions prévues par la Politique de confidentialité (lien
 hypertexte). Ces données seront supprimées au maximum un an après la
 fin de ma procédure de candidature ou de la fin de ma participation à
-un programme opéré par *nom de l'entreprise*. Je dispose à tout moment
+un programme opéré par Tale It &copy. Je dispose à tout moment
 d'un droit d'accès, de rectification et de suppression qui peut-être
 exercé en contactant l'adresse anicet.celerier@gmail.com” */
