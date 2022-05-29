@@ -34,7 +34,6 @@ const DisplayFriends = ({ contacts, handleToogle }) => {
         headers: { Authorization: "Bearer " + authTokens.access },
       })
         .then((response) => {
-          console.log(response.data);
           setContactList(response.data);
         })
         .catch((error) => console.log(error));

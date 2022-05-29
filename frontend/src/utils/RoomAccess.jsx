@@ -101,7 +101,12 @@ const RoomAccess = () => {
   return loading ? (
     room && participants && characters ? (
       <div className="duat">
-        <h4>CHOOSE YOUR CHARACTER</h4>
+        <div className="duat__title">
+          <h4>CHOOSE YOUR CHARACTER</h4>{" "}
+          <button className={`btn-text-only ${character ? "" : "disable"}`} onClick={handleSubmit}>
+            ENTER ROOM AS : {character ? character.name : ""}
+          </button>
+        </div>
         <div className="duat__container">
           <div className="duat__cards">
             {characters
@@ -110,9 +115,6 @@ const RoomAccess = () => {
                 ))
               : "Loading..."}
           </div>
-          <button className={`btn-primary ${character ? "" : "disable"}`} onClick={handleSubmit}>
-            SELECT {character ? character.name : "A CHARACTER"}
-          </button>
         </div>
       </div>
     ) : (

@@ -344,28 +344,63 @@ select {
 }
 #dashboard {
   min-height: 100vh;
+  max-width: 100vw;
   background-color: hsl(0deg, 0%, 9%);
 }
 
 .dashboard__grid {
-  display: grid;
-  grid-template-areas: "header header header" "sidebar container container" "sidebar container container";
-  grid-template-columns: 15rem 1fr 1fr;
-  grid-template-rows: 5rem auto;
-  min-height: 100vh;
   padding: 0.5rem 2rem 1.7rem;
-}
-.dashboard__grid > *:nth-child(1) {
-  grid-area: header;
+  display: flex;
+  flex-direction: column;
 }
 .dashboard__grid > *:nth-child(2) {
-  grid-area: sidebar;
+  display: none;
 }
-.dashboard__grid > *:nth-child(3) {
-  grid-area: container;
-  min-height: 1fr;
+.dashboard__grid.game-active > *:nth-child(2) .sidebar__rooms {
+  padding-left: 0.5rem;
+  direction: rtl;
+  overflow-y: auto;
+}
+.dashboard__grid.game-active > *:nth-child(2) .sidebar__rooms::-webkit-scrollbar {
+  width: 0.7rem;
+  height: 0.7rem;
+}
+.dashboard__grid.game-active > *:nth-child(2) .sidebar__rooms::-webkit-scrollbar-thumb {
+  background: hsl(0deg, 0%, 23%);
+}
+.dashboard__grid.game-active > *:nth-child(2) .sidebar__rooms::-webkit-scrollbar-track {
+  background: hsl(0deg, 0%, 14%);
+}
+.dashboard__grid.game-active > *:nth-child(2) .sidebar__rooms > * {
+  direction: ltr;
+}
+.dashboard__grid.game-active > *:nth-child(3) {
+  overflow: hidden;
 }
 
+@media (min-width: 50em) {
+  .dashboard__grid {
+    display: grid;
+    grid-template-areas: "header header header" "sidebar container container" "sidebar container container";
+    grid-template-columns: 15rem 1fr 1fr;
+    grid-template-rows: 5rem 1fr 1fr;
+    min-height: 100vh;
+  }
+  .dashboard__grid > *:nth-child(1) {
+    grid-area: header;
+  }
+  .dashboard__grid > *:nth-child(2) {
+    grid-area: sidebar;
+    display: inline-flex;
+  }
+  .dashboard__grid > *:nth-child(3) {
+    grid-area: container;
+  }
+  .dashboard__grid.game-active {
+    min-height: 0;
+    height: 100vh;
+  }
+}
 .rooms {
   padding-top: 1.5rem;
 }
@@ -392,13 +427,63 @@ select {
   grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
 }
 
+.duat {
+  padding-top: 1.5rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.duat__title {
+  display: flex;
+  gap: 2rem;
+}
+.duat__title .btn-text-only {
+  background-color: hsl(140deg, 93%, 60%);
+  text-transform: uppercase;
+  color: black;
+  border-radius: 5px;
+  transition: background-color 250ms ease-in;
+}
+.duat__title .btn-text-only.disable {
+  background-color: hsl(0deg, 0%, 23%);
+  color: hsl(0deg, 0%, 60%);
+  cursor: default;
+  border-radius: 5px;
+}
+.duat__container {
+  background-color: hsl(0deg, 0%, 14%);
+  height: 100%;
+  padding: 1.5rem;
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+.duat__cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  overflow-y: scroll;
+}
+.duat__cards::-webkit-scrollbar {
+  width: 0.7rem;
+  height: 0.7rem;
+}
+.duat__cards::-webkit-scrollbar-thumb {
+  background: hsl(0deg, 0%, 9%);
+}
+.duat__cards::-webkit-scrollbar-track {
+  background: hsl(0deg, 0%, 18%);
+}
+
 #game-engine {
-  max-width: 100%;
-  max-height: 100%;
+  width: 100%;
+  height: 100%;
   margin-top: 1.5rem;
   display: grid;
   grid-template-areas: "sidebar header header" "sidebar container infos" "sidebar container infos";
-  grid-template-columns: 30rem 1fr 10rem;
+  grid-template-columns: 27rem 1fr 10rem;
+  grid-template-rows: 13rem 1fr 1fr;
   gap: 1rem;
 }
 #game-engine > *:nth-child(1) {
@@ -424,6 +509,7 @@ button {
 
 .btn-primary {
   background-color: hsl(140deg, 75%, 63%);
+  height: 3rem;
   border: 0px;
   border-radius: 5px;
   padding: 0.7rem;
@@ -873,7 +959,9 @@ input[type=number] {
 }
 
 .duat__card {
-  min-width: 20rem;
+  min-width: 15rem;
+  max-width: 20rem;
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -891,24 +979,16 @@ input[type=number] {
 .duat__card .btn-text-only:hover {
   background: hsl(0deg, 0%, 18%);
 }
-.duat__description {
-  display: flex;
-  justify-content: space-between;
-}
-.duat__stats {
-  background-color: hsl(0deg, 0%, 9%);
-  width: 100%;
-  aspect-ratio: 1/0.1;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  gap: 2rem;
+.duat__card:hover .duat__img img {
+  transform: scale(1.2);
+  transition: transform 7s;
 }
 .duat__img {
   width: 100%;
   aspect-ratio: 1/1.72;
   border-radius: 5px;
   overflow: hidden;
+  border: 3px solid rgb(254, 255, 245);
 }
 .duat__img img {
   height: 100%;
@@ -923,6 +1003,96 @@ input[type=number] {
   image-rendering: crisp-edges;
   -ms-interpolation-mode: nearest-neighbor;
   /* IE (non-standard property) */
+}
+
+.image__stats__container {
+  position: relative;
+}
+.image__stats__container > * {
+  font-family: "Just Another Hand", cursive;
+  text-transform: uppercase;
+}
+.image__stats__hp {
+  position: absolute;
+  text-align: center;
+  padding: 0.2rem;
+  top: 0px;
+  left: 0px;
+  height: 5rem;
+  width: 2.5rem;
+  background-color: rgb(254, 255, 245);
+  border-end-end-radius: 15px;
+  color: #3d3d3d;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+.image__stats__hp h3 {
+  font-size: 1.7rem;
+  text-decoration: underline;
+  text-underline-offset: 0.2rem;
+}
+.image__stats__hp h4 {
+  font-size: 1.2rem;
+}
+.image__stats__atk {
+  font-size: 1.7rem;
+  position: absolute;
+  text-align: center;
+  padding: 0.5rem;
+  width: 2.5rem;
+  bottom: 0.5rem;
+  left: 0;
+  background: rgb(254, 255, 245);
+  border-start-end-radius: 15px;
+  color: #3d3d3d;
+  z-index: 2;
+}
+.image__stats__atk h3 {
+  font-size: 1.7rem;
+}
+.image__stats__atk h4 {
+  font-size: 1.2rem;
+}
+.image__stats__def {
+  position: absolute;
+  text-align: center;
+  padding: 0.5rem;
+  width: 2.5rem;
+  bottom: 0.5rem;
+  right: 0;
+  background: rgb(254, 255, 245);
+  border-start-start-radius: 15px;
+  color: #3d3d3d;
+  z-index: 2;
+}
+.image__stats__def h3 {
+  font-size: 1.7rem;
+}
+.image__stats__def h4 {
+  font-size: 1.2rem;
+}
+.image__stats__name {
+  font-family: "Just Another Hand", cursive;
+  letter-spacing: 2px;
+  font-size: 1.2rem;
+  position: absolute;
+  text-align: center;
+  padding: 0.2rem;
+  bottom: 0;
+  width: 100%;
+  background: rgb(254, 255, 245);
+  color: rgb(24, 24, 24);
+}
+.image__stats__name h4 {
+  text-decoration: underline;
+  text-underline-offset: 0.3rem;
+}
+.image__stats__name h5 {
+  font-size: 1rem;
+  margin: 0;
 }
 
 .contacts {
@@ -1058,6 +1228,8 @@ input[type=number] {
 
 .sidebar {
   padding-right: 2rem;
+  display: flex;
+  flex-direction: column;
 }
 .sidebar ul {
   color: hsl(0deg, 0%, 54%);
@@ -1187,41 +1359,6 @@ input[type=number] {
   flex-direction: column;
   justify-content: center;
   gap: 2rem;
-}
-
-.duat {
-  padding-top: 1.5rem;
-}
-.duat__container {
-  background-color: hsl(0deg, 0%, 14%);
-  padding: 1.5rem;
-  margin: 1rem 0 2rem;
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-}
-.duat__cards {
-  display: flex;
-  gap: 1.5rem;
-  overflow-x: scroll;
-}
-.duat__cards::-webkit-scrollbar {
-  width: 0.7rem;
-  height: 0.7rem;
-}
-.duat__cards::-webkit-scrollbar-thumb {
-  background: hsl(0deg, 0%, 9%);
-}
-.duat__cards::-webkit-scrollbar-track {
-  background: hsl(0deg, 0%, 18%);
-}
-.duat .btn-primary {
-  text-transform: uppercase;
-}
-.duat .btn-primary.disable {
-  background-color: hsl(0deg, 0%, 23%);
-  color: hsl(0deg, 0%, 60%);
-  cursor: default;
 }
 
 /*# sourceMappingURL=App.css.map */

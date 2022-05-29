@@ -35,10 +35,9 @@ const QuickCards = () => {
       };
 
       fetch();
-
       return () => request.cancel();
     },
-    [location]
+    [location.key]
   );
 
   return (

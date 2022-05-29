@@ -1,8 +1,8 @@
 @use "../abstracts/" as *;
 
 #game-engine {
-    max-width: 100%;
-    max-height: 100%;
+    width: 100%;
+    height: 100%;
     margin-top: 1.5rem;
 
     display: grid;
@@ -10,7 +10,8 @@
         "sidebar header header"
         "sidebar container infos"
         "sidebar container infos";
-    grid-template-columns: 30rem 1fr 10rem;
+    grid-template-columns: 27rem 1fr 10rem;
+    grid-template-rows: 13rem 1fr 1fr;
     gap: 1rem;
 
     > * {

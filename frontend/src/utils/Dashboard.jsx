@@ -2,8 +2,8 @@
  * WIP
  */
 /* global ------------------------------------------------------------------ */
-import React, { useState, useEffect, useContext } from "react";
-import { Outlet } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Outlet, useLocation } from "react-router-dom";
 
 /* components -------------------------------------------------------------- */
 import Contacts from "@components/Contacts";
@@ -12,16 +12,27 @@ import SideBar from "@components/SideBar";
 
 const Dashboard = () => {
   const [contacts, toogleContacts] = useState(false);
+  const [gameMode, setGameMode] = useState();
+  const location = useLocation();
 
   const handleToogle = () => {
     toogleContacts(!contacts);
   };
 
+  useEffect(() => {
+    if (location.pathname.startsWith("/test/")) {
+      // ! DEBUG
+      setGameMode(true);
+    } else {
+      setGameMode(false);
+    }
+  }, [location]);
+
   /* display --------------------------------------------------------------- */
 
   return (
     <div id="dashboard">
-      <div className="dashboard__grid">
+      <div className={`dashboard__grid ${gameMode ? "game-active" : ""}`}>
         <Header handleToogle={handleToogle} contacts={contacts} />
         <SideBar />
         <div className="dahsboard__container">
