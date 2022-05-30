@@ -1,9 +1,23 @@
 import React from "react";
 
 const ChatInput = (props) => {
-  const { newMessage, msgChange, submitMessage } = props;
+  const { newMessage, msgChange, submitMessage, triggerCandidates } = props;
   return (
     <div className="ge-center__input__container">
+      {triggerCandidates ? (
+        <div className="triggers">
+          {triggerCandidates?.map((candidate, index) => (
+            <div>
+              <div className="triggers_tab">{candidate.tab}</div>
+              <div className="triggers_name">{candidate.name ? candidate.name : candidate.title}</div>
+              <div className="triggers_trigger">/{candidate.trigger}</div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        ""
+      )}
+
       <form onSubmit={submitMessage}>
         <input
           value={newMessage}

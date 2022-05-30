@@ -3,13 +3,14 @@
 import contextlib
 import os
 import random
+import json
 from pathlib import Path
 from django.core.management.base import BaseCommand
 from django.db.models import Q
 from faker import Faker
 import faker.providers
 from blablapp.models import CharacterClass, Character, Action, MyUser, Contact, Tickbox, Entity, EntityInstance, Event, Story, Room, RoomParticipant, Message, Whisper, Quote  # pylint: disable=import-error
-
+from blablapp.serializers import TriggerSerializer, EventSerializer
 
 APP_URL = Path(__file__).resolve().parent.parent.parent.parent.parent
 
@@ -346,19 +347,31 @@ class Command(BaseCommand):
                 quote = False if whisper else fake.boolean(
                     chance_of_getting_true=10)
                 is_triggered = False if whisper or quote else fake.boolean(
-                    chance_of_getting_true=10)
+                    chance_of_getting_true=15)
 
                 random_nb = random.randint(1, 30)
 
-                message = Message.objects.create(
-                    room=room,
-                    sender=sender,
-                    messageContent=fake.sentence(nb_words=10),
-                    quoted=quote,
-                    whispered=whisper,
-                    isTriggered=is_triggered,
-                    image=f'messages/{fake.img_mess()}' if random_nb % 3 == 0 else ""
-                )
+                if is_triggered:
+                    event = Event.objects.order_by("?").first()
+                    test = EventSerializer(event).data
+                    message_content = json.dumps(test)
+
+                    message = Message.objects.create(
+                        room=room,
+                        sender=sender,
+                        messageContent=message_content,
+                        isTriggered=True)
+
+                else:
+                    message = Message.objects.create(
+                        room=room,
+                        sender=sender,
+                        messageContent=fake.sentence(nb_words=10),
+                        quoted=quote,
+                        whispered=whisper,
+                        isTriggered=is_triggered,
+                        image=f'messages/{fake.img_mess()}' if random_nb % 7 == 0 else ""
+                    )
 
                 # whisper --------------------------------------------------- #
                 if whisper:

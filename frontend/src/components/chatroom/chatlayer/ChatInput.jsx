@@ -1,9 +1,9 @@
-import React from 'react'
+import React from "react";
 
 const ChatInput = (props) => {
-  const {autocompletion, trigger, triggerCandidates, newMessage, msgChange, submitMessage} = props;
+  const { autocompletion, trigger, triggerCandidates, newMessage, msgChange, submitMessage } = props;
   return (
-    <div className='limite_composant'>
+    <div className="limite_composant">
       ChatInput
       <div id="search_container">
         <div id="autocomplete">{autocompletion ? autocompletion : null}</div>
@@ -34,7 +34,7 @@ const ChatInput = (props) => {
         ))}
       </ul>
     </div>
-  )
-}
+  );
+};
 
-export default ChatInput
+export default ChatInput;

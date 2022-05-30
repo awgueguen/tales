@@ -26,6 +26,7 @@ const GameEngine = () => {
   const { roomId } = useParams();
 
   const URL_PARTICIPANTS = `http://127.0.0.1:8000/api/roompart/list/${roomId}`;
+  const URL_TRIGGERS = "http://127.0.0.1:8000/api/triggers/submit/";
 
   /* lifecycle ------------------------------------------------------------- */
   const { messages, sendMessage } = useChat(roomId, userDetail.roompart.nickname); // ?
@@ -74,7 +75,11 @@ const GameEngine = () => {
   }, [triggerMessages]);
 
   /* chat handle ----------------------------------------------------------- */
-  const [checkTrigger, triggerCandidates, trigger] = useTrigger(authTokens.access, roomId, userDetail.roompart.isAdmin);
+  const [checkTrigger, triggerCandidates, trigger, reset] = useTrigger(
+    authTokens.access,
+    roomId,
+    userDetail.roompart.isAdmin
+  );
 
   const msgChange = (e) => {
     checkTrigger(e.target.value);
@@ -86,6 +91,18 @@ const GameEngine = () => {
     const { isAdmin, nickname } = userDetail.roompart;
     sendMessage(newMessage, nickname, isAdmin);
     setNewMessage("");
+    submitTrigger();
+  };
+
+  const submitTrigger = () => {
+    if (trigger) {
+      axios({
+        url: URL_TRIGGERS,
+        method: "POST",
+        headers: { Authorization: `Bearer ${authTokens.access}` },
+        data: { ...trigger, roomId },
+      });
+    }
   };
 
   const chatInputProps = {
@@ -110,9 +127,9 @@ const GameEngine = () => {
       <div className="game-engine__center-container">
         <ChatLayer messages={chatMessages} handleInput={chatInputProps} />
       </div>
-      <div className="game-engine__right-container">
+      {/* <div className="game-engine__right-container">
         <PlayersLayer participants={participants} />
-      </div>
+      </div> */}
     </div>
   );
 };

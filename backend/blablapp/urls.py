@@ -12,6 +12,7 @@ urlpatterns = [
 
     # gameplay -------------------------------------------------------------- #
     path('triggers/', views.trigger),
+    path('triggers/submit/', views.submit_trigger),
     # rechercher un trigger existant dans une table
     # path('gameplay/instances_ingame/<int:instance_id>&hit=<int:hit>',
     #  views.instances_ingame),

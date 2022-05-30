@@ -340,7 +340,7 @@ select {
   display: none;
 }
 
-@media (min-width: 70em) {
+@media (min-width: 50em) {
   #connect__container {
     flex-direction: row;
     width: min(100vw - 10rem, 60rem);
@@ -391,7 +391,7 @@ select {
   overflow: hidden;
 }
 
-@media (min-width: 70em) {
+@media (min-width: 50em) {
   .dashboard__grid {
     display: grid;
     grid-template-areas: "header header header" "sidebar container container" "sidebar container container";
@@ -494,7 +494,7 @@ select {
   height: 100%;
   margin-top: 1.5rem;
   display: grid;
-  grid-template-areas: "sidebar header header" "sidebar container infos" "sidebar container infos";
+  grid-template-areas: "sidebar header header" "sidebar container container" "sidebar container container";
   grid-template-columns: 25rem 1fr 9%;
   grid-template-rows: 25% 1fr 1fr;
   gap: 1rem;
@@ -510,7 +510,6 @@ select {
 }
 #game-engine > *:nth-child(4) {
   grid-area: infos;
-  background-color: rgb(255, 153, 0);
 }
 
 .game-engine__center-container {
@@ -563,6 +562,26 @@ select {
 .ge-center__input__container {
   border-bottom: 1.2rem solid rgba(255, 0, 170, 0);
   position: relative;
+}
+.ge-center__input__container .triggers {
+  color: rgb(122, 122, 122);
+  font-size: 0.9rem;
+  font-weight: 500;
+  width: 40rem;
+  position: absolute;
+  bottom: 3rem;
+  padding: 1rem;
+  background: rgb(254, 255, 245);
+  border-radius: 5px;
+}
+.ge-center__input__container .triggers > * {
+  display: flex;
+  gap: 1rem;
+  margin-top: 5px;
+  border-bottom: 1px solid hsl(0deg, 0%, 60%);
+}
+.ge-center__input__container .triggers > * > * {
+  flex: 1;
 }
 .ge-center__input__submit {
   position: absolute;
@@ -668,7 +687,11 @@ select {
   color: hsl(0deg, 0%, 54%);
 }
 .game-engine__top-container .ge-top__narration__message.last-message {
-  color: hsl(0deg, 100%, 68%);
+  color: hsl(32deg, 100%, 93%);
+}
+.game-engine__top-container .ge-top__narration__description {
+  font-size: 0.9rem;
+  margin-top: 1rem;
 }
 .game-engine__top-container .ge-top__character {
   height: 100%;
@@ -691,6 +714,39 @@ select {
 }
 .game-engine__top-container .ge-top__character__infos {
   align-self: center;
+}
+
+.game-engine__right-container h5 {
+  margin: 0;
+  padding: 0.4rem;
+  text-align: center;
+}
+
+.ge-right__players {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+.ge-right__players__img {
+  width: 70%;
+  height: 8rem;
+  overflow: hidden;
+  border-radius: 10px;
+}
+.ge-right__players__img img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  image-rendering: -moz-crisp-edges;
+  /* Firefox */
+  image-rendering: -o-crisp-edges;
+  /* Opera */
+  image-rendering: -webkit-optimize-contrast;
+  /* Webkit (non-standard naming) */
+  image-rendering: crisp-edges;
+  -ms-interpolation-mode: nearest-neighbor;
+  /* IE (non-standard property) */
 }
 
 button {

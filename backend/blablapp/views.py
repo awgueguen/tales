@@ -107,6 +107,45 @@ def trigger(request):
 
     return Response([entity_instances_triggers + story_trigger + event_triggers + action_triggers], status=status.HTTP_200_OK)
 
+
+@api_view(['POST'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([permissions.IsAuthenticated])
+def submit_trigger(request):
+
+    if request.data['tab'] == "Action":
+        res = models.Action.objects.get(trigger=request.data['trigger'])
+        data = serializers.ActionSerializer(res)
+    elif request.data['tab'] == 'Event':
+        res = models.Event.objects.get(trigger=request.data['trigger'])
+        data = serializers.EventSerializer(res)
+    elif request.data['tab'] == 'EntityInstance':
+        res = models.EntityInstance.objects.get(
+            trigger=request.data['trigger'])
+        data = serializers.EntityInstanceSerializer(res)
+    else:
+        res = models.Story.objects.get(trigger=request.data['trigger'])
+        data = serializers.StorySerializer(res)
+    print(data.data)
+
+    content = json.dumps(data.data)
+
+    query = {
+        'room': request.data['roomId'],
+        'sender': request.user.id,
+        'messageContent': content,
+        'isTriggered': True
+    }
+
+    res_query = serializers.TriggerSerializer(data=query)
+    if not res_query.is_valid():
+        res_query.data
+        print('>>>>', res_query.errors)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+    res_query.save()
+
+    return Response(status=status.HTTP_200_OK)
+
 # --------------------------------------------------------------------------- #
 # CHARACTERS                                                                  #
 # --------------------------------------------------------------------------- #

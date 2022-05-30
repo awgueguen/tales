@@ -80,7 +80,11 @@ const useTrigger = (token, roomId, isAdmin) => {
     });
   };
 
-  return [checkTrigger, triggerCandidates, trigger]; // autocompletion
+  const reset = () => {
+    setAvailableTriggers(() => "");
+  };
+
+  return [checkTrigger, triggerCandidates, trigger, reset]; // autocompletion
 };
 
 export default useTrigger;

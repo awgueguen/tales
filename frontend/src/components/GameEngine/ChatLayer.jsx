@@ -5,7 +5,7 @@ import React from "react";
 import DisplayMsg from "./ChatLayer/DisplayMsg";
 import ChatInput from "./ChatLayer/ChatInput";
 
-const ChatLayer = ({ messages, handleInput }) => {
+const ChatLayer = ({ messages, handleInput, triggerCandidates }) => {
   return (
     <>
       <DisplayMsg messages={messages} />

@@ -8,8 +8,10 @@
   display: grid;
   grid-template-areas:
     "sidebar header header"
-    "sidebar container infos"
-    "sidebar container infos";
+    // "sidebar container infos"
+    "sidebar container container"
+    // "sidebar container infos";
+    "sidebar container container";
   grid-template-columns: 25rem 1fr 9%;
   grid-template-rows: 25% 1fr 1fr;
   gap: 1rem;
@@ -28,7 +30,7 @@
     }
     &:nth-child(4) {
       grid-area: infos;
-      background-color: rgb(255, 153, 0);
+      //   background-color: rgb(255, 153, 0);
     }
   }
 }

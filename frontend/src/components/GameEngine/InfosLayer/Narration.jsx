@@ -11,7 +11,14 @@ const Narration = ({ messages }) => {
                   key={index}
                   className={`ge-top__narration__message ${index === allMessages.length - 1 ? "last-message" : ""}`}
                 >
-                  {JSON.parse(message.data).description}
+                  <div className="ge-top__narration__description">{JSON.parse(message.data).description}</div>
+                  <div className="ge-top__narration__content">
+                    {JSON.parse(message.data).content ? (
+                      <div className="ge-top__narration__content">{JSON.parse(message.data).content} </div>
+                    ) : (
+                      ""
+                    )}
+                  </div>
                 </div>
               );
             } catch (e) {

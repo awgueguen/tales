@@ -35,7 +35,7 @@ const SideBar = () => {
               Characters
             </Link>
           </li>
-          {/* <li onClick={logoutUser}>DEBUG: LOGOUT</li> */}
+          <li onClick={logoutUser}>DEBUG: LOGOUT</li>
         </ul>
       </nav>
       <h5>QUICK ACCESS</h5>
