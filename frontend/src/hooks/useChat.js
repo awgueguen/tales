@@ -31,7 +31,11 @@ const useChat = (roomId, nickname) => {
      * seulement quand on change de room/de joueurs ou qu'on a une déconnexion ?
      */
 
-    socketRef.current.emit("join", { room: roomId, date: dateTranslator(), log: true });
+    socketRef.current.emit("join", {
+      room: roomId,
+      date: dateTranslator(),
+      log: true,
+    });
     socketRef.current.on(LISTENER_EVENT, (message) => {
       /**
        * TODO: potentiellement n'afficher qu'une seule fois les logs ("connecté" / "rejoint la room x")
@@ -98,7 +102,10 @@ const useChat = (roomId, nickname) => {
      */
 
     // ________________ envoi socket
-    console.log("---------------------------------------------------------------", isAdmin);
+    console.log(
+      "---------------------------------------------------------------",
+      isAdmin
+    );
     socketRef.current.emit(EMIT_EVENT, {
       data: messageBody,
       user_id: userId,
