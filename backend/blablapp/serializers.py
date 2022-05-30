@@ -229,6 +229,11 @@ class StorySerializer(serializers.ModelSerializer):
 # triggers                                                                    #
 # --------------------------------------------------------------------------- #
 
+class TriggerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Message
+        fields = ['room', 'sender', 'messageContent', 'image', 'isTriggered']
+
 
 class EntityInstanceTriggers(serializers.ModelSerializer):
 

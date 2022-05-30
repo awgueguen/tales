@@ -14,7 +14,7 @@ import axios from "axios";
 import { useState } from "react";
 // import useAutocomplete from "@hooks/useAutocomplete";
 
-const useTrigger = (token, roomId) => {
+const useTrigger = (token, roomId, isAdmin) => {
   // const [autocompletion, displayAutocomplete] = useAutocomplete();
 
   const [availableTriggers, setAvailableTriggers] = useState(null);
@@ -32,9 +32,7 @@ const useTrigger = (token, roomId) => {
       const possibleTrigger = message.slice(message.indexOf("/") + 1);
 
       setTriggerCandidates(() => {
-        const triggers = availableTriggers?.filter((commands) =>
-          commands["trigger"].startsWith(possibleTrigger)
-        );
+        let triggers = availableTriggers?.filter((commands) => commands["trigger"].startsWith(possibleTrigger));
         // displayAutocomplete(message, triggers);
         return triggers;
       });
@@ -55,8 +53,8 @@ const useTrigger = (token, roomId) => {
     }
   };
 
-  const fetchInitialTriggers = () => {
-    axios({
+  const fetchInitialTriggers = async () => {
+    await axios({
       url: `http://127.0.0.1:8000/api/triggers?room_id=${roomId}`,
       method: "GET",
       headers: {
@@ -64,8 +62,13 @@ const useTrigger = (token, roomId) => {
         Authorization: `Bearer ${token}`,
       },
     }).then((response) => {
-      setTriggerCandidates(response.data[0]);
-      setAvailableTriggers(response.data[0]);
+      if (!isAdmin) {
+        setTriggerCandidates(response.data[0].filter((command) => command["tab"] === "Action"));
+        setAvailableTriggers(response.data[0].filter((command) => command["tab"] === "Action"));
+      } else {
+        setTriggerCandidates(response.data[0]);
+        setAvailableTriggers(response.data[0]);
+      }
     });
   };
 

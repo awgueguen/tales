@@ -97,6 +97,24 @@ form {
     color: inherit;
 }
 
+/* chat -------------------------------------------------------------------- */
+
+.ge-center__messages {
+    &__container {
+        .chat-user-infos {
+            font-size: 0.7rem;
+        }
+        .chat-user-name {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+    }
+    &__message {
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+}
+
 /* specifics --------------------------------------------------------------- */
 
 .contacts__add ~ span {

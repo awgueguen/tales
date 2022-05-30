@@ -150,6 +150,19 @@ form {
   color: inherit;
 }
 
+/* chat -------------------------------------------------------------------- */
+.ge-center__messages__container .chat-user-infos {
+  font-size: 0.7rem;
+}
+.ge-center__messages__container .chat-user-name {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+}
+.ge-center__messages__message {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
 /* specifics --------------------------------------------------------------- */
 .contacts__add ~ span {
   font-size: 0.8rem;
@@ -327,7 +340,7 @@ select {
   display: none;
 }
 
-@media (min-width: 50em) {
+@media (min-width: 70em) {
   #connect__container {
     flex-direction: row;
     width: min(100vw - 10rem, 60rem);
@@ -378,7 +391,7 @@ select {
   overflow: hidden;
 }
 
-@media (min-width: 50em) {
+@media (min-width: 70em) {
   .dashboard__grid {
     display: grid;
     grid-template-areas: "header header header" "sidebar container container" "sidebar container container";
@@ -482,8 +495,8 @@ select {
   margin-top: 1.5rem;
   display: grid;
   grid-template-areas: "sidebar header header" "sidebar container infos" "sidebar container infos";
-  grid-template-columns: 27rem 1fr 10rem;
-  grid-template-rows: 13rem 1fr 1fr;
+  grid-template-columns: 25rem 1fr 9%;
+  grid-template-rows: 25% 1fr 1fr;
   gap: 1rem;
 }
 #game-engine > *:nth-child(1) {
@@ -496,11 +509,107 @@ select {
 }
 #game-engine > *:nth-child(3) {
   grid-area: container;
-  background-color: blue;
 }
 #game-engine > *:nth-child(4) {
   grid-area: infos;
   background-color: rgb(255, 153, 0);
+}
+
+.game-engine__center-container {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  padding: 1rem;
+  gap: 1rem;
+  background-color: hsl(0deg, 0%, 14%);
+  border-radius: 5px;
+}
+
+.ge-center__messages__container {
+  min-height: 100%;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding-right: 1rem;
+}
+.ge-center__messages__container::-webkit-scrollbar {
+  width: 0.7rem;
+  height: 0.7rem;
+}
+.ge-center__messages__container::-webkit-scrollbar-thumb {
+  background: hsl(0deg, 0%, 9%);
+}
+.ge-center__messages__container::-webkit-scrollbar-track {
+  background: hsl(0deg, 0%, 18%);
+}
+.ge-center__messages__container .my-message {
+  align-self: flex-end;
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+.ge-center__messages__container .my-message .chat-user-infos {
+  margin-top: 4px;
+}
+.ge-center__messages__container .chat-user-infos {
+  color: hsl(0deg, 0%, 60%);
+}
+.ge-center__messages__container .chat-user-name {
+  color: hsl(0deg, 0%, 100%);
+  margin-top: 10px;
+}
+
+.ge-center__input__container {
+  border-bottom: 1.2rem solid rgba(255, 0, 170, 0);
+  position: relative;
+}
+.ge-center__input__submit {
+  position: absolute;
+  background-color: hsl(0deg, 0%, 18%);
+  padding: 2px;
+  border-radius: 5px;
+  top: 0.6rem;
+  z-index: 2;
+  right: 0.4rem;
+}
+
+.ge-center__messages__log {
+  background-color: hsl(0deg, 0%, 9%);
+  color: hsl(0deg, 100%, 68%);
+  padding: 5px 20px;
+  width: 100%;
+  border-radius: 12.5px;
+}
+.ge-center__messages__message {
+  background-color: hsl(0deg, 0%, 23%);
+  padding: 5px 15px;
+  border-radius: 12.5px;
+}
+.ge-center__messages__message.my-message {
+  background-color: hsl(140deg, 93%, 60%);
+  color: hsl(0deg, 0%, 9%);
+}
+.ge-center__messages__message.message-img {
+  width: 25rem;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+.ge-center__messages__message.message-img img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  image-rendering: -moz-crisp-edges;
+  /* Firefox */
+  image-rendering: -o-crisp-edges;
+  /* Opera */
+  image-rendering: -webkit-optimize-contrast;
+  /* Webkit (non-standard naming) */
+  image-rendering: crisp-edges;
+  -ms-interpolation-mode: nearest-neighbor;
+  /* IE (non-standard property) */
 }
 
 button {
@@ -533,6 +642,7 @@ button {
   display: flex;
   justify-content: center;
   align-items: center;
+  background-color: hsl(0deg, 0%, 100%);
   gap: 1rem;
   padding: 1rem;
   border: none;
@@ -1097,6 +1207,7 @@ input[type=number] {
 
 .contacts {
   background-color: hsl(0deg, 0%, 14%);
+  z-index: 10;
   position: fixed;
   top: 0;
   right: -17rem;

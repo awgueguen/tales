@@ -13,10 +13,12 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from blablapp import serializers
 from blablapp import models
 
+import json
 
 # --------------------------------------------------------------------------- #
 # REGISTER                                                                    #
 # --------------------------------------------------------------------------- #
+
 
 class MyTokenObtainPairView(TokenObtainPairView):
     # throttle_classes = [UserRateThrottle, AnonRateThrottle]
@@ -100,10 +102,10 @@ def trigger(request):
                            for i in character_serializer['characterClass']['actions']]
 
     except models.Character.DoesNotExist:
-        print('no character associated\nplease connect with someone registered in the room')
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        # print('no character associated\nplease connect with someone registered in the room')
+        return Response([entity_instances_triggers + story_trigger + event_triggers], status=status.HTTP_200_OK)
 
-    return Response([entity_instances_triggers + story_trigger + event_triggers + action_triggers])
+    return Response([entity_instances_triggers + story_trigger + event_triggers + action_triggers], status=status.HTTP_200_OK)
 
 # --------------------------------------------------------------------------- #
 # CHARACTERS                                                                  #
@@ -230,6 +232,7 @@ def create_room(request):
     """OK"""
 
     room = request.data['room']
+    print(room)
 
     moderator = get_user_detail(request.user)
     res = serializers.RoomSerializer(data=room)
@@ -262,6 +265,29 @@ def create_room(request):
 
         player.save()
         response['players'] += [player.data]
+
+    # message --------------------------------------------------------------- #
+    story = models.Story.objects.get(id=room['story'])
+    res_story = serializers.StorySerializer(story).data
+
+    message = json.dumps(res_story)
+
+    query = {
+        'room': response['room']['id'],
+        'sender': response['mod']['user'],
+        'messageContent': message,
+        'isTriggered': True,
+    }
+
+    print('>>>>', query)
+
+    res_query = serializers.TriggerSerializer(data=query)
+    if not res_query.is_valid():
+        res_query.data
+        print(res_query.errors)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+    res_query.save()
+
     return Response(response, status=status.HTTP_201_CREATED)
 
 

@@ -10,8 +10,8 @@
         "sidebar header header"
         "sidebar container infos"
         "sidebar container infos";
-    grid-template-columns: 27rem 1fr 10rem;
-    grid-template-rows: 13rem 1fr 1fr;
+    grid-template-columns: 25rem 1fr 9%;
+    grid-template-rows: 25% 1fr 1fr;
     gap: 1rem;
 
     > * {
@@ -25,7 +25,6 @@
         }
         &:nth-child(3) {
             grid-area: container;
-            background-color: blue;
         }
         &:nth-child(4) {
             grid-area: infos;

@@ -168,7 +168,7 @@ class Command(BaseCommand):
             )
 
             # characters ---------------------------------------------------- #
-            for _ in range(7):
+            for _ in range(5):
                 class_id = CharacterClass.objects.order_by("?").first()
 
                 Character.objects.create(

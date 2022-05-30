@@ -44,7 +44,7 @@ const useChat = (roomId, nickname) => {
         is_admin: message.is_admin,
       };
       if (incomingMessage.info) return;
-      setMessages((messages) => [...messages, incomingMessage]);
+      setMessages((messages) => [incomingMessage, ...messages]);
     });
 
     const request = axios.CancelToken.source();

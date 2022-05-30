@@ -85,8 +85,8 @@ const AddRoom = (props) => {
     if (invitations.some((invitation) => invitation.id == id)) {
       let newInvitations = invitations.filter((invitation) => invitation.id !== id);
       setModalInput((prevValue) => ({ ...prevValue, invitations: newInvitations }));
-    } else if (invitations.length >= maxParticipants) {
-      alert("maximun number of participants reached");
+    } else if (invitations.length >= maxParticipants - 1) {
+      alert("maximun number of participants reached"); // ! TODO
     } else {
       let newInvitations = [...invitations, { id: id, nickname: nickname }];
       setModalInput((prevValue) => ({ ...prevValue, invitations: newInvitations }));
@@ -236,7 +236,6 @@ const AddRoom = (props) => {
         </div>
       </div>
       {formSteps()}
-      {/* <pre>{JSON.stringify(modalInput, null, 2)}</pre> */}
     </dialog>
   );
 };

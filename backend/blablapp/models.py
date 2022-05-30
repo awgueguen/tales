@@ -376,7 +376,7 @@ class Message(models.Model):
     isTriggered = models.BooleanField(default=False)
 
     class Meta:
-        ordering = ["room", "createdAt"]
+        ordering = ["room", "-createdAt"]
         verbose_name = "Message"
         verbose_name_plural = "Messages"
 

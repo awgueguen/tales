@@ -5,9 +5,12 @@ import AuthContext from "@context/AuthContext";
 
 /* hooks ------------------------------------------------------------------- */
 import useChat from "@hooks/useChat";
+import useTrigger from "@hooks/useTrigger";
 import axios from "axios";
 
 /* components -------------------------------------------------------------- */
+import PlayersLayer from "@components/GameEngine/PlayersLayer";
+import ChatLayer from "@components/GameEngine/ChatLayer";
 
 /* render ------------------------------------------------------------------ */
 
@@ -15,6 +18,8 @@ const GameEngine = () => {
   const [participants, setParticipants] = useState();
   const [userDetail, setUserDetail] = useState({ roompart: { nickname: "waiting", isAdmin: "waiting" } }); // ?
   const [myCharacter, setMyCharacter] = useState();
+  const [newMessage, setNewMessage] = useState("");
+
   const { userId, authTokens } = useContext(AuthContext);
   const { roomId } = useParams();
 
@@ -52,6 +57,30 @@ const GameEngine = () => {
     setTriggerMessages(messages.filter((message) => message.isTriggered));
   }, [messages.length]);
 
+  /* chat handle ----------------------------------------------------------- */
+  const [checkTrigger, triggerCandidates, trigger] = useTrigger(authTokens.access, roomId, userDetail.roompart.isAdmin);
+
+  const msgChange = (e) => {
+    checkTrigger(e.target.value);
+    setNewMessage(e.target.value);
+  };
+
+  const submitMessage = (e) => {
+    e.preventDefault();
+    console.log(e);
+    const { isAdmin, nickname } = userDetail.roompart;
+    sendMessage(newMessage, nickname, isAdmin);
+    setNewMessage("");
+  };
+
+  const chatInputProps = {
+    trigger: trigger,
+    triggerCandidates: triggerCandidates,
+    newMessage: newMessage,
+    msgChange: msgChange,
+    submitMessage: submitMessage,
+  };
+
   /* debug ----------------------------------------------------------------- */
   const eventProps = {
     isEntity: true,
@@ -61,12 +90,19 @@ const GameEngine = () => {
   /* render ---------------------------------------------------------------- */
   return (
     <div id="game-engine">
-      {/* <pre>{JSON.stringify(chatMessages, null, 2)}</pre> */}
       {/* <pre>{JSON.stringify(triggerMessages, null, 2)}</pre> */}
-      <div className="game-engine__left-container">LEFT BLOCK</div>
+      <div className="game-engine__left-container">
+        {" "}
+        <pre>{JSON.stringify(triggerCandidates, null, 2)}</pre>
+        <pre>{JSON.stringify(trigger, null, 2)}</pre>
+      </div>
       <div className="game-engine__top-container">HEADER</div>
-      <div className="game-engine__center-container">CHAT</div>
-      <div className="game-engine__right-container">CHARACTERS</div>
+      <div className="game-engine__center-container">
+        <ChatLayer messages={chatMessages} handleInput={chatInputProps} />
+      </div>
+      <div className="game-engine__right-container">
+        <PlayersLayer participants={participants} />
+      </div>
     </div>
   );
 };
