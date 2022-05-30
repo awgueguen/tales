@@ -11,6 +11,8 @@ import axios from "axios";
 /* components -------------------------------------------------------------- */
 import PlayersLayer from "@components/GameEngine/PlayersLayer";
 import ChatLayer from "@components/GameEngine/ChatLayer";
+import InfosLayer from "@components/GameEngine/InfosLayer";
+import EventLayer from "@components/GameEngine/EventLayer";
 
 /* render ------------------------------------------------------------------ */
 
@@ -27,6 +29,7 @@ const GameEngine = () => {
 
   /* lifecycle ------------------------------------------------------------- */
   const { messages, sendMessage } = useChat(roomId, userDetail.roompart.nickname); // ?
+  const [lastEvent, setLastEvent] = useState();
   const [chatMessages, setChatMessages] = useState();
   const [triggerMessages, setTriggerMessages] = useState();
 
@@ -57,6 +60,19 @@ const GameEngine = () => {
     setTriggerMessages(messages.filter((message) => message.isTriggered));
   }, [messages.length]);
 
+  useEffect(() => {
+    if (triggerMessages) {
+      const lastEvent = triggerMessages[0];
+      try {
+        setLastEvent(JSON.parse(lastEvent.data));
+        // const allMessages = triggerMessages.shift();
+        // setTriggerMessages(allMessages);
+      } catch (e) {
+        // console.log(e);
+      }
+    }
+  }, [triggerMessages]);
+
   /* chat handle ----------------------------------------------------------- */
   const [checkTrigger, triggerCandidates, trigger] = useTrigger(authTokens.access, roomId, userDetail.roompart.isAdmin);
 
@@ -67,7 +83,6 @@ const GameEngine = () => {
 
   const submitMessage = (e) => {
     e.preventDefault();
-    console.log(e);
     const { isAdmin, nickname } = userDetail.roompart;
     sendMessage(newMessage, nickname, isAdmin);
     setNewMessage("");
@@ -81,22 +96,17 @@ const GameEngine = () => {
     submitMessage: submitMessage,
   };
 
-  /* debug ----------------------------------------------------------------- */
-  const eventProps = {
-    isEntity: true,
-    event: { atk: 2, hp: 3, def: 4, img: null, title: "la valé dlamor", description: "ça fout les choquottes sa mère" },
-  };
-
   /* render ---------------------------------------------------------------- */
   return (
     <div id="game-engine">
-      {/* <pre>{JSON.stringify(triggerMessages, null, 2)}</pre> */}
       <div className="game-engine__left-container">
-        {" "}
-        <pre>{JSON.stringify(triggerCandidates, null, 2)}</pre>
-        <pre>{JSON.stringify(trigger, null, 2)}</pre>
+        <EventLayer lastEvent={lastEvent} />
+        {/* <pre>{JSON.stringify(triggerCandidates, null, 2)}</pre>
+        <pre>{JSON.stringify(trigger, null, 2)}</pre> */}
       </div>
-      <div className="game-engine__top-container">HEADER</div>
+      <div className="game-engine__top-container">
+        <InfosLayer messages={triggerMessages} character={myCharacter} lastEvent={lastEvent} />
+      </div>
       <div className="game-engine__center-container">
         <ChatLayer messages={chatMessages} handleInput={chatInputProps} />
       </div>

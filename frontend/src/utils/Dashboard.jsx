@@ -20,7 +20,7 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    if (location.pathname.startsWith("/test/")) {
+    if (location.pathname.startsWith("/rooms/")) {
       // ! DEBUG
       setGameMode(true);
     } else {

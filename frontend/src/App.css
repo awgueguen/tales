@@ -501,11 +501,9 @@ select {
 }
 #game-engine > *:nth-child(1) {
   grid-area: sidebar;
-  background-color: green;
 }
 #game-engine > *:nth-child(2) {
   grid-area: header;
-  background-color: red;
 }
 #game-engine > *:nth-child(3) {
   grid-area: container;
@@ -610,6 +608,89 @@ select {
   image-rendering: crisp-edges;
   -ms-interpolation-mode: nearest-neighbor;
   /* IE (non-standard property) */
+}
+
+.game-engine__left-container {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: hsl(0deg, 0%, 14%);
+  border-radius: 5px;
+  padding: 1rem;
+}
+.game-engine__left-container .ge-left__card {
+  width: 100%;
+  aspect-ratio: 1/1.72;
+  border-radius: 5px;
+  overflow: hidden;
+  border: 3px solid rgb(254, 255, 245);
+}
+.game-engine__left-container .ge-left__card img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  image-rendering: -moz-crisp-edges;
+  /* Firefox */
+  image-rendering: -o-crisp-edges;
+  /* Opera */
+  image-rendering: -webkit-optimize-contrast;
+  /* Webkit (non-standard naming) */
+  image-rendering: crisp-edges;
+  -ms-interpolation-mode: nearest-neighbor;
+  /* IE (non-standard property) */
+}
+
+.game-engine__top-container {
+  display: grid;
+  grid-template-columns: 1fr 15rem;
+  gap: 1rem;
+  border: 1px solid hsl(0deg, 0%, 18%);
+  border-radius: 5px;
+}
+.game-engine__top-container > * {
+  padding: 1rem;
+}
+.game-engine__top-container .ge-top__narration {
+  overflow-y: auto;
+}
+.game-engine__top-container .ge-top__narration::-webkit-scrollbar {
+  width: 0.7rem;
+  height: 0.7rem;
+}
+.game-engine__top-container .ge-top__narration::-webkit-scrollbar-thumb {
+  background: hsl(0deg, 0%, 23%);
+}
+.game-engine__top-container .ge-top__narration::-webkit-scrollbar-track {
+  background: hsl(0deg, 0%, 14%);
+}
+.game-engine__top-container .ge-top__narration__message {
+  color: hsl(0deg, 0%, 54%);
+}
+.game-engine__top-container .ge-top__narration__message.last-message {
+  color: hsl(0deg, 100%, 68%);
+}
+.game-engine__top-container .ge-top__character {
+  height: 100%;
+  width: 100%;
+  border-left: 1px solid hsl(0deg, 0%, 18%);
+  display: flex;
+}
+.game-engine__top-container .ge-top__character h5,
+.game-engine__top-container .ge-top__character ul {
+  margin: 0;
+}
+.game-engine__top-container .ge-top__character__dm {
+  color: hsl(140deg, 93%, 60%);
+  align-self: center;
+  margin: 0 auto;
+  text-align: center;
+}
+.game-engine__top-container .ge-top__character__dm > *:first-child {
+  font-size: 4rem;
+}
+.game-engine__top-container .ge-top__character__infos {
+  align-self: center;
 }
 
 button {

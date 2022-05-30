@@ -1,0 +1,75 @@
+@use "../abstracts" as *;
+
+.game-engine__left-container {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background-color: setcolor(background-color, 400);
+  border-radius: $corner;
+  padding: 1rem;
+
+  .ge-left__card {
+    width: 100%;
+    aspect-ratio: 1/1.72;
+    border-radius: $corner;
+    overflow: hidden;
+    border: 3px solid rgb(254, 255, 245);
+    img {
+      @include image-cover;
+    }
+  }
+}
+
+.game-engine__top-container {
+  display: grid;
+  grid-template-columns: 1fr 15rem;
+  gap: 1rem;
+
+  border: 1px solid setcolor(background-color, 300);
+  border-radius: $corner;
+
+  > * {
+    padding: 1rem;
+  }
+
+  .ge-top {
+    &__narration {
+      @include scrollbar-dark;
+      overflow-y: auto;
+      &__message {
+        color: setcolor(text-dk, 300);
+        &.last-message {
+          color: setcolor(error, 500);
+        }
+      }
+    }
+    &__character {
+      height: 100%;
+      width: 100%;
+      border-left: 1px solid setcolor(background-color, 300);
+      h5,
+      ul {
+        margin: 0;
+      }
+
+      display: flex;
+
+      &__dm {
+        color: setcolor(alert, 500);
+        align-self: center;
+        margin: 0 auto;
+        text-align: center;
+
+        > *:first-child {
+          font-size: 4rem;
+        }
+      }
+
+      &__infos {
+        align-self: center;
+      }
+    }
+  }
+}

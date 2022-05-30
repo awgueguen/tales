@@ -22,7 +22,6 @@ const CharacterCard = ({ id, name, image, background, characterClass, setCharact
           <h4>{name}</h4>
           <h5>{classTitle}</h5>
         </div>
-        <div className="image__stats__role"></div>
       </div>
       <p>{background?.length < 150 ? background : background.substring(0, 150) + "..."}</p>
       <button className="btn-text-only" onClick={() => setCharacter({ id, name: name })}>
