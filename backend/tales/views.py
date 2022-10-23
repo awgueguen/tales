@@ -10,8 +10,8 @@ from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.views import TokenObtainPairView
 
-from blablapp import serializers
-from blablapp import models
+from tales import serializers
+from tales import models
 
 import json
 

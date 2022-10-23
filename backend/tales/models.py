@@ -15,7 +15,7 @@ class CharacterClass(models.Model):
     hp = models.PositiveIntegerField(help_text="Maximum 20")
     atk = models.PositiveIntegerField(help_text="Maximum 20")
     defense = models.PositiveIntegerField(help_text="Maximum 20")
-    actions = models.ManyToManyField('blablapp.Action', related_name='classes')
+    actions = models.ManyToManyField('tales.Action', related_name='classes')
 
     class Meta:
         ordering = ["name"]
@@ -31,7 +31,7 @@ class Character(models.Model):
     characterClass = models.ForeignKey(
         CharacterClass, on_delete=models.RESTRICT, related_name="characters")
     user = models.ForeignKey(
-        "blablapp.MyUser", on_delete=models.CASCADE, related_name="characters")
+        "tales.MyUser", on_delete=models.CASCADE, related_name="characters")
     name = models.CharField(max_length=30)
     weapon = models.CharField(max_length=30, blank=True)
     background = models.TextField(help_text="Not Required", blank=True)
@@ -174,7 +174,7 @@ class EntityInstance(AbstractEntity):
     entity = models.ForeignKey(
         Entity, on_delete=models.CASCADE, related_name="instances")
     room = models.ForeignKey(
-        "blablapp.Room", on_delete=models.CASCADE, null=True, related_name="instances")
+        "tales.Room", on_delete=models.CASCADE, null=True, related_name="instances")
     currentHP = models.PositiveIntegerField(
         help_text="Not Required", null=True)
     currentATK = models.PositiveIntegerField(

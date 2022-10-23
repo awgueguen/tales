@@ -1,7 +1,7 @@
 from model_bakery import baker
 from pprint import pprint
 from django.test import TestCase
-from blablapp.models import CharacterClass, Character, Action, MyUser, Contact, Tickbox, Entity, EntityInstance, Event, Story, Room, RoomParticipant, Message, Whisper, Quote
+from tales.models import CharacterClass, Character, Action, MyUser, Contact, Tickbox, Entity, EntityInstance, Event, Story, Room, RoomParticipant, Message, Whisper, Quote
 
 
 class TestModels(TestCase):

@@ -29,7 +29,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework_simplejwt.token_blacklist',
-    'blablapp',
+    'tales',
 
     "rest_framework",
     'chat',
@@ -115,7 +115,7 @@ DATABASES = {
 # engine = create_engine("sqlite+pysqlite:///ma_db.db")
 
 
-AUTH_USER_MODEL = 'blablapp.MyUser'
+AUTH_USER_MODEL = 'tales.MyUser'
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators

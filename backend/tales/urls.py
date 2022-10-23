@@ -1,6 +1,6 @@
 """WIP"""
 from django.urls import path
-from blablapp import views
+from tales import views
 
 urlpatterns = [
     # room ------------------------------------------------------------------ #

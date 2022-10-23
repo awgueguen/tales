@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
-from blablapp import models
+from tales import models
 
 # --------------------------------------------------------------------------- #
 # WIP SERIALIZER                                                              #
