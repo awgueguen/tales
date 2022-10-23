@@ -11,6 +11,9 @@ node_modules
 # production
 /build
 
+# django
+migrations/
+
 # misc
 .DS_Store
 .env.local
