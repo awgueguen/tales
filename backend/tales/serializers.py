@@ -1,12 +1,11 @@
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-
 from tales import models
 
-# --------------------------------------------------------------------------- #
-# WIP SERIALIZER                                                              #
-# --------------------------------------------------------------------------- #
 
+# --------------------------------------------------------------------------- #
+# GENERIC SERIALIZERS                                                         #
+# --------------------------------------------------------------------------- #
 
 class ActionSerializer(serializers.ModelSerializer):
     class Meta:
@@ -90,8 +89,7 @@ class CharacterShortSerializer(serializers.ModelSerializer):
 
 
 class RoomParticipantCharaSerializer(serializers.ModelSerializer):
-    # ici on utilise un résumé de character mais en utilisant le vrai charactère on pourra
-    # facilement avoir toutes les infos class, actions etc pour le mvp++
+    # Class info for Roadmap Dev
     character = CharacterShortSerializer()
 
     class Meta:
@@ -99,7 +97,6 @@ class RoomParticipantCharaSerializer(serializers.ModelSerializer):
         fields = ['id', 'user', 'character', 'isAdmin', 'nickname', 'hit']
 
     # def save(self, **kwargs):
-
     #     return super().save(*kwargs)
 
 
@@ -133,9 +130,15 @@ class QuoteSerializer(serializers.ModelSerializer):
 # Serialization allows complex data (querysets, model) to be converted into native Python data.
 # These can be easily converted JSON.
 
+class SerializerUserId(serializers.ModelSerializer):
+    class Meta:
+        model = models.MyUser
+        fields = ['id', 'username']
+
 # --------------------------------------------------------------------------- #
 # rooms                                                                       #
 # --------------------------------------------------------------------------- #
+
 
 class StoryQuickSerializer(serializers.ModelSerializer):
     class Meta:
@@ -156,6 +159,37 @@ class ParticipantPutSerializer(serializers.ModelSerializer):
         model = models.RoomParticipant
         fields = ["nickname", "character"]
 
+
+class SerializerRoomsHomepage(serializers.ModelSerializer):
+    # Use by SerializerRoomsGE
+    user = SerializerUserId(read_only=True)
+
+    class Meta:
+        model = models.RoomParticipant
+        fields = ['user', 'isAdmin']
+
+
+class SerialiazerStoriesHomepage(serializers.ModelSerializer):
+    # Use by SerializerRoomsGE
+    class Meta:
+        model = models.Story
+        fields = ['id', 'title', 'description', 'image']
+
+
+class SerializerRoomsGE(serializers.ModelSerializer):
+    # Get all details of all the rooms on the homepage
+    story = SerialiazerStoriesHomepage(read_only=True)
+    participants = SerializerRoomsHomepage(many=True, read_only=True)
+    nbParticipants = serializers.IntegerField(
+        source='participants.count',
+        read_only=True
+    )
+
+    class Meta:
+        model = models.Room
+        fields = ['id', 'title', 'description', 'isPublic',
+                  'nbParticipants', 'maxParticipants', 'participants', 'story']
+
 # --------------------------------------------------------------------------- #
 # token customizations                                                        #
 # --------------------------------------------------------------------------- #
@@ -170,10 +204,10 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['nickname'] = user.nickname
         return token
 
+
 # --------------------------------------------------------------------------- #
 # register setup                                                              #
 # --------------------------------------------------------------------------- #
-
 
 class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
@@ -194,10 +228,10 @@ class TickboxSerializer(serializers.ModelSerializer):
         model = models.Tickbox
         fields = '__all__'
 
+
 # --------------------------------------------------------------------------- #
 # contacts serializers                                                        #
 # --------------------------------------------------------------------------- #
-
 
 class ContactSerializer(serializers.ModelSerializer):
 
@@ -217,7 +251,6 @@ class ContactUserSerializer(serializers.ModelSerializer):
 # assets                                                                      #
 # --------------------------------------------------------------------------- #
 
-
 class StorySerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Story
@@ -228,6 +261,7 @@ class StorySerializer(serializers.ModelSerializer):
 # --------------------------------------------------------------------------- #
 # triggers                                                                    #
 # --------------------------------------------------------------------------- #
+
 
 class TriggerSerializer(serializers.ModelSerializer):
     class Meta:

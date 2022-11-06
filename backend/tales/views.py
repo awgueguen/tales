@@ -15,15 +15,18 @@ from tales import models
 
 import json
 
+
 # --------------------------------------------------------------------------- #
-# REGISTER                                                                    #
+# REGISTER & TOKEN                                                            #
 # --------------------------------------------------------------------------- #
 
+# token --------------------------------------------------------------------- #
 
 class MyTokenObtainPairView(TokenObtainPairView):
     # throttle_classes = [UserRateThrottle, AnonRateThrottle]
-
     serializer_class = serializers.MyTokenObtainPairSerializer
+
+# register ------------------------------------------------------------------ #
 
 
 @api_view(['POST'])
@@ -48,19 +51,6 @@ def background_check(request):
     return Response(data=response, status=status.HTTP_200_OK)
 
 
-# @api_view(['GET', 'POST', 'PUT'])
-# @authentication_classes([JWTAuthentication])
-# @permission_classes([permissions.IsAuthenticated])
-# def tick_api(request):
-
-#     if request.method == 'GET':
-#         return
-#     if request.method == 'POST':
-#         return
-#     if request.method == 'PUT':
-#         return
-
-
 # --------------------------------------------------------------------------- #
 # GAMEPLAY                                                                    #
 # --------------------------------------------------------------------------- #
@@ -68,17 +58,29 @@ def background_check(request):
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([permissions.IsAuthenticated])
-def trigger(request):
+def triggers(request):
+    """Get all the available triggers and return them to the user.
 
+    Args:
+        request (Request): request with user & room informations.
+
+    Returns:
+        Response: response containing all the available triggers.
+    """
+    # get info -------------------------------------------------------------- #
     room_id = request.GET.get("room_id")
     username = request.user
 
+    # get available triggers ------------------------------------------------ #
+
+    # entities -------------------------------------------------------------- #
     entity_instances = models.EntityInstance.objects.filter(room=room_id)
     entity_instances_serializer = serializers.EntityInstanceTriggers(
         entity_instances, many=True)
     entity_instances_triggers = [dict(item, **{'tab': 'EntityInstance'})
                                  for item in entity_instances_serializer.data]
 
+    # story ----------------------------------------------------------------- #
     story = models.Story.objects.filter(room=room_id)
     story_serializer = serializers.StoryTriggers(story, many=True)
     story_trigger = [dict(item, **{'tab': 'Story'})
@@ -86,11 +88,13 @@ def trigger(request):
 
     story_id = story_trigger[0]['id']
 
+    # event ----------------------------------------------------------------- #
     event = models.Event.objects.filter(stories__id=story_id)
     event_serializer = serializers.EventTriggers(event, many=True)
     event_triggers = [dict(item, **{'tab': 'Event'})
                       for item in event_serializer.data]
 
+    # actions --------------------------------------------------------------- #
     action_triggers = []
 
     try:
@@ -101,6 +105,7 @@ def trigger(request):
         action_triggers = [{'id': i['id'], 'title': i["title"], 'trigger': i['trigger'], 'tab': 'Action'}
                            for i in character_serializer['characterClass']['actions']]
 
+    # except -> in case the user happend to be connected to a room without a character
     except models.Character.DoesNotExist:
         # print('no character associated\nplease connect with someone registered in the room')
         return Response([entity_instances_triggers + story_trigger + event_triggers], status=status.HTTP_200_OK)
@@ -112,23 +117,39 @@ def trigger(request):
 @authentication_classes([JWTAuthentication])
 @permission_classes([permissions.IsAuthenticated])
 def submit_trigger(request):
+    """Submit a typed trigger and execute the according action.
+
+    Args:
+        request (Request): Selected trigger.
+
+    Returns:
+        Response: Status of the response 400/200
+    """
+    # TODO Ajouter une vérification du trigger en fonction du statut avec un retour dans le chat.
 
     if request.data['tab'] == "Action":
         res = models.Action.objects.get(trigger=request.data['trigger'])
         data = serializers.ActionSerializer(res)
+
     elif request.data['tab'] == 'Event':
         res = models.Event.objects.get(trigger=request.data['trigger'])
         data = serializers.EventSerializer(res)
+
+    elif request.data['tab'] == 'Story':
+        res = models.Event.objects.get(trigger=request.data['trigger'])
+        data = serializers.StorySerializer(res)
+
     elif request.data['tab'] == 'EntityInstance':
         res = models.EntityInstance.objects.get(
             trigger=request.data['trigger'])
         data = serializers.EntityInstanceSerializer(res)
+
     else:
         res = models.Story.objects.get(trigger=request.data['trigger'])
         data = serializers.StorySerializer(res)
-    print(data.data)
 
     content = json.dumps(data.data)
+    # Retrieve from contentn 'is_admin' & cross check the request.data['tab'] information
 
     query = {
         'room': request.data['roomId'],
@@ -138,10 +159,12 @@ def submit_trigger(request):
     }
 
     res_query = serializers.TriggerSerializer(data=query)
+
     if not res_query.is_valid():
         res_query.data
         print('>>>>', res_query.errors)
         return Response(status=status.HTTP_400_BAD_REQUEST)
+
     res_query.save()
 
     return Response(status=status.HTTP_200_OK)
@@ -167,23 +190,51 @@ def characters_api(request):
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 # --------------------------------------------------------------------------- #
-# STORY                                                                       #
+# LAYOUT                                                                      #
 # --------------------------------------------------------------------------- #
+
+
+@api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([permissions.IsAuthenticated])
+def quick_access(request):
+    # TODO Front part not working as intended.
+    rooms = models.Room.objects.filter(
+        participants__user__username=request.user)
+    rooms = serializers.RoomQuickSerializer(rooms, many=True)
+
+    return Response(data=rooms.data, status=status.HTTP_200_OK)
+
+
+# --------------------------------------------------------------------------- #
+# HOMEPAGE                                                                    #
+# --------------------------------------------------------------------------- #
+
+@api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([permissions.IsAuthenticated])
+def homepage_rooms(request):
+    user = request.user
+    rooms = models.Room.objects.filter(
+        Q(participants__user__username=user) | Q(isPublic=True)).distinct()
+    rooms = serializers.SerializerRoomsGE(rooms, many=True).data
+
+    return Response(data=rooms, status=status.HTTP_200_OK)
+
 
 # --------------------------------------------------------------------------- #
 # ROOMS                                                                       #
 # --------------------------------------------------------------------------- #
 
-
-# display ------------------------------------------------------------------- #
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([permissions.IsAuthenticated])
 def get_a_room(request, room_id):
-    """OK"""
     try:
         room = models.Room.objects.get(id=room_id)
     except ObjectDoesNotExist:
@@ -192,86 +243,14 @@ def get_a_room(request, room_id):
     return Response(room_serializer.data, status=status.HTTP_200_OK)
 
 
-@api_view(['GET'])
-@authentication_classes([JWTAuthentication])
-@permission_classes([permissions.IsAuthenticated])
-def quick_access(request):
-    '''OK'''
-    rooms = models.Room.objects.filter(
-        participants__user__username=request.user)
-    rooms = serializers.RoomQuickSerializer(rooms, many=True)
-
-    return Response(data=rooms.data, status=status.HTTP_200_OK)
-
-
-@api_view(['GET'])
-@authentication_classes([JWTAuthentication])
-@permission_classes([permissions.IsAuthenticated])
-def get_user_rooms_list(request):
-    """OK"""
-    rooms_participants = get_room_participants_by_user_id(request.user.id)
-    roompart_response = [{key: val for key, val in elem.items() if key in [
-        'id', 'isAdmin', 'nickname', 'room', 'character']} for elem in rooms_participants]
-    rooms_ids = [e['room'] for e in rooms_participants]
-
-    rooms = get_rooms_by_list_id(rooms_ids)
-    stories_ids = [e['story'] for e in rooms]
-    room_response = [{key: val for key, val in elem.items() if key in
-                      ['id', 'maxParticipants', 'isPublic', 'title', 'description', 'story', ]} for elem in rooms]
-
-    stories = get_stories_by_list_id(stories_ids)
-    story_response = [{key: val for key, val in elem.items(
-    ) if key in ['id', 'title', 'image']} for elem in stories]
-
-    room_response = filter_by(story_response, room_response, 'story')
-    roompart_response = filter_by(room_response, roompart_response, 'room')
-
-    return Response(data=roompart_response, status=status.HTTP_200_OK)
-
-
-@api_view(['GET'])
-@authentication_classes([JWTAuthentication])
-@permission_classes([permissions.IsAuthenticated])
-def get_public_rooms(request):
-    ''' OK'''
-
-    rooms = [{key: val for key, val in elem.items() if key in
-              ['id', 'maxParticipants', 'isPublic', 'title', 'description', 'story', ]}
-             for elem in get_all_rooms() if elem['isPublic']]
-
-    rooms_id = [e['id'] for e in rooms]
-    room_participants = get_room_participants_by_room_list(rooms_id)
-
-    stories_ids = [e['story'] for e in rooms]
-    stories = get_stories_by_list_id(stories_ids)
-    story_response = [{key: val for key, val in elem.items(
-    ) if key in ['id', 'title', 'description', 'image']} for elem in stories]
-
-    room_response = filter_by(story_response, rooms, 'story')
-
-    for elem in room_participants:
-        for data in room_response:
-            if elem['room'] == data['id']:
-                try:
-                    data['participants'] += [elem]
-                except KeyError:
-                    data['participants'] = []
-                    data['participants'] += [{key: val for key, val in elem.items(
-                    ) if key in ['id', 'isAdmin', 'nickname', 'character', 'user']}]
-
-    return Response(data=room_response, status=status.HTTP_200_OK)
-
-# room lifecycle ------------------------------------------------------------ #
-
-
-@api_view(['POST'])
-@authentication_classes([JWTAuthentication])
-@permission_classes([permissions.IsAuthenticated])
+@ api_view(['POST'])
+@ authentication_classes([JWTAuthentication])
+@ permission_classes([permissions.IsAuthenticated])
 def create_room(request):
     """OK"""
 
     room = request.data['room']
-    print(room)
+    # print(room)
 
     moderator = get_user_detail(request.user)
     res = serializers.RoomSerializer(data=room)
@@ -333,9 +312,9 @@ def create_room(request):
 # room participants --------------------------------------------------------- #
 
 
-@api_view(['GET', 'POST', 'PUT'])
-@authentication_classes([JWTAuthentication])
-@permission_classes([permissions.IsAuthenticated])
+@ api_view(['GET', 'POST', 'PUT'])
+@ authentication_classes([JWTAuthentication])
+@ permission_classes([permissions.IsAuthenticated])
 def roomparticipants_api(request, room_id=None):
     """OK"""
 
@@ -391,9 +370,9 @@ def roomparticipants_api(request, room_id=None):
 # messagerie ---------------------------------------------------------------- #
 
 
-@api_view(['GET', 'POST'])
-@authentication_classes([JWTAuthentication])
-@permission_classes([permissions.IsAuthenticated])
+@ api_view(['GET', 'POST'])
+@ authentication_classes([JWTAuthentication])
+@ permission_classes([permissions.IsAuthenticated])
 def messages_api(request, room_id):
 
     # TODO: récup isAdmin depuis le sender de chaque message
@@ -445,9 +424,9 @@ def messages_api(request, room_id):
 # ASSSETS                                                                     #
 # --------------------------------------------------------------------------- #
 
-@api_view(['GET', 'PUT', 'DELETE'])
-@authentication_classes([JWTAuthentication])
-@permission_classes([permissions.IsAuthenticated])
+@ api_view(['GET', 'PUT', 'DELETE'])
+@ authentication_classes([JWTAuthentication])
+@ permission_classes([permissions.IsAuthenticated])
 def stories_api(request):
     '''WIP'''
     if request.method == 'GET':
@@ -465,9 +444,9 @@ def stories_api(request):
 # --------------------------------------------------------------------------- #
 
 
-@api_view(['GET'])
-@authentication_classes([JWTAuthentication])
-@permission_classes([permissions.IsAuthenticated])
+@ api_view(['GET'])
+@ authentication_classes([JWTAuthentication])
+@ permission_classes([permissions.IsAuthenticated])
 def contacts_api(request):
     """OK"""
     user = request.user
@@ -481,9 +460,9 @@ def contacts_api(request):
     return Response(data=res.data, status=status.HTTP_200_OK)
 
 
-@api_view(['GET', 'POST'])
-@authentication_classes([JWTAuthentication])
-@permission_classes([permissions.IsAuthenticated])
+@ api_view(['GET', 'POST'])
+@ authentication_classes([JWTAuthentication])
+@ permission_classes([permissions.IsAuthenticated])
 def add_contact(request):
     """OK"""
     if request.method == 'GET':

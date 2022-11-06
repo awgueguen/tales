@@ -1,3 +1,5 @@
+# OK ------------------------------------------------------------------------ #
+
 from datetime import timedelta
 from pathlib import Path
 import os
@@ -10,7 +12,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-5=&g$z5p&tbekg86dc5vestupeyzu+eu*91z#gay!$y5rcu*b^'
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -32,7 +34,7 @@ INSTALLED_APPS = [
     'tales',
 
     "rest_framework",
-    'chat',
+    'websocket',
 
 ]
 # REST SETTINGS ------------------------------------------------------------- #
@@ -66,7 +68,7 @@ SIMPLE_JWT = {
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
+    # 'whitenoise.middleware.WhiteNoiseMiddleware', // HEROKU
 
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -197,7 +199,7 @@ CORS_ALLOW_METHODS = [
 ]
 
 # --------------------------------------------------------------------------- #
-# USER SETTINGS                                                               #
+# HEROKU                                                                      #
 # --------------------------------------------------------------------------- #
 # django_heroku.settings(locals(), allowed_hosts=False)
 

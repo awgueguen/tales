@@ -15,56 +15,47 @@ import InRooms from "@components/Rooms/InRooms";
 const Rooms = (props) => {
   /* global ---------------------------------------------------------------- */
   const { authTokens, userId } = useContext(AuthContext);
-  const URL_ROOM_IN = "http://localhost:8000/api/room/inroom_list/";
-  const URL_PUBLIC_ROOM = "http://localhost:8000/api/room/public_list/";
   const URL_CREATE = "http://127.0.0.1:8000/api/room/create/";
+  const URL_ROOMS = "http://localhost:8000/api/room/homepage";
 
   /* states ---------------------------------------------------------------- */
-  const [inRoomList, setInRoomList] = useState();
-  const [publicList, setPublicList] = useState();
+  const [roomsIn, setRoomsIn] = useState([]);
+  const [roomsPublic, setRoomsPublic] = useState([]);
   const navigate = useNavigate();
 
   /* lifecycle ------------------------------------------------------------- */
-  useEffect(function fetchPublicRooms() {
+
+  useEffect(function fetchRooms() {
     const request = axios.CancelToken.source();
-    const fetch = async () => {
+    const connectAPI = async (url) => {
       await axios({
-        url: URL_PUBLIC_ROOM,
+        url,
         method: "GET",
         headers: { Authorization: `Bearer ${authTokens.access}` },
         cancelToken: request.token,
       })
         .then((response) => {
-          setPublicList(response.data);
+          setRoomsIn([]);
+          setRoomsPublic([]);
+
+          response.data.forEach((room) => {
+            if (room.participants.some((e) => e.user.id == userId)) {
+              setRoomsIn((prevValue) => [...prevValue, room]);
+            } else if (room.isPublic) {
+              setRoomsPublic((prevValue) => [...prevValue, room]);
+            }
+          });
         })
-        .catch((e) => console.log("error", e));
+        .catch((e) => {
+          if (e.response.status == 500) {
+            console.log("Not Connected");
+          }
+        });
     };
 
-    fetch();
+    connectAPI(URL_ROOMS);
 
     return () => request.cancel();
-    //eslint-disable-next-line
-  }, []);
-
-  useEffect(function fetchRoomParticipants() {
-    const request = axios.CancelToken.source();
-    const fetch = async () => {
-      await axios({
-        url: URL_ROOM_IN,
-        method: "GET",
-        headers: { Authorization: `Bearer ${authTokens.access}` },
-        cancelToken: request.token,
-      })
-        .then((response) => {
-          setInRoomList(response.data);
-        })
-        .catch((e) => console.log("error", e));
-    };
-
-    fetch();
-
-    return () => request.cancel();
-    // eslint-disable-next-line
   }, []);
 
   /* modal ----------------------------------------------------------------- */
@@ -123,14 +114,14 @@ const Rooms = (props) => {
   return (
     <div className="rooms">
       <InRooms
-        rooms={inRoomList}
+        rooms={roomsIn}
         handleModal={handleModal}
         handleChange={handleChange}
         handleSubmit={handleSubmit}
         setModalInput={setModalInput}
         modalInput={modalInput}
       />
-      <PublicRooms rooms={publicList} userId={userId} />
+      <PublicRooms rooms={roomsPublic} userId={userId} />
     </div>
   );
 };

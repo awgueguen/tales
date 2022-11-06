@@ -5,13 +5,12 @@ from tales import views
 urlpatterns = [
     # room ------------------------------------------------------------------ #
 
-
     # edit messages --------------------------------------------------------- #
-    # path('messages/<str:action>/', views.edit_messages),
     # agir sur un message en particulier, l'éditer, le supprimer
+    # path('messages/<str:action>/', views.edit_messages),
 
     # gameplay -------------------------------------------------------------- #
-    path('triggers/', views.trigger),
+    path('triggers/', views.triggers),
     path('triggers/submit/', views.submit_trigger),
     # rechercher un trigger existant dans une table
     # path('gameplay/instances_ingame/<int:instance_id>&hit=<int:hit>',
@@ -58,6 +57,7 @@ urlpatterns = [
 
 
     # * CLEAN
+    path('room/homepage', views.homepage_rooms),
     path('roompart/list/<int:room_id>', views.roomparticipants_api),
     path('roompart/create/', views.roomparticipants_api),
     # connectAPI
@@ -65,9 +65,9 @@ urlpatterns = [
     # fetchQuickRooms
     path('room/quick_access', views.quick_access),
     # fetchPublicRooom
-    path('room/public_list/', views.get_public_rooms),
+    # path('room/public_list/', views.get_public_rooms),
     # fetchRoomParticipants
-    path('room/inroom_list/', views.get_user_rooms_list),
+    # path('room/inroom_list/', views.get_user_rooms_list),
 
     # ----------------------------------------------------------------------- #
     # USER                                                                    #
@@ -75,7 +75,7 @@ urlpatterns = [
     # path('user/<int:user_id>/', views.users_api),
     # path('user/<int:user_id>/tickbox/', views.tick_api),
     path('register/', views.register_user),
-    path('background_check/', views.background_check),
+    path('background-check/', views.background_check),
     # * CLEAN
     # getCharacters
     path('characters/', views.characters_api),

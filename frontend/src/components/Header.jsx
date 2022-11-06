@@ -20,7 +20,7 @@ const Header = ({ contacts, handleToogle }) => {
       <div>
         <h2>
           <Link className="link" to="/">
-            TALE IT
+            TALES
           </Link>
         </h2>
         <p>Welcome back {nickname.charAt(0).toUpperCase() + nickname.slice(1)} !</p>

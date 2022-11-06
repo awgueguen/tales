@@ -1,28 +1,22 @@
-"""CLEAN CODE"""
+# OK ------------------------------------------------------------------------ #
 
 import contextlib
 import os
 import random
 import json
+import faker.providers
 from pathlib import Path
 from django.core.management.base import BaseCommand
 from django.db.models import Q
 from faker import Faker
-import faker.providers
 from tales.models import CharacterClass, Character, Action, MyUser, Contact, Tickbox, Entity, EntityInstance, Event, Story, Room, RoomParticipant, Message, Whisper, Quote  # pylint: disable=import-error
 from tales.serializers import TriggerSerializer, EventSerializer
 
-APP_URL = Path(__file__).resolve().parent.parent.parent.parent.parent
 
+APP_URL = Path(__file__).resolve().parent.parent.parent.parent.parent
 
 ACTIONS = ["Hide", "Search", "Charm", "Trap"]
 DEFAULT_ACTIONS = ["Attack", "Use", "Talk"]
-
-
-# blogs = Blog.objects.filter(author=author).values_list('id', flat=True)
-# action = Action.objects.get(title=action_sample) -> return trigger
-# action.id -> return action_id
-# user_id = MyUser.objects.order_by("?").values('id', 'characters')
 
 
 def images_list(folder_name):
@@ -66,8 +60,7 @@ class Provider(faker.providers.BaseProvider):
 
 class Command(BaseCommand):
 
-    def handle(self, *args, **kwargs):  # sourcery no-metrics
-
+    def handle(self, *args, **kwargs):
         print(">>> reset db")
         os.system('python manage.py flush --noinput')
         print(">>> db flushed\n")

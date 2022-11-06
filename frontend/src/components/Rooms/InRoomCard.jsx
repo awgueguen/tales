@@ -1,11 +1,8 @@
-/**
- * * CLEAN CODE
- */
-/* global ------------------------------------------------------------------ */
 import React from "react";
 
 /* render ------------------------------------------------------------------ */
 const InRoomCard = ({ room, admin }) => {
+  // TODO When description is too short, hover doen't cover whole card.
   const { description, title } = room;
   const { title: storyTitle, image: storyImage } = room.story;
 

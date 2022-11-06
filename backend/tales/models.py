@@ -1,4 +1,5 @@
-"""WIP"""
+# OK ------------------------------------------------------------------------ #
+
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
@@ -186,7 +187,7 @@ class EntityInstance(AbstractEntity):
     def save(self, *args, **kwargs):
         """
         Set the currentHP according to whats injected
-        **kwargs = if the items is called EntityInstance(currentHP=<number>)
+        **kwargs = if the items are called like this: EntityInstance(currentHP=<number>)
         It will cover three basic scenarios: set new value, default, and modification
         """
         if kwargs.get('currentHP'):
@@ -380,8 +381,8 @@ class Message(models.Model):
         verbose_name = "Message"
         verbose_name_plural = "Messages"
 
-# message mechanism --------------------------------------------------------- #
 
+# message mechanism --------------------------------------------------------- #
 
 class Whisper(models.Model):
     """Model: Whisper"""

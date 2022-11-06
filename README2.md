@@ -9,10 +9,19 @@ vérifier que l'intérpréteur est le bon -> sinon sélectionner dans Scripts/py
 python manage.py makemigration tales
 -> créer une base de donnée VIERGE via psql nommée dcdb
 python manage.py migrate
+python manage.py runserver
 
----
+---P
 
 FRONTEND
+
+npm i
+npm start
+
+nouveau terminal :
+
+pour gérer des modifications sur le sass, ne pas le faire dans le fichier app.css sans :
+sass --watch styles/main.scss App.css
 
 ---
 
@@ -20,6 +29,9 @@ DB
 WINDOWS :
 ouvrir via powershell : alt + shift + D
 vision sur plusieurs aperçu : gestion de la db, sass si besoin, django, react
+-> un pour le serveur django
+-> un pour le serveur react
+-> un pour sass
 
 SCRIPTS
 
