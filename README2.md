@@ -1,10 +1,17 @@
+Requires:
+PSQL, Python < 3.11, NPM
+
 BACKEND :
 WINDOWS :
-cd backend
+cd backend 
 python -m venv env
 ./env/Scripts/activate
 pip install -r requirements.txt
 vérifier que l'intérpréteur est le bon -> sinon sélectionner dans Scripts/python.exe
+
+To generate a new key, we can use the get_random_secret_key() function present in django.core.management.utils. This function returns a 50 character string that consists of random characters. This string can be used as a SECRET_KEY.
+
+env example
 
 python manage.py makemigration tales
 -> créer une base de donnée VIERGE via psql nommée dcdb
