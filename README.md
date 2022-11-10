@@ -13,11 +13,9 @@ It supports up to Python 3.10.8.
 
 #
 
-[Getting started](https://https://github.com/awgueguen/tales/tree/alexis#getting-started) | [Run the application](https://https://github.com/awgueguen/tales/tree/alexis#run-the-application) | [Project Description](#) | [Roadmap](#)
+[Getting started](#getting-started) | [Run the application](#run-the-application) | [Project Description](#) | [Roadmap](#)
 
 ## Getting started
-
-#
 
 ### WINDOWS
 
@@ -105,8 +103,6 @@ $ tales/frontend> npm i
 
 ## Run the application
 
-#
-
 ### Windows
 
 Again, you have nothing to do, just execute the `runserver.bat` batch file.
@@ -136,7 +132,7 @@ $ tales/frontend> npm start
 
 If you want to make some edit to the different SASS files, and have already pre-installed the tool, you'll need to use the following command in another shell window:
 
-```powershell
+```bash
 $ tales/frontend/src> sass --watch styles/main.scss App.css
 ```
 
