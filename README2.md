@@ -3,7 +3,7 @@ PSQL, Python < 3.11, NPM
 
 BACKEND :
 WINDOWS :
-cd backend 
+cd backend
 python -m venv env
 ./env/Scripts/activate
 pip install -r requirements.txt
@@ -39,6 +39,7 @@ vision sur plusieurs aperçu : gestion de la db, sass si besoin, django, react
 -> un pour le serveur django
 -> un pour le serveur react
 -> un pour sass
+To reset the db
 
 SCRIPTS
 

@@ -2,8 +2,6 @@
 @ECHO OFF
 setlocal EnableDelayedExpansion
 
-:: add something to input python name
-
 ECHO.
 ECHO -----------------------------------------------------------------
 ECHO [92mTALES V0.1-a[0m 
@@ -18,8 +16,8 @@ ECHO [93mIf any issues are encountered, please terminate the script by
 ECHO either using the CTRL-C shortcut or \q in postgres.[0m 
 ECHO No informations are stored whithin this script.
 ECHO.
-ECHO Requirements ^: 
-ECHO Python<3.11, Node/NPM, Postgres, SASS ^(only for edit^)
+ECHO Requirements^: 
+ECHO Python^<3.11, Node^/NPM, Postgres, SASS ^(only for edit^)
 ECHO.
 ECHO -----------------------------------------------------------------
 ECHO.
@@ -29,6 +27,7 @@ ECHO -----------------------------------------------------------------
 ECHO [92mPostgreSQL Installation...[0m 
 ECHO.
 ECHO After connecting to postgres shell use the following cmd:
+ECHO [93m$ postgres=# ^DROP DATABASE dcdb; ^(Optional^)[0m ^> reset dcdb database
 ECHO [93m$ postgres=# ^CREATE DATABASE dcdb; [0m ^> create the app db.
 ECHO [93m$ postgres=# ^\q [0m                    ^> resume the rest of the script.
 ECHO.
@@ -72,15 +71,28 @@ if %step% equ 2 set /P "=-PIP installation                !CR!" < NUL
 goto :monitoring
 
 :end
-:: Timeout to let the process finish completely.
+:: Buffer to let the process finish completely.
 timeout /t 6 >nul
 
 ECHO.
 ECHO -----------------------------------------------------------------
 ECHO [92mDJANGOrest Installation...[0m 
 ECHO.
+
 CD /D ../../..
+cmd /c "env\Scripts\activate & %py% tales\management\getrandomskey.py"
+ECHO [93mDjango secret key generated in ^.env[0m 
 cmd /c "env\Scripts\activate & %py% manage.py makemigrations tales & %py% manage.py migrate"
+
+:: setup everything in Django
+ECHO.
+ECHO -----------------------------------------------------------------
+ECHO [92mTales database population...[0m 
+ECHO.
+
+cmd /c "env\Scripts\activate & %py% manage.py createdata"
+ECHO [93mDB population done using faker[0m 
+
 :: add env creation & createdata
 ECHO.
 ECHO -----------------------------------------------------------------
