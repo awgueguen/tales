@@ -23,6 +23,9 @@ export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
   let [loading, setLoading] = useState(true);
 
+  const URL_REGISTER = "http://127.0.0.1:8000/api/register/";
+  const URL_LOGIN = "http://127.0.0.1:8000/token/";
+
   /* life cycle methods ---------------------------------------------------- */
 
   let [authTokens, setAuthTokens] = useState(() =>
@@ -58,12 +61,33 @@ export const AuthProvider = ({ children }) => {
     // eslint-disable-next-line
   }, [authTokens, loading]);
 
+  let registerUser = async ({ username, password, email, rgpd }) => {
+    let error = {};
+
+    await axios({
+      url: URL_REGISTER,
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: { username, password, email, rgpd },
+    })
+      .then((_) => loginUser({ username, password }))
+      .catch((e) => {
+        error = e.response.data;
+      });
+
+    return error;
+  };
+
   /* login method ---------------------------------------------------------- */
 
   let loginUser = async ({ username, password }) => {
+    let error = false;
+
     if (username && password) {
       await axios({
-        url: "http://127.0.0.1:8000/token/",
+        url: URL_LOGIN,
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -90,10 +114,10 @@ export const AuthProvider = ({ children }) => {
             navigate("/");
           }
         })
-        .catch((e) => {
-          alert("Wrong input");
-        });
+        .catch((e) => (error = true));
     }
+
+    return error;
   };
 
   /* logout method --------------------------------------------------------- */
@@ -151,9 +175,9 @@ export const AuthProvider = ({ children }) => {
     username,
     userId,
     profilPic,
-    nickname,
     authTokens,
     loginUser,
+    registerUser,
     logoutUser,
   };
 

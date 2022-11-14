@@ -124,3 +124,69 @@
         @include flex-column-center;
     }
 }
+
+.terms-modal {
+    a {
+        color: white;
+        text-decoration: solid underline white 1px;
+        text-decoration: none;
+        padding: 0;
+
+        position: relative;
+
+        &:before {
+            content: "";
+            position: absolute;
+            width: 110%;
+            // height: 5px;
+            bottom: -0.15em;
+            left: -5%;
+            border-bottom: 1px solid rgb(255, 255, 255);
+        }
+    }
+
+    &__container {
+        background-color: setcolor(background-color, 500);
+        color: setcolor(text-dk, 500);
+        font-weight: 300;
+
+        border-radius: 5px;
+
+        border: none;
+        padding: 2.2rem 2.2rem;
+        width: min(100vw - 5rem, 30rem);
+        box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3);
+
+        aspect-ratio: 1 / 1;
+
+        button {
+            align-self: flex-end;
+        }
+
+        p {
+            font-size: 0.85em;
+        }
+
+        &::backdrop {
+            background: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+
+            @supports (-moz-appearance: none) {
+                opacity: 1;
+            }
+        }
+
+        &[open] {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+
+            animation: slide-in 300ms forwards, fade-in 250ms forwards;
+            &::backdrop {
+                opacity: 0.7;
+
+                animation: fade-in 250ms forwards;
+            }
+        }
+    }
+}

@@ -73,14 +73,14 @@ class Action(models.Model):
 class MyUser(AbstractUser):
     """Model: User declinaison using AbstractUser"""
     email = models.EmailField(unique=True)
-    nickname = models.CharField(max_length=30)
+    nickname = models.CharField(max_length=30, blank=True, null=True)
 
     profile_pic = models.ImageField(
         verbose_name="Profile Picture",
         help_text="Upload a profile picture",
         default='profile_pics/default.jpg',
         upload_to='profile_pics')
-    birthdate = models.DateField()
+    birthdate = models.DateTimeField(blank=True, null=True)
     last_edit = models.DateTimeField(auto_now=True, blank=True)
 
     class Meta:

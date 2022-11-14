@@ -9,7 +9,7 @@ import useTrigger from "@hooks/useTrigger";
 import axios from "axios";
 
 /* components -------------------------------------------------------------- */
-import PlayersLayer from "@components/GameEngine/PlayersLayer";
+// import PlayersLayer from "@components/GameEngine/PlayersLayer";
 import ChatLayer from "@components/GameEngine/ChatLayer";
 import InfosLayer from "@components/GameEngine/InfosLayer";
 import EventLayer from "@components/GameEngine/EventLayer";

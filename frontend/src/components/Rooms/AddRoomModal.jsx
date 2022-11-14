@@ -82,12 +82,20 @@ const AddRoom = (props) => {
   };
 
   const handleAddFriends = (id, nickname) => {
+    // Case 1: contact already selected.
     if (invitations.some((invitation) => invitation.id == id)) {
       let newInvitations = invitations.filter((invitation) => invitation.id !== id);
       setModalInput((prevValue) => ({ ...prevValue, invitations: newInvitations }));
-    } else if (invitations.length >= maxParticipants - 1) {
-      alert("maximun number of participants reached"); // ! TODO
-    } else {
+    }
+    // Case 2: contact limit reached.
+    else if (invitations.length >= maxParticipants - 1) {
+      // TODO : Change notification system to UI
+      // TODO : Show number of seat available
+      // TODO : Add pick a nickname
+      alert("maximun number of participants reached");
+    }
+    // Case 3: contact added to the invitation list
+    else {
       let newInvitations = [...invitations, { id: id, nickname: nickname }];
       setModalInput((prevValue) => ({ ...prevValue, invitations: newInvitations }));
     }

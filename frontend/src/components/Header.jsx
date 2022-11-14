@@ -13,7 +13,7 @@ import PeopleIcon from "@mui/icons-material/People";
 /* ------------------------------------------------------------------------- */
 
 const Header = ({ contacts, handleToogle }) => {
-  const { nickname, profilPic } = useContext(AuthContext);
+  const { username, profilPic } = useContext(AuthContext);
 
   return (
     <div className="header">
@@ -23,7 +23,7 @@ const Header = ({ contacts, handleToogle }) => {
             TALES
           </Link>
         </h2>
-        <p>Welcome back {nickname.charAt(0).toUpperCase() + nickname.slice(1)} !</p>
+        <p>Welcome back {username.charAt(0).toUpperCase() + username.slice(1)} !</p>
       </div>
       <nav className="header__menu">
         <ul>

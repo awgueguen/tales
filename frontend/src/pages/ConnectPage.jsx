@@ -3,7 +3,7 @@
  */
 /* global ------------------------------------------------------------------ */
 import React, { useContext, useEffect, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 /* context & components ---------------------------------------------------- */
 import AuthContext from "@context/AuthContext";
@@ -11,10 +11,13 @@ import Login from "@components/ConnectPage/Login";
 import Register from "@components/ConnectPage/Register";
 
 const ConnectPage = () => {
-  /* form handling --------------------------------------------------------- */
-  const [origin, setOrigin] = useState(true);
-  const [login, setLogin] = useState({ username: "", password: "" });
-  const [nextStep, setNextStep] = useState(false);
+  /* template -------------------------------------------------------------- */
+
+  const [login, setLogin] = useState({
+    username: "",
+    password: "",
+  });
+
   const [register, setRegister] = useState({
     username: "",
     password: "",
@@ -23,11 +26,28 @@ const ConnectPage = () => {
     rgpd: false,
   });
 
-  const handleChange = (e, check = null) => {
+  /* form handling --------------------------------------------------------- */
+
+  const [origin, setOrigin] = useState("login");
+  const [errorState, setErrorState] = useState(false);
+  const [formState, setFormState] = useState({
+    login: false,
+    register: false,
+  });
+
+  const [errMessage, setErrMessages] = useState({
+    login: "",
+    register: "",
+  });
+
+  const handleChange = (e) => {
+    if (!errMessage.register.includes("password")) {
+      setErrorState(false);
+    }
+
     if (e.target.parentElement.name === "connect") {
       setLogin((oldState) => ({ ...oldState, [e.target.name]: e.target.value }));
     } else if (e.target.parentElement.name === "register" || e.target.name === "rgpd") {
-      // faudra sûrement modifier ça
       setRegister((oldState) => ({
         ...oldState,
         [e.target.name]: e.target.type === "checkbox" ? e.target.checked : e.target.value,
@@ -35,31 +55,119 @@ const ConnectPage = () => {
     }
   };
 
-  const handleOrigin = (e) => {
-    e.preventDefault();
-    setOrigin((oldState) => !oldState);
-  };
+  useEffect(() => {
+    let newState = { ...formState };
+    if (errMessage[origin]) {
+      setFormState(() => ({ ...newState, [origin]: false }));
+    } else {
+      setFormState(() => ({ ...newState, [origin]: true }));
+    }
+  }, [errMessage]);
+
+  /* login ----------------------------------------------------------------- */
+
+  useEffect(() => {
+    if (origin !== "login") {
+      return;
+    }
+
+    let newErrMessage = { ...errMessage };
+    newErrMessage.login = "";
+
+    if (Object.values(login).some((input) => input === "")) {
+      newErrMessage.login = "You must fill all fields.";
+    }
+
+    setErrMessages(newErrMessage);
+  }, [login, origin]);
+
   /* register -------------------------------------------------------------- */
+
+  const handleBlur = (e) => {
+    let newErrMessage = { ...errMessage };
+
+    if (register.password.length < 5) {
+      newErrMessage.register = "Your password is too short (6 characters min).";
+      setErrorState(true);
+    } else if (register.password !== register.passwordConfirmation) {
+      newErrMessage.register = "Your passwords do not match.";
+      setErrorState(true);
+    } else {
+      newErrMessage.register = "You must fill all fields.";
+      setErrorState(false);
+    }
+    setErrMessages(newErrMessage);
+  };
+
+  useEffect(() => {
+    if (origin !== "register" || errMessage.register.includes("password")) {
+      return;
+    }
+
+    let newErrMessage = { ...errMessage };
+    newErrMessage.register = "";
+
+    if (!register.rgpd) {
+      newErrMessage.register = "To continue please accept our Terms of service.";
+    }
+
+    if (Object.values(register).some((input) => input === "")) {
+      newErrMessage.register = "You must fill all fields.";
+    }
+
+    setErrMessages(newErrMessage);
+  }, [register, origin]);
+
+  /* submit ---------------------------------------------------------------- */
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (origin) {
-      loginUser({ ...login });
+    if (origin === "login" && formState.login) {
+      loginUser({ ...login }).then((err) => {
+        if (err) {
+          let newErrMessage = { ...errMessage };
+          newErrMessage.login = "Username or password does not matched.";
+          setErrMessages(newErrMessage);
+
+          setErrorState(true);
+        }
+      });
+    } else if (origin === "register" && formState.register) {
+      registerUser({ ...register }).then((err) => {
+        if (Object.keys(err).length > 0) {
+          let newErrMessage = { ...errMessage };
+          let errMsg = [].concat.apply([], Object.values(err)).join(" ");
+          newErrMessage.register = errMsg;
+          setErrMessages(newErrMessage);
+
+          setErrorState(true);
+        }
+      });
     } else {
-      // ici on ouvre le modal qui affiche la suite ou on navigate vers une autre page?
-      if (!nextStep) {
-        console.log("register");
-        return;
-      }
-      console.log("succes");
-      navigate("/welcome/last-step", { state: { inputs: register } });
+      setErrorState(true);
+    }
+  };
+
+  /* terms of service ------------------------------------------------------ */
+  const handleModal = (e) => {
+    e.preventDefault();
+
+    const modal = document.querySelector(".terms-modal__container");
+    if (modal.hasAttribute("open")) {
+      modal.close();
+    } else {
+      modal.showModal();
     }
   };
 
   /* lifecycle ------------------------------------------------------------- */
-  let { loginUser, username } = useContext(AuthContext);
+
+  let { loginUser, registerUser, username } = useContext(AuthContext);
   const navigate = useNavigate();
-  const request = axios.CancelToken.source();
+
   useEffect(() => {
+    const request = axios.CancelToken.source();
+
     if (username) {
       navigate("/");
     }
@@ -67,38 +175,59 @@ const ConnectPage = () => {
     // eslint-disable-next-line
   }, []);
 
+  const handleOrigin = (e) => {
+    e.preventDefault();
+    setErrorState(false);
+    setOrigin(e.target.name);
+  };
+
   /* display --------------------------------------------------------------- */
   return (
     <div id="connect">
       <div id="connect__container">
         <div className="connect__description">
-          <h1 className="wh-background">Tale It</h1>
+          <h1 className="wh-background">Tales</h1>
           <h3 className="wh-background">A free text & chat based multiplayer RPG.</h3>
         </div>
         <div className="connect__input">
-          {origin ? (
-            <Login values={login} handleChange={handleChange} handleSubmit={handleSubmit} />
+          {origin === "login" ? (
+            <Login
+              values={login}
+              handleChange={handleChange}
+              handleSubmit={handleSubmit}
+              errorState={errorState}
+              errors={errMessage.login}
+            />
           ) : (
             <Register
               values={register}
               handleChange={handleChange}
               handleSubmit={handleSubmit}
-              request={request}
-              setNextStep={setNextStep}
+              handleBlur={handleBlur}
+              handleModal={handleModal}
+              errorState={errorState}
+              errors={errMessage.register}
             />
           )}
           <div id="connect__button">
-            <button onClick={handleSubmit} className="btn-primary">
-              {origin ? "LOGIN" : "REGISTER"}
-            </button>
+            {origin === "login" ? (
+              <button onClick={handleSubmit} className={formState.login ? "btn-primary" : "btn-primary unactive"}>
+                LOGIN
+              </button>
+            ) : (
+              <button onClick={handleSubmit} className={formState.register ? "btn-primary" : "btn-primary unactive"}>
+                REGISTER
+              </button>
+            )}
+
             <span>
-              {origin ? "not registered yet?" : "already a member?"}{" "}
-              {origin ? (
-                <a href="#" onClick={handleOrigin}>
+              {origin === "login" ? "not registered yet?" : "already a member?"}{" "}
+              {origin === "login" ? (
+                <a name="register" href="#" onClick={handleOrigin}>
                   sign up
                 </a>
               ) : (
-                <a href="#" onClick={handleOrigin}>
+                <a name="login" href="#" onClick={handleOrigin}>
                   sign in
                 </a>
               )}
