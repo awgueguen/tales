@@ -3,7 +3,7 @@
  */
 /* global ------------------------------------------------------------------ */
 import React, { useState, useContext, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import AuthContext from "@context/AuthContext";
 
@@ -19,6 +19,12 @@ const QuickCards = () => {
   const { authTokens } = useContext(AuthContext);
   const [rooms, setRooms] = useState();
   let location = useLocation();
+  let navigate = useNavigate();
+
+  const changeLocation = (e) => {
+    navigate(e, { replace: true });
+    window.location.reload();
+  };
 
   useEffect(
     function fetchQuickRooms() {
@@ -44,7 +50,12 @@ const QuickCards = () => {
     <>
       {rooms
         ? rooms.map((room, id) => (
-            <Link to={`/rooms/${room.id}`} key={id} className="link">
+            <Link
+              to={`/rooms/${room.id}`}
+              onClick={() => changeLocation(`/rooms/${room.id}`)}
+              key={id}
+              className="link"
+            >
               <QuickCard room={room} />
             </Link>
           ))
