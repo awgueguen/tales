@@ -3,6 +3,7 @@ import React from "react";
 const CharacterCard = ({ id, name, image, background, characterClass, setCharacter }) => {
   const { name: classTitle, hp, atk, defense } = characterClass;
   return (
+    // We can modify here the multiple elements of a character's card
     <div className="duat__card">
       <div className="duat__img image__stats__container">
         <img src={image} alt={name} />

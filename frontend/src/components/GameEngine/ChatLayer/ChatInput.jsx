@@ -4,6 +4,7 @@ const ChatInput = (props) => {
   const { newMessage, msgChange, submitMessage, triggerCandidates } = props;
   return (
     <div className="ge-center__input__container">
+      {/* display hovering above the available triggers */}
       {triggerCandidates ? (
         <div className="triggers">
           {triggerCandidates?.map((candidate, index) => (

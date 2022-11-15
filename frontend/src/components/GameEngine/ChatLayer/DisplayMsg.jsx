@@ -6,6 +6,7 @@ const DisplayMsg = ({ messages }) => {
       {messages?.map((message, index, allMessages) => {
         const nextMessage = allMessages[index + 1];
         const prevMessage = allMessages[index - 1];
+        // next variables are used to check the display settings of each message
         const lastUserMessage = !!prevMessage ? prevMessage.user !== message.user : true;
         const firstUserMessage = !!nextMessage ? nextMessage.user !== message.user : true;
 
@@ -19,7 +20,7 @@ const DisplayMsg = ({ messages }) => {
 
                 {message.img ? (
                   <div className={`ge-center__messages__message message-img`}>
-                    <img src={message.img} />
+                    <img alt={"chat img"} src={message.img} />
                   </div>
                 ) : (
                   ""

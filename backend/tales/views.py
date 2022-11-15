@@ -38,19 +38,6 @@ def register_user(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['POST'])
-def background_check(request):
-    email, username = request.data['email'], request.data['username']
-    _email = models.MyUser.objects.filter(email=email)
-    _username = models.MyUser.objects.filter(username=username)
-    response = {'email': True, 'username': True}
-    if len(_email) > 0:
-        response['email'] = False
-    if len(_username) > 0:
-        response['username'] = False
-    return Response(data=response, status=status.HTTP_200_OK)
-
-
 # --------------------------------------------------------------------------- #
 # GAMEPLAY                                                                    #
 # --------------------------------------------------------------------------- #
@@ -207,7 +194,6 @@ def characters_api(request):
 @authentication_classes([JWTAuthentication])
 @permission_classes([permissions.IsAuthenticated])
 def quick_access(request):
-    # TODO: Front part not working as intended.
     rooms = models.Room.objects.filter(
         participants__user__username=request.user)
     rooms = serializers.RoomQuickSerializer(rooms, many=True)
@@ -376,7 +362,6 @@ def get_messages(request, room_id):
         return Response({'messages': response}, status=status.HTTP_200_OK)
 
     if request.method == 'POST':
-        # TODO : ajouter whisper, img, etc..
         messageContent = request.data['messageContent']
         user = models.MyUser.objects.get(id=request.data['sender'])
         room = models.Room.objects.get(id=int(request.data['room']))

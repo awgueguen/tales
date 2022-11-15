@@ -26,6 +26,9 @@ const QuickCards = () => {
     window.location.reload();
   };
 
+  /**
+   * Using the location.key, the list is updated even if we just created a room.
+   */
   useEffect(
     function fetchQuickRooms() {
       const request = axios.CancelToken.source();

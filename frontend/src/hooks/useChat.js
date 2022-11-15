@@ -30,10 +30,6 @@ const useChat = (roomId, nickname) => {
       return;
     }
     socketRef.current = socketIOClient(ENDPOINT);
-    /**
-     * Cette page se recharge à chaque fois qu'on change un charactere donc il faut fetch la dB
-     * seulement quand on change de room/de joueurs ou qu'on a une déconnexion ?
-     */
 
     socketRef.current.emit("join", {
       room: roomId,
@@ -41,11 +37,6 @@ const useChat = (roomId, nickname) => {
       log: true,
     });
     socketRef.current.on(LISTENER_EVENT, (message) => {
-      /**
-       * TODO: potentiellement n'afficher qu'une seule fois les logs ("connecté" / "rejoint la room x")
-       * en utilisant log et en ayant un state compteur ?
-       */
-
       const incomingMessage = {
         ...message,
         ownedByCurrentUser: message.user_id === userId,
@@ -79,18 +70,17 @@ const useChat = (roomId, nickname) => {
           user_id: message.sender.id,
           user: message.sender.nickname,
           ownedByCurrentUser: message.sender.id === userId,
-          // is_admin: message.is_admin, // ?
-          isTriggered: message.isTriggered, // alexis ajout
+          isTriggered: message.isTriggered,
         };
         setMessages((prev) => [...prev, incomingMessage]);
       }
     };
     fetch("GET", url, changeMessage);
-    // method, url, changeState, data?
     return () => {
       socketRef.current.disconnect();
       request.cancel();
     };
+    // eslint-disable-next-line
   }, [roomId, nickname]);
 
   const sendMessage = (messageBody, nickname, isAdmin) => {

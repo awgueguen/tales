@@ -136,6 +136,12 @@ If you want to make some edit to the different SASS files, and have already pre-
 $ tales/frontend/src> sass --watch styles/main.scss App.css
 ```
 
+If you want to reset the creation of fake data, you can always execute the following command, it will flush the previous database in order to reset it:
+
+```bash
+$ tales/backend> python manage.py createdata
+```
+
 #
 
 ## Project Description

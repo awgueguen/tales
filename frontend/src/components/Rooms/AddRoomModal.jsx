@@ -27,6 +27,9 @@ const AddRoom = (props) => {
 
   /* lifecyle -------------------------------------------------------------- */
 
+  /**
+   * Fetch at each steps the availables assets according to the present step.
+   */
   useEffect(() => {
     const request = axios.CancelToken.source();
 
@@ -51,12 +54,18 @@ const AddRoom = (props) => {
 
   /* form handle ----------------------------------------------------------- */
 
+  /**
+   * Update the step number.
+   */
   const handleSteps = () => {
     if (step !== 1) {
       setModalInput({ ...modalInput, step: step - 1 });
     }
   };
 
+  /**
+   * Handle the differents input for the story editing.
+   */
   const handleStorySelect = (id, title, description, maxPlayer) => {
     setModalInput((prevValue) => ({
       ...prevValue,
@@ -68,6 +77,9 @@ const AddRoom = (props) => {
     }));
   };
 
+  /**
+   * Check if the user has edited some of the original story's informations.
+   */
   const handleCustomDetails = () => {
     setModalInput({
       ...modalInput,
@@ -82,6 +94,9 @@ const AddRoom = (props) => {
     });
   };
 
+  /**
+   * Handle the selection of one or multiple friends to a room.
+   */
   const handleAddFriends = (id, nickname) => {
     // Case 1: contact already selected.
     if (invitations.some((invitation) => invitation.id === id)) {
@@ -105,6 +120,7 @@ const AddRoom = (props) => {
   const formSteps = () => {
     switch (step) {
       case 1:
+        // story selection.
         return (
           <div className="addroom__stories">
             {stories
@@ -132,6 +148,7 @@ const AddRoom = (props) => {
           </div>
         );
       case 2:
+        // Story details editing.
         return (
           <>
             <div className="addroom__input">
@@ -181,6 +198,7 @@ const AddRoom = (props) => {
           </>
         );
       case 3:
+        // Friends invitation step
         return (
           <>
             <div className="addroom__invitations">
@@ -244,6 +262,7 @@ const AddRoom = (props) => {
           <h5>Story: {story.title} </h5>
         </div>
       </div>
+      {/* Call each different steps to populate the modal */}
       {formSteps()}
     </dialog>
   );

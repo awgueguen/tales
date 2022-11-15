@@ -700,6 +700,8 @@ select {
 .game-engine__top-container .ge-top__narration__description {
   font-size: 0.9rem;
   margin-top: 1rem;
+  margin-bottom: 0.2rem;
+  font-style: italic;
 }
 .game-engine__top-container .ge-top__character {
   height: 100%;

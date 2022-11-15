@@ -6,10 +6,6 @@ urlpatterns = [
     # gameplay -------------------------------------------------------------- #
     path('triggers/', views.triggers),
     path('triggers/submit/', views.submit_trigger),
-    # rechercher un trigger existant dans une table
-    # path('gameplay/instances_ingame/<int:instance_id>&hit=<int:hit>',
-    #  views.instances_ingame),
-    # système de HP pour les instances
     path('assets/stories/', views.stories_api),
     path('characters/', views.characters_api),
 
@@ -31,7 +27,6 @@ urlpatterns = [
     # USER                                                                    #
     # ----------------------------------------------------------------------- #
     path('register/', views.register_user),
-    path('background-check/', views.background_check),
 
     # ----------------------------------------------------------------------- #
     # CONTACTS                                                                #

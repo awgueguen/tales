@@ -36,12 +36,6 @@ class MyUserSerializer(serializers.ModelSerializer):
                   'email', 'nickname',  'profile_pic', 'id']
 
 
-class EntitySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.Entity
-        fields = '__all__'
-
-
 class EntityInstanceSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.EntityInstance
@@ -112,18 +106,6 @@ class MessageSerializer(serializers.ModelSerializer):
 class PostedMessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Message
-        fields = '__all__'
-
-
-class WhisperSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.Whisper
-        fields = '__all__'
-
-
-class QuoteSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.Quote
         fields = '__all__'
 
 

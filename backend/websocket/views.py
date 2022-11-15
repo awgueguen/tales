@@ -6,32 +6,22 @@ async_mode = 'eventlet'
 sio = socketio.Server(async_mode=async_mode,
                       cors_allowed_origins='http://localhost:3000')
 
-'''to print the logs'''
-# logger=True, engineio_logger=True,
-
 
 def index(request):
-
     return HttpResponse()
 
 
-@sio.event()  # namespace='/dung' revoir le fonctionnement et mieux comprendre l'intérêt
+@sio.event()
 def my_event(sid, message):
-
-    # event de base adressé à tlm ?
     sio.emit('my_response', data={
              'data': message['data'], 'sid': sid}, room=sid)
 
 
 @sio.event()
 def join(sid, message):
-
-    # join room, on peut dans l'ui aller vers une autre page
     sio.enter_room(sid, message['room'])
     sio.emit('my_response', data={'data': 'Entered room: ' +
              message['room'], 'room': message['room'], 'date': message['date'], 'log': True}, room=sid)
-
-# ici on pourra mettre un msg à tlm room=rommmachin pour dire que untel s'est barré
 
 
 @sio.event()
@@ -72,15 +62,9 @@ def disconnect_request(sid):
     sio.disconnect(sid)
 
 
-welcome_message = 'Welcome'
-# ici on pourra écrire un message de bienvenue, les règles (triggers, regle de conduite) etc...
-# Ce message n'est vu que par l'utilisateur qui arrive dans une room mais pour le moment il est rechargé chaque fois qu'il y a une déconnexion
-
-
 @sio.event()
 def connect(sid, environ):
     return
-    # sio.emit('my_response', {'data': f'{welcome_message}', 'log': True, 'count': 0}, room=sid )
 
 
 @sio.event()

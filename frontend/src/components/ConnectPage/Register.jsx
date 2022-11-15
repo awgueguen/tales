@@ -19,6 +19,7 @@ const Register = ({ values, ...props }) => {
           type="password"
           name="password"
           placeholder="password"
+          // onBlur -> when losing focus on the element
           onBlur={handleBlur}
         />
         <input

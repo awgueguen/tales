@@ -1,6 +1,3 @@
-/**
- * * CLEAN CODE
- */
 /* global ------------------------------------------------------------------ */
 import React from "react";
 
@@ -14,7 +11,7 @@ const FriendCard = ({ profilePic, nickname, username, full }) => {
   return (
     <div className="friend-card">
       <div className="friend-card__image">
-        <img src={profilePic} />
+        <img alt={username} src={profilePic} />
       </div>
       <div className="friend-card__details">
         <span className="friend-card__nickname">{nickname}</span>

@@ -1,7 +1,6 @@
 import React from "react";
 
 const PublicCard = ({ room }) => {
-  // TODO When description of story is too short, hover doesn't cover whole card
   const { description, title, maxParticipants, nbParticipants } = room;
   const { title: storyTitle, image: storyImage, description: storyDescription } = room.story;
   return (

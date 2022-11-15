@@ -13,6 +13,7 @@ const EventLayer = ({ lastEvent }) => {
 
   return lastEvent ? (
     <>
+      {/* We can modify here how to display event or entities */}
       <div className="ge-left__card image__stats__container">
         <img src={lastEvent.image} alt={lastEvent.title} />
         {entity ? (
@@ -42,7 +43,7 @@ const EventLayer = ({ lastEvent }) => {
       {/* <pre>{JSON.stringify(lastEvent, null, 2)}</pre> */}
     </>
   ) : (
-    "NO EVENT YET"
+    "Loading..."
   );
 };
 

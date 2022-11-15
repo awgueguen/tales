@@ -121,6 +121,7 @@ const Rooms = (props) => {
   return (
     <div className="rooms">
       <InRooms
+        userId={userId}
         rooms={roomsIn}
         handleModal={handleModal}
         handleChange={handleChange}

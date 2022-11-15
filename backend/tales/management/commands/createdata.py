@@ -1,6 +1,8 @@
 # OK ------------------------------------------------------------------------ #
 
+
 import contextlib
+import sys
 import os
 import random
 import json
@@ -10,7 +12,7 @@ from django.core.management.base import BaseCommand
 from django.db.models import Q
 from faker import Faker
 from tales.models import CharacterClass, Character, Action, MyUser, Contact, Tickbox, Entity, EntityInstance, Event, Story, Room, RoomParticipant, Message, Whisper, Quote  # pylint: disable=import-error
-from tales.serializers import TriggerSerializer, EventSerializer
+from tales.serializers import EventSerializer
 
 
 APP_URL = Path(__file__).resolve().parent.parent.parent.parent.parent
@@ -30,9 +32,10 @@ def loadbar(iteration, total, decimals=1, length=100, fill='█'):
                'f}').format(100 * iteration/float(total))
     filledLen = int(length * iteration // total)
     bar = fill * filledLen + '-' * (length - filledLen)
-    print(f'\rProgress: |{bar}| {percent}% Complete', end="", flush=True)
+    sys.stdout.write(
+        f'\rProgress: |{bar}| {percent}% Complete')
     if iteration == total:
-        print()
+        sys.stdout.write("\n")
 
 
 class Provider(faker.providers.BaseProvider):
@@ -61,9 +64,9 @@ class Provider(faker.providers.BaseProvider):
 class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
-        print(">>> reset db")
+        sys.stdout.write(">>> reset db\n")
         os.system('python manage.py flush --noinput')
-        print(">>> db flushed\n")
+        sys.stdout.write(">>> db flushed\n\n")
 
         fake = Faker(["en_US"])
         fancyfake = Faker(["nl_NL"])
@@ -142,7 +145,7 @@ class Command(BaseCommand):
             user = MyUser.objects.create(
                 profile_pic=f'profile_pics/{fake.img_prof()}',
                 nickname=fake.user_name(),
-                birthdate=fake.past_date(),
+                # birthdate=fake.past_date(),
                 is_superuser=False,
                 username=login,
                 first_name=fake.first_name(),

@@ -2,6 +2,7 @@ import django.core.management.utils as dj
 
 
 def randomkey():
+    """Generate random secret key during the installation process."""
     secret_key = dj.get_random_secret_key()
 
     with open('.env', 'w+', encoding='utf8') as f:

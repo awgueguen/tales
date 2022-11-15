@@ -7,6 +7,7 @@ const Narration = ({ messages }) => {
         ? messages.map((message, index, allMessages) => {
             try {
               return (
+                // the last message should be highlighted
                 <div
                   key={index}
                   className={`ge-top__narration__message ${index === allMessages.length - 1 ? "last-message" : ""}`}
@@ -22,7 +23,7 @@ const Narration = ({ messages }) => {
                 </div>
               );
             } catch (e) {
-              // console.log(e);
+              return "";
             }
           })
         : "NO EVENT YET"}
