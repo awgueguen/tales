@@ -27,7 +27,7 @@ def images_list(folder_name):
             if os.path.isfile(os.path.join(APP_URL, 'frontend', 'media', folder_name, f))]
 
 
-def loadbar(iteration, total, decimals=1, length=100, fill='█'):
+def loadbar(iteration, total, decimals=1, length=50, fill='█'):
     percent = ('{0:.' + str(decimals) +
                'f}').format(100 * iteration/float(total))
     filledLen = int(length * iteration // total)
