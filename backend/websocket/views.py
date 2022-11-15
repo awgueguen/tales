@@ -19,7 +19,6 @@ def index(request):
 def my_event(sid, message):
 
     # event de base adressé à tlm ?
-    print('msg', message)
     sio.emit('my_response', data={
              'data': message['data'], 'sid': sid}, room=sid)
 
@@ -52,7 +51,6 @@ def close_room(sid, message):
 
 @sio.event()
 def my_room_event(sid, message):
-    print('message reçu serveur', message)
     if not (img := message.get('img')):
         img = ''
     sio.emit(
@@ -67,7 +65,6 @@ def my_room_event(sid, message):
             'log': message['log'],
         },
         room=message['room'])
-    print('msg emit à priori\n')
 
 
 @sio.event()
@@ -75,19 +72,17 @@ def disconnect_request(sid):
     sio.disconnect(sid)
 
 
-welcome_message = 'coucou'
+welcome_message = 'Welcome'
 # ici on pourra écrire un message de bienvenue, les règles (triggers, regle de conduite) etc...
 # Ce message n'est vu que par l'utilisateur qui arrive dans une room mais pour le moment il est rechargé chaque fois qu'il y a une déconnexion
 
 
 @sio.event()
 def connect(sid, environ):
-    print('\n', sid, 'sid on connexion\n')
+    return
     # sio.emit('my_response', {'data': f'{welcome_message}', 'log': True, 'count': 0}, room=sid )
 
 
 @sio.event()
 def disconnect(sid):
-    print('\n', sid, 'sid on disconnexion\n')
     sio.disconnect(sid)
-    print('Client disconnected')

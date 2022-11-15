@@ -28,7 +28,7 @@ const Header = ({ contacts, handleToogle }) => {
       <nav className="header__menu">
         <ul>
           <li>
-            <img src={profilPic} />
+            <img alt={username} src={profilPic} />
           </li>
           <li onClick={handleToogle}>
             <PeopleIcon fontSize="large" />

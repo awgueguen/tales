@@ -782,6 +782,7 @@ button {
   color: hsl(0deg, 0%, 54%);
 }
 .btn-primary ~ span a {
+  cursor: pointer;
   color: white;
   text-decoration: solid underline white 1px;
   text-decoration: none;

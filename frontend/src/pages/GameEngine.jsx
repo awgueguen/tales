@@ -1,6 +1,6 @@
 /* global ------------------------------------------------------------------ */
 import React, { useState, useContext, useEffect } from "react";
-import { useLocation, useParams } from "react-router";
+import { useParams } from "react-router";
 import AuthContext from "@context/AuthContext";
 
 /* hooks ------------------------------------------------------------------- */
@@ -17,7 +17,7 @@ import EventLayer from "@components/GameEngine/EventLayer";
 /* render ------------------------------------------------------------------ */
 
 const GameEngine = () => {
-  const [participants, setParticipants] = useState();
+  // const [participants, setParticipants] = useState();
   const [userDetail, setUserDetail] = useState({ roompart: { nickname: "waiting", isAdmin: "waiting" } }); // ?
   const [myCharacter, setMyCharacter] = useState();
   const [newMessage, setNewMessage] = useState("");
@@ -46,7 +46,7 @@ const GameEngine = () => {
         .then((response) => {
           const roomParticipant = response.data.find((user) => user.user === userId);
 
-          setParticipants(response.data);
+          // setParticipants(response.data);
           setMyCharacter(roomParticipant.character);
           setUserDetail({ roompart: { nickname: roomParticipant.nickname, isAdmin: roomParticipant.isAdmin } });
         })
@@ -54,11 +54,13 @@ const GameEngine = () => {
     };
 
     fetchAllParticipants();
+    // eslint-disable-next-line
   }, []);
 
   useEffect(() => {
     setChatMessages(messages.filter((message) => !message.isTriggered));
     setTriggerMessages(messages.filter((message) => message.isTriggered));
+    // eslint-disable-next-line
   }, [messages.length]);
 
   useEffect(() => {
@@ -72,10 +74,12 @@ const GameEngine = () => {
         // console.log(e);
       }
     }
+    // eslint-disable-next-line
   }, [triggerMessages]);
 
   /* chat handle ----------------------------------------------------------- */
-  const [checkTrigger, triggerCandidates, trigger, reset] = useTrigger(
+  const [checkTrigger, triggerCandidates, trigger] = useTrigger(
+    // ^ reset
     authTokens.access,
     roomId,
     userDetail.roompart.isAdmin

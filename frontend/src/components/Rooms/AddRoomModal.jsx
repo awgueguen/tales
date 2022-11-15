@@ -46,6 +46,7 @@ const AddRoom = (props) => {
     }
 
     return () => request.cancel();
+    // eslint-disable-next-line
   }, [step]);
 
   /* form handle ----------------------------------------------------------- */
@@ -83,7 +84,7 @@ const AddRoom = (props) => {
 
   const handleAddFriends = (id, nickname) => {
     // Case 1: contact already selected.
-    if (invitations.some((invitation) => invitation.id == id)) {
+    if (invitations.some((invitation) => invitation.id === id)) {
       let newInvitations = invitations.filter((invitation) => invitation.id !== id);
       setModalInput((prevValue) => ({ ...prevValue, invitations: newInvitations }));
     }

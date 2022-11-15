@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect, useRef, useState, useContext } from "react";
+import { useEffect, useRef, useState, useContext } from "react";
 import socketIOClient from "socket.io-client";
 import AuthContext from "@context/AuthContext";
 
@@ -8,7 +8,6 @@ const LISTENER_EVENT = "my_response";
 const ENDPOINT = "http://localhost:8000";
 
 const useChat = (roomId, nickname) => {
-  // est-ce que ça a du sens de mettre la date ici ou de le mettre dans les socketEvent ???
   const { authTokens, userId } = useContext(AuthContext);
   const dateTranslator = (inputDate = false) => {
     let date = inputDate
@@ -22,9 +21,14 @@ const useChat = (roomId, nickname) => {
   };
   const [messages, setMessages] = useState([]);
   const socketRef = useRef();
+  const init = useRef(true);
   // const [loadedMessage, setLoadedMessage] = useState()
 
   useEffect(() => {
+    if (init.current === true) {
+      init.current = false;
+      return;
+    }
     socketRef.current = socketIOClient(ENDPOINT);
     /**
      * Cette page se recharge à chaque fois qu'on change un charactere donc il faut fetch la dB
@@ -90,22 +94,6 @@ const useChat = (roomId, nickname) => {
   }, [roomId, nickname]);
 
   const sendMessage = (messageBody, nickname, isAdmin) => {
-    /**
-     * fonction appellée en appuyant sur Send dans l'inputMsg
-     *
-     * TODO: réflechir à mettre le fetch dans un useEffect
-     * avec par exemple un state qui s'incrémente au moment d'un emit
-     * et un useEffect qui prend ce state en array dependency
-     *
-     * Est-il utile de créer une nouvelle valeur à extraire du hook genre postMessage
-     * pour le distinguer du sendMessage ??
-     */
-
-    // ________________ envoi socket
-    console.log(
-      "---------------------------------------------------------------",
-      isAdmin
-    );
     socketRef.current.emit(EMIT_EVENT, {
       data: messageBody,
       user_id: userId,
@@ -116,17 +104,12 @@ const useChat = (roomId, nickname) => {
       room: roomId,
     });
 
-    // ______________ 'POST' dans la dB
     const data = {
-      // il faudra ici ajouter l'image dès qu'on l'aura récuperé
       sender: userId,
       room: roomId,
       messageContent: messageBody,
-      // image:
     };
-    const isSuccesfullyPosted = (response) => {
-      console.log(response);
-    };
+    const isSuccesfullyPosted = (response) => {};
     const fetch = async (method, url, changeState, data) => {
       await axios({
         url: url,

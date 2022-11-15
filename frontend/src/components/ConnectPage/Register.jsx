@@ -34,7 +34,7 @@ const Register = ({ values, ...props }) => {
           <input checked={rgpd} type="checkbox" name="rgpd" onChange={handleChange} />
           <p>
             I agree with the{" "}
-            <a href="#" onClick={handleModal}>
+            <a href="/" onClick={handleModal}>
               Terms of services.
             </a>
           </p>

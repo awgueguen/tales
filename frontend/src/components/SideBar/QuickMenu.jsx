@@ -29,7 +29,7 @@ const QuickCards = () => {
   useEffect(
     function fetchQuickRooms() {
       const request = axios.CancelToken.source();
-      const fetch = async () => {
+      const apiConnect = async () => {
         await axios({
           url: URL,
           method: "GET",
@@ -40,9 +40,10 @@ const QuickCards = () => {
           .catch((e) => console.log("error", e));
       };
 
-      fetch();
+      apiConnect();
       return () => request.cancel();
     },
+    // eslint-disable-next-line
     [location.key]
   );
 

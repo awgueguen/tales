@@ -5,7 +5,6 @@ const CharacterInfos = ({ character }) => {
   const [isDM, setIsDM] = useState(false);
 
   useEffect(() => {
-    console.log(character);
     setIsDM(!character);
   }, [character]);
 

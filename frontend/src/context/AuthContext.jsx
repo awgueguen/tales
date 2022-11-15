@@ -40,9 +40,9 @@ export const AuthProvider = ({ children }) => {
   let [profilPic, setProfilPic] = useState(() =>
     localStorage.getItem("authTokens") ? jwt_decode(localStorage.getItem("authTokens")).profile_pic : null
   );
-  let [nickname, setNickname] = useState(() =>
-    localStorage.getItem("authTokens") ? jwt_decode(localStorage.getItem("authTokens")).nickname : null
-  );
+  // let [nickname, setNickname] = useState(() =>
+  //   localStorage.getItem("authTokens") ? jwt_decode(localStorage.getItem("authTokens")).nickname : null
+  // );
 
   useEffect(() => {
     if (loading) {
@@ -100,14 +100,14 @@ export const AuthProvider = ({ children }) => {
             let resUsername = jwt_decode(response.data.access).username;
             let resId = jwt_decode(response.data.access).user_id;
             let resPic = jwt_decode(response.data.access).profile_pic;
-            let resNickname = jwt_decode(response.data.access).nickname;
+            // let resNickname = jwt_decode(response.data.access).nickname;
 
             setAuthTokens(resTokens);
 
             setUsername(resUsername);
             setUserId(resId);
             setProfilPic(resPic);
-            setNickname(resNickname);
+            // setNickname(resNickname);
 
             localStorage.setItem("authTokens", JSON.stringify(resTokens));
 
@@ -127,7 +127,7 @@ export const AuthProvider = ({ children }) => {
     setUsername(null);
     setUserId(null);
     setProfilPic(null);
-    setNickname(null);
+    // setNickname(null);
     localStorage.removeItem("authTokens");
   };
 
@@ -149,14 +149,14 @@ export const AuthProvider = ({ children }) => {
             let resUsername = jwt_decode(response.data.access).username;
             let resId = jwt_decode(response.data.access).user_id;
             let resPic = jwt_decode(response.data.access).profile_pic;
-            let resNickname = jwt_decode(response.data.access).nickname;
+            // let resNickname = jwt_decode(response.data.access).nickname;
 
             setAuthTokens(resTokens);
 
             setUsername(resUsername);
             setUserId(resId);
             setProfilPic(resPic);
-            setNickname(resNickname);
+            // setNickname(resNickname);
 
             localStorage.setItem("authTokens", JSON.stringify(resTokens));
           }

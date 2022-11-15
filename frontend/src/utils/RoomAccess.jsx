@@ -50,6 +50,7 @@ const RoomAccess = () => {
     connectAPI(URL_PARTICIPANTS, setParticipants);
 
     return () => request.cancel();
+    // eslint-disable-next-line
   }, [roomId]);
 
   useEffect(() => {
@@ -80,6 +81,7 @@ const RoomAccess = () => {
     }
 
     return () => request.cancel();
+    // eslint-disable-next-line
   }, [participants, room]);
 
   const handleSubmit = async (e) => {

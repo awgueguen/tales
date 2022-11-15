@@ -62,6 +62,7 @@ const ConnectPage = () => {
     } else {
       setFormState(() => ({ ...newState, [origin]: true }));
     }
+    // eslint-disable-next-line
   }, [errMessage]);
 
   /* login ----------------------------------------------------------------- */
@@ -79,6 +80,7 @@ const ConnectPage = () => {
     }
 
     setErrMessages(newErrMessage);
+    // eslint-disable-next-line
   }, [login, origin]);
 
   /* register -------------------------------------------------------------- */
@@ -116,6 +118,7 @@ const ConnectPage = () => {
     }
 
     setErrMessages(newErrMessage);
+    // eslint-disable-next-line
   }, [register, origin]);
 
   /* submit ---------------------------------------------------------------- */
@@ -223,11 +226,11 @@ const ConnectPage = () => {
             <span>
               {origin === "login" ? "not registered yet?" : "already a member?"}{" "}
               {origin === "login" ? (
-                <a name="register" href="#" onClick={handleOrigin}>
+                <a name="register" href="/" onClick={handleOrigin}>
                   sign up
                 </a>
               ) : (
-                <a name="login" href="#" onClick={handleOrigin}>
+                <a name="login" href="/" onClick={handleOrigin}>
                   sign in
                 </a>
               )}

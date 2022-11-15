@@ -13,14 +13,11 @@ const PlayersLayer = (props) => {
 
   useEffect(() => {
     if (!players) return;
-    console.log(players);
     setOtherPlayers(players.filter((player) => player.user !== userId));
     //eslint-disable-next-line
   }, [players]);
 
-  useEffect(() => {
-    console.log(otherPlayers);
-  }, [otherPlayers]);
+  useEffect(() => {}, [otherPlayers]);
   return (
     <div className="limite_composant">
       TEAM

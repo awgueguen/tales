@@ -40,7 +40,7 @@ const Rooms = (props) => {
           setRoomsPublic([]);
 
           response.data.forEach((room) => {
-            if (room.participants.some((e) => e.user.id == userId)) {
+            if (room.participants.some((e) => e.user.id === userId)) {
               setRoomsIn((prevValue) => [...prevValue, room]);
             } else if (room.isPublic) {
               setRoomsPublic((prevValue) => [...prevValue, room]);
@@ -48,7 +48,7 @@ const Rooms = (props) => {
           });
         })
         .catch((e) => {
-          if (e.response.status == 500) {
+          if (e.response.status === 500) {
             console.log("Not Connected");
           }
         });
@@ -57,6 +57,7 @@ const Rooms = (props) => {
     connectAPI(URL_ROOMS);
 
     return () => request.cancel();
+    // eslint-disable-next-line
   }, []);
 
   /* room creation --------------------------------------------------------- */
@@ -110,7 +111,6 @@ const Rooms = (props) => {
       headers: { Authorization: `Bearer ${authTokens.access}` },
     })
       .then((response) => {
-        console.log(response);
         navigate(`../rooms/${response.data}`, { state: { alreadyUser: true }, replace: true });
       })
       .catch((e) => console.log("error", e));
