@@ -44,7 +44,7 @@ ECHO.
 CD /D backend
 
 :: Using start, we can have another shell dealing with all the installation process
-start cmd.exe /c "echo [92mMr.Anderson, welcome back... & %py% -m venv env & env\Scripts\activate & pip install -r requirements.txt"
+start cmd.exe /c "echo [92mMr.Anderson, welcome back... & %py% -m venv env & env\Scripts\activate & pip install -r requirements.txt & echo hello"
 for /F %%a in ('copy /Z "%~F0" NUL') do set "CR=%%a"
 
 set /a step=1
@@ -72,11 +72,11 @@ goto :monitoring
 
 :end
 :: Buffer to let the process finish completely.
-timeout /t 6 >nul
 
 ECHO.
 ECHO -----------------------------------------------------------------
 ECHO [92mDJANGOrest Installation...[0m 
+timeout /t 10 >nul
 ECHO.
 
 CD /D ../../..

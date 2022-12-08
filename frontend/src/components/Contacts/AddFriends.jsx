@@ -33,7 +33,7 @@ const AddFriends = ({ input, handleChange, contactList, add }) => {
       url: `${URL}?receiver=${input}`,
       headers: { Authorization: "Bearer " + authTokens.access },
     }).catch((error) => error.response);
-
+    console.log('friendrequest response', request)
     return request.statusText !== "Not Found";
   };
 

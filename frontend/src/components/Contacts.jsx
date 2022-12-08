@@ -1,18 +1,20 @@
 /**
  * * CLEAN CODE
+ * SERVICES ADDED
  */
 /* global ------------------------------------------------------------------ */
 import React, { useContext, useState, useEffect } from "react";
 import AuthContext from "@context/AuthContext";
-import axios from "axios";
 /* mui --------------------------------------------------------------------- */
 import CloseIcon from "@mui/icons-material/Close";
 /* components -------------------------------------------------------------- */
 import AddFriends from "./Contacts/AddFriends";
 import FriendCard from "./Contacts/FriendCard";
 
+/* services -------------------------------------------------------------- */
+import { getContacts } from "@services/contacts/contacts.services";
+
 const DisplayFriends = ({ contacts, handleToogle }) => {
-  const URL = `http://127.0.0.1:8000/api/contacts/`;
   let { authTokens } = useContext(AuthContext);
 
   /* states ---------------------------------------------------------------- */
@@ -27,20 +29,14 @@ const DisplayFriends = ({ contacts, handleToogle }) => {
 
   /* lifecycle ------------------------------------------------------------- */
   useEffect(() => {
+
     if (contacts) {
-      axios({
-        method: "GET",
-        url: URL,
-        headers: { Authorization: "Bearer " + authTokens.access },
-      })
-        .then((response) => {
-          setContactList(response.data);
-        })
+      getContacts(authTokens.access)
+        .then((response) => setContactList(response))
         .catch((error) => console.log(error));
     }
 
-    // eslint-disable-next-line
-  }, [contacts]);
+  }, [contacts, authTokens.access]);
 
   /* export ---------------------------------------------------------------- */
   return (

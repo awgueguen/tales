@@ -7,7 +7,7 @@ import CloseIcon from "@mui/icons-material/Close";
 const TermsModal = ({ handleModal }) => {
   return (
     <dialog className="terms-modal__container">
-      <button className="btn-close" onClick={handleModal}>
+      <button className="btn-close" onClick={(e) => handleModal(e, 'terms')}>
         <CloseIcon className="btn-close__icon" />
       </button>
       <div>

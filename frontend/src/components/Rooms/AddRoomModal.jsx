@@ -1,56 +1,55 @@
 /**
  * * CLEAN CODE
+ * SERVICES ADDED
  */
 /* global ------------------------------------------------------------------ */
 import React, { useState, useEffect, useContext } from "react";
-import axios from "axios";
 import AuthContext from "@context/AuthContext";
 
 /* components -------------------------------------------------------------- */
 import FriendCard from "@components/Contacts/FriendCard";
-
+import NoLeftSeatModal from "./NoLeftSeatModal";
 /* mui --------------------------------------------------------------------- */
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import CloseIcon from "@mui/icons-material/Close";
 import AddReactionOutlinedIcon from "@mui/icons-material/AddReactionOutlined";
 
+/* services -------------------------------------------------------------- */
+import { getContacts } from '@services/contacts/contacts.services';
+import { getStories } from '@services/stories/stories.services';
+
 const AddRoom = (props) => {
   const { modalInput, handleChange, handleSubmit, setModalInput, handleModal } = props;
   const { step, story, description, title, maxParticipants, isPublic, invitations } = modalInput;
-
   const { authTokens } = useContext(AuthContext);
   const [stories, setStories] = useState();
   const [contacts, setContacts] = useState();
-
-  const URL_STORIES = "http://localhost:8000/api/assets/stories/";
-  const URL_CONTACTS = "http://localhost:8000/api/contacts/";
-
+  const [leftSeats, setLeftSeats] = useState();
   /* lifecyle -------------------------------------------------------------- */
 
+
+  useEffect(() => {
+    setLeftSeats(parseInt(maxParticipants, 10) - 1)
+  }, [maxParticipants])
   /**
    * Fetch at each steps the availables assets according to the present step.
    */
   useEffect(() => {
-    const request = axios.CancelToken.source();
-
-    const fetchModalData = async (url, setFunction) => {
-      await axios({
-        url,
-        method: "GET",
-        headers: { Authorization: `Bearer ${authTokens.access}` },
-        cancelToken: request.token,
-      }).then((response) => setFunction(response.data));
-    };
-
     if (step === 1) {
-      fetchModalData(URL_STORIES, setStories);
+
+      getStories(authTokens.access)
+      .then((response) => setStories(response))
+      .catch((error) => console.log(error))
+
     } else if (step === 3) {
-      fetchModalData(URL_CONTACTS, setContacts);
+
+      getContacts(authTokens.access)
+        .then((response) => setContacts(response))
+        .catch((error) => console.log(error))
     }
 
-    return () => request.cancel();
-    // eslint-disable-next-line
-  }, [step]);
+    // return () => request.cancel();
+  }, [step, authTokens.access]);
 
   /* form handle ----------------------------------------------------------- */
 
@@ -69,7 +68,12 @@ const AddRoom = (props) => {
   const handleStorySelect = (id, title, description, maxPlayer) => {
     setModalInput((prevValue) => ({
       ...prevValue,
-      story: { id: id, title: title, description: description, maxPlayers: maxPlayer },
+      story: { 
+        id: id,
+        title: title,
+        description: description,
+        maxPlayers: maxPlayer
+      },
       title: "",
       description: "",
       maxParticipants: "",
@@ -97,23 +101,44 @@ const AddRoom = (props) => {
   /**
    * Handle the selection of one or multiple friends to a room.
    */
+  const handleLeftSeatModal = (e, modalName) => {
+    const modal = document.querySelector(`.${modalName}-modal__container`);
+    if (!e){
+      modal.showModal();
+    }
+    else {
+      e.preventDefault();
+
+      if (modal.hasAttribute("open")) {
+        modal.close();
+      } else {
+        modal.showModal();
+      }
+    }
+  };
   const handleAddFriends = (id, nickname) => {
     // Case 1: contact already selected.
     if (invitations.some((invitation) => invitation.id === id)) {
       let newInvitations = invitations.filter((invitation) => invitation.id !== id);
       setModalInput((prevValue) => ({ ...prevValue, invitations: newInvitations }));
+      setLeftSeats(leftSeats + 1);
     }
     // Case 2: contact limit reached.
     else if (invitations.length >= maxParticipants - 1) {
       // TODO : Change notification system to UI
-      // TODO : Show number of seat available
+      // TODO : Show number of seat available (DONE with poor UI)
       // TODO : Add pick a nickname
-      alert("maximun number of participants reached");
+      // alert("maximun number of participants reached");
+      handleLeftSeatModal(false, "no-left-seat")
     }
     // Case 3: contact added to the invitation list
     else {
       let newInvitations = [...invitations, { id: id, nickname: nickname }];
-      setModalInput((prevValue) => ({ ...prevValue, invitations: newInvitations }));
+      setModalInput((prevValue) => ({
+        ...prevValue,
+        invitations: newInvitations
+      }));
+      setLeftSeats(leftSeats - 1);
     }
   };
 
@@ -202,6 +227,10 @@ const AddRoom = (props) => {
         return (
           <>
             <div className="addroom__invitations">
+              { leftSeats !== 0 ?
+                <p>{leftSeats} seat(s) left</p>
+                : <p style={{color: "red"}}>NO LEFT SEAT</p>
+              }
               {invitations
                 ? invitations.map((contact, id) => (
                     <button
@@ -233,6 +262,7 @@ const AddRoom = (props) => {
                   ))
                 : "Loading..."}
             </div>
+            <NoLeftSeatModal handleModal={handleLeftSeatModal}/>
 
             <button className="btn-primary" onClick={handleSubmit}>
               CREATE ROOM

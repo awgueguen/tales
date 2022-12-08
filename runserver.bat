@@ -21,7 +21,7 @@ for /d %%d in (*.*) do (
 )
 
 if %success% == 2 (
-    start cmd.exe /C "echo [92m.....REACT starting.....[0m & cd frontend/src & npm start"
+    start cmd.exe /C "echo [92m.....REACT starting.....[0m & cd frontend/src & npm run start:dev"
     cmd /c "echo [92m.....DJANGO starting..... & echo env activated...[0m & cd backend\env\Scripts & activate & cd ..\..\ & python manage.py runserver"
 ) else (
     ECHO Missing backend or frontend folder, check if at the root of the project.

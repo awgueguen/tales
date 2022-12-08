@@ -152,10 +152,10 @@ const ConnectPage = () => {
   };
 
   /* terms of service ------------------------------------------------------ */
-  const handleModal = (e) => {
+  const handleModal = (e, modalName) => {
     e.preventDefault();
 
-    const modal = document.querySelector(".terms-modal__container");
+    const modal = document.querySelector(`.${modalName}-modal__container`);
     if (modal.hasAttribute("open")) {
       modal.close();
     } else {

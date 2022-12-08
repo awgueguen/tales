@@ -1,17 +1,28 @@
 import axios from 'axios';
 
-// charger les env_var
-const API_URL = "";
+// doc axios https://axios-http.com/fr/docs/req_config
 
-/**
- * @param {Boolean} needAuth wether the request need authorization
- * @param {String} contentType type of the request content
- * @returns {AxiosInstance}
- */
-export const instance = (needAuth, contentType='application/json') => axios.create({
-   baseURL: API_URL,
-   headers: {
-      'Content-type': contentType,
-   },
-   withCredentials: needAuth
+// charger les env_var
+const API_URL = process.env.REACT_APP_API_ENDPOINT;
+
+
+
+// need to ifgure out how to add cancel token and get fresh tokens on cancels ..
+// export const cancelTokenSource = axios.CancelToken.source();
+
+export const privateInstance = ( token ) => 
+   axios.create({
+      baseURL: API_URL,
+      headers: {
+         "Content-type": "Application/json",
+         "Authorization" : `Bearer ${token}`,
+      },
+   });
+
+export const publicInstance = () => 
+   axios.create({
+      baseURL: API_URL,
+      headers: {
+         "Content-type": "Application/json",
+      },
 });

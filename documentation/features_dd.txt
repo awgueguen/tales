@@ -57,3 +57,5 @@ admin
 * Système de combat (Lancé de dé, calculs des effets, interaction avec le chat, mort d'un personnage, qu'est ce qu'on fait dans ce cas là? retour au choix du personnage ? ajouter un check des hps restants)
 
 
+
+transformer les id en slug ?
