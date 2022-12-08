@@ -1,0 +1,59 @@
+# (in install.bat) removed `CD /D ../../..` [l.82] && changed timeout [l.75]
+
+*ajouter des services qui vont effectuer les requetes api pour GET / PUT (tous les trucs souvent utilisés qui nécessitent peu de validation / variations)
+
+exemple:
+
+export const instance (
+	needAuth:boolean,
+	contentType='application/json
+ ) = axios.create({
+   baseURL: API_URL,
+   headers: {
+      'Content-type': contentType,
+   },
+   withCredentials: needAuth
+})
+
+export const changePassword = async(newPassword: string, newConfirmPassword: string, token: string) => {
+   const response = await instance.post('auth/pwd/change', {newPassword, newConfirmPassword}, { params: {token}})
+   return response.data
+}
+
+___
+
+* validation formulaires (joi?)
+* variabiliser les éléments changeant selon l'env (DB creds etc.., URLs, dossier image)
+* passage sur typescript ? Vite?
+* Weapon dans la dB (juste ajouter un hasRange dans character me parait être le plus simple, une dague pourrait avoir de la range mais osef si on check bien ça devrait lfaire)
+
+
+Fonctionalités :
+
+* Mise en place des actions à partir des triggers
+-> basiques : 
+
+player
+	/start_fight (trigger roll dice pour l'initiative)
+	/attack (trigger roll dice)
+	/flee (trigger roll dice)
+	/pick_item (soit on part dans le truc et on ajoute des items en db avec les actions qu'ils peuvent déclencher .. soit on indique aux joueurs
+de noter les éléments au fûr et à mesure pour pas s'en préocupper tout de suite, soit on ajoute un champ sur l'instance message à l'image de isAdmin (isItem?)
+et on met ces messages dans une liste spéciale accessible depuis l'interface)
+	/use_item (pareil)
+	/change_weapon (OU cf remove_hp)
+
+admin
+	/special_action (inserer un texte decoré dans le chat qui permet au MJ de mettre en place une animation spontanée/improvisée)
+	/start_event (modal)
+	/end_event
+	/start_story ( ++ afficherait un message are you ready et on a besoin que tlm dise oui pour déclencher le jeu)
+	/end_story
+	/throw_dice
+	/remove_hp(entity, hp) OU -> modal affichant un formulaire avec les entités ciblables et la quantité d'hp à enlever
+	/add_hp(entity, hp) OU PAREIL
+
+* Gestion des Assets (sorte de backoffice permettant de gerer les entity, les triggers, les actions, les histoires etc)
+* Système de combat (Lancé de dé, calculs des effets, interaction avec le chat, mort d'un personnage, qu'est ce qu'on fait dans ce cas là? retour au choix du personnage ? ajouter un check des hps restants)
+
+

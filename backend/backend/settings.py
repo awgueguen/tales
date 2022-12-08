@@ -1,3 +1,5 @@
+# OK ------------------------------------------------------------------------ #
+
 from datetime import timedelta
 from pathlib import Path
 import os
@@ -10,12 +12,28 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-5=&g$z5p&tbekg86dc5vestupeyzu+eu*91z#gay!$y5rcu*b^'
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
+""" environment variable to differenciate local and prod versions
+
+ENVIRONMENT = os.getenv("ENVIRONMENT")
+TOKEN_LIFETIME = os.getenv("TOKEN_LIFETIME")
+REFRESH_TOKEN_LIFETIME = os.getenv("REFRESH_TOKEN_LIFETIME")
+DB_NAME = os.getenv("DB_NAME")
+POSTGRES_USER = os.getenv("POSTGRES_USER")
+POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD")
+DB_HOST = os.getenv("DB_HOST")
+DB_PORT = os.getenv("DB_PORT")
+FRONTEND_URL = os.getenv("FRONTEND_URL")
+
+"""
+
+if not SECRET_KEY:
+    SECRET_KEY = "test"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'dungeon-mate.herokuapp.com']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'dungeon-mate.herokuapp.com'] #?
 
 
 INSTALLED_APPS = [
@@ -29,10 +47,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework_simplejwt.token_blacklist',
-    'blablapp',
+    'tales',
 
     "rest_framework",
-    'chat',
+    'websocket',
 
 ]
 # REST SETTINGS ------------------------------------------------------------- #
@@ -42,21 +60,21 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
 
     ],
-    'DEFAULT_THROTTLE_CLASSES': [
-        'rest_framework.throttling.AnonRateThrottle',
-        'rest_framework.throttling.UserRateThrottle'
-    ],
-    'DEFAULT_THROTTLE_RATES': {
-        'anon': '100/day',
-        'user': '1000/day'
-    }
+    # 'DEFAULT_THROTTLE_CLASSES': [
+    #     'rest_framework.throttling.AnonRateThrottle',
+    #     'rest_framework.throttling.UserRateThrottle'
+    # ],
+    # 'DEFAULT_THROTTLE_RATES': {
+    #     'anon': '100/day',
+    #     'user': '1000/day'
+    # }
 }
 # JWT SETTINGS -------------------------------------------------------------- #
 
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=90),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5), #TOKEN_LIFETIME
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=90), #REFRESH_TOKEN_LIFETIME
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': True,
     'UPDATE_LAST_LOGIN': True,
@@ -66,7 +84,7 @@ SIMPLE_JWT = {
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
+    # 'whitenoise.middleware.WhiteNoiseMiddleware', // HEROKU
 
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -104,18 +122,19 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'dcdb',
-        'USER': 'postgres',
-        'PASSWORD': 'postgres',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'NAME': 'dcdb', #DB_NAME
+        'USER': 'postgres', #POSTGRES_USER
+        'PASSWORD': 'postgres', #POSTGRES_PASSWORD
+        'HOST': 'localhost', #DB_HOST
+        'PORT': '5432', #DB_PORT
     }
 }
+
 
 # engine = create_engine("sqlite+pysqlite:///ma_db.db")
 
 
-AUTH_USER_MODEL = 'blablapp.MyUser'
+AUTH_USER_MODEL = 'tales.MyUser'
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
@@ -170,11 +189,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
     'http://127.0.0.1:3000'
+    # f'{FRONTEND_URL}/*'
     # A list of origins that are authorized to make cross-site HTTP requests.
 ]
 
 CORS_TRUSTED_ORIGINS = [
     "localhost", "127.0.0.1"
+    # f'{FRONTEND_URL}/*'
     # A list of hosts which are trusted origins for unsafe requests.
     # subdomain.safesite.com
 ]
@@ -185,6 +206,7 @@ CORS_TRUSTED_ORIGINS = [
 CORS_ORIGIN_WHITELIST = [
     'http://localhost:3000',
     'http://127.0.0.1:3000'
+    # f'{FRONTEND_URL}/*'
 ]
 
 CORS_ALLOW_METHODS = [
@@ -197,7 +219,7 @@ CORS_ALLOW_METHODS = [
 ]
 
 # --------------------------------------------------------------------------- #
-# USER SETTINGS                                                               #
+# HEROKU                                                                      #
 # --------------------------------------------------------------------------- #
 # django_heroku.settings(locals(), allowed_hosts=False)
 
