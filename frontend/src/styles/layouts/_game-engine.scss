@@ -1,34 +1,36 @@
 @use "../abstracts/" as *;
 
 #game-engine {
-    max-width: 100%;
-    max-height: 100%;
-    margin-top: 1.5rem;
+  width: 100%;
+  height: 100%;
+  margin-top: 1.5rem;
 
-    display: grid;
-    grid-template-areas:
-        "sidebar header header"
-        "sidebar container infos"
-        "sidebar container infos";
-    grid-template-columns: 30rem 1fr 10rem;
-    gap: 1rem;
+  display: grid;
+  grid-template-areas:
+    "sidebar header header"
+    // "sidebar container infos"
+    "sidebar container container"
+    // "sidebar container infos";
+    "sidebar container container";
+  grid-template-columns: 25rem 1fr 9%;
+  grid-template-rows: 25% 1fr 1fr;
+  gap: 1rem;
 
-    > * {
-        &:nth-child(1) {
-            grid-area: sidebar;
-            background-color: green;
-        }
-        &:nth-child(2) {
-            grid-area: header;
-            background-color: red;
-        }
-        &:nth-child(3) {
-            grid-area: container;
-            background-color: blue;
-        }
-        &:nth-child(4) {
-            grid-area: infos;
-            background-color: rgb(255, 153, 0);
-        }
+  > * {
+    &:nth-child(1) {
+      grid-area: sidebar;
+      //   background-color: green;
     }
+    &:nth-child(2) {
+      grid-area: header;
+      //   background-color: red;
+    }
+    &:nth-child(3) {
+      grid-area: container;
+    }
+    &:nth-child(4) {
+      grid-area: infos;
+      //   background-color: rgb(255, 153, 0);
+    }
+  }
 }

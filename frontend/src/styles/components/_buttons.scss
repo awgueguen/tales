@@ -6,12 +6,26 @@ button {
 
 .btn-primary {
     background-color: setcolor(alert, 400);
+    // color: setcolor(text-wh, 200);
+    height: 3rem;
 
     border: 0px;
     border-radius: $corner;
     padding: 0.7rem;
 
     transition: background-color 350ms ease-in;
+
+    &.unactive {
+        cursor: default;
+        background-color: setcolor(background-color, 200);
+        color: setcolor(text-dk, 300);
+        transition: background-color 350 ease-out;
+
+        &:hover,
+        &:focus {
+            background-color: setcolor(background-color, 200);
+        }
+    }
 
     ~ span {
         color: setcolor(text-dk, 300);
@@ -20,7 +34,19 @@ button {
             cursor: pointer;
             color: white;
             text-decoration: solid underline white 1px;
-            text-underline-offset: 0.1rem;
+            text-decoration: none;
+            padding: 0;
+
+            position: relative;
+
+            &:before {
+                content: "";
+                position: absolute;
+                width: 110%;
+                bottom: -0.15em;
+                left: -5%;
+                border-bottom: 1px solid rgb(255, 255, 255);
+            }
         }
     }
     &:hover,
@@ -50,7 +76,7 @@ button {
 
 .btn-close,
 .btn-back {
-    color: setcolor(text-dk, 500);
+    color: setcolor(text-dk, 300);
 
     background: none;
     border: none;
@@ -58,10 +84,10 @@ button {
 
     transition: all 100ms ease-in;
 
-    &:hover &__icon {
-        transform: rotate(1.25turn);
+    &:hover {
+        color: setcolor(text-dk, 500);
 
-        transition: transform 700ms ease-in-out;
+        transition: color 150ms ease-in;
     }
 
     &.inactive {

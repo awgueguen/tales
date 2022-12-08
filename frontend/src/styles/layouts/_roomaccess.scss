@@ -1,0 +1,49 @@
+@use "../abstracts" as *;
+
+.duat {
+    padding-top: 1.5rem;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    &__title {
+        display: flex;
+        gap: 2rem;
+        .btn-text-only {
+            background-color: setcolor(alert, 500);
+
+            text-transform: uppercase;
+            color: black;
+            border-radius: $corner;
+            transition: background-color 250ms ease-in;
+        }
+
+        .btn-text-only.disable {
+            background-color: setcolor(background-color, 200);
+            color: setcolor(text-dk, 400);
+
+            cursor: default;
+            border-radius: $corner;
+        }
+    }
+
+    &__container {
+        background-color: setcolor(background-color, 400);
+
+        height: 100%;
+        padding: 1.5rem;
+        margin-top: 1rem;
+
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+    &__cards {
+        @include scrollbar-light;
+
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+
+        gap: 1.5rem;
+        overflow-y: scroll;
+    }
+}

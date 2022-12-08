@@ -4,7 +4,7 @@ import axios from "axios";
 import AuthContext from "@context/AuthContext";
 
 /* components -------------------------------------------------------------- */
-import CharacterCard from "@components/RoomAccess/CharacterCard";
+import CharacterCard from "@components/GameEngine/CharacterCard";
 
 const RoomAccess = () => {
   /* states ---------------------------------------------------------------- */
@@ -22,7 +22,7 @@ const RoomAccess = () => {
   const URL_ROOM = `http://127.0.0.1:8000/api/room-${roomId}`;
   const URL_PARTICIPANTS = `http://127.0.0.1:8000/api/roompart/list/${roomId}`;
   const URL_CHARACTERS = `http://127.0.0.1:8000/api/characters/`;
-  const URL_ADD_PARTICIPANT = `http://127.0.0.1:8000/api/roompart/create/`;
+
   /* lifecylce ------------------------------------------------------------- */
 
   useEffect(() => {
@@ -50,6 +50,7 @@ const RoomAccess = () => {
     connectAPI(URL_PARTICIPANTS, setParticipants);
 
     return () => request.cancel();
+    // eslint-disable-next-line
   }, [roomId]);
 
   useEffect(() => {
@@ -66,6 +67,7 @@ const RoomAccess = () => {
       } else if (!room.isPublic || room.isClosed || participants.length >= room.maxParticipants) {
         navigate("/");
       }
+
       axios({
         url: URL_CHARACTERS,
         method: "GET",
@@ -79,13 +81,14 @@ const RoomAccess = () => {
     }
 
     return () => request.cancel();
+    // eslint-disable-next-line
   }, [participants, room]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (character) {
       await axios({
-        url: URL_ADD_PARTICIPANT,
+        url: URL_PARTICIPANTS,
         method: put ? "PUT" : "POST",
         headers: { Authorization: `Bearer ${authTokens.access}` },
         data: put
@@ -101,7 +104,12 @@ const RoomAccess = () => {
   return loading ? (
     room && participants && characters ? (
       <div className="duat">
-        <h4>CHOOSE YOUR CHARACTER</h4>
+        <div className="duat__title">
+          <h4>CHOOSE YOUR CHARACTER</h4>{" "}
+          <button className={`btn-text-only ${character ? "" : "disable"}`} onClick={handleSubmit}>
+            ENTER ROOM AS : {character ? character.name : ""}
+          </button>
+        </div>
         <div className="duat__container">
           <div className="duat__cards">
             {characters
@@ -110,9 +118,6 @@ const RoomAccess = () => {
                 ))
               : "Loading..."}
           </div>
-          <button className={`btn-primary ${character ? "" : "disable"}`} onClick={handleSubmit}>
-            SELECT {character ? character.name : "A CHARACTER"}
-          </button>
         </div>
       </div>
     ) : (

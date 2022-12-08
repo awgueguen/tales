@@ -1,6 +1,3 @@
-/**
- * * CLEAN CODE
- */
 import React, { useContext, useState, useEffect } from "react";
 /* context & components ---------------------------------------------------- */
 import AuthContext from "@context/AuthContext";

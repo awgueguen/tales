@@ -9,19 +9,23 @@ import { Link } from "react-router-dom";
 import InRoomCard from "./InRoomCard";
 import AddRoomModal from "./AddRoomModal";
 
-const InRooms = ({ rooms, handleModal, ...props }) => {
+const InRooms = ({ userId, rooms, handleModal, ...props }) => {
   return (
     <>
       <h4>MY ROOMS</h4>
       <div className="inrooms__container">
         <div className="inrooms__cards">
           {rooms
-            ? rooms.map((room, id) => (
-                <Link to={`/rooms/${room.room.id}`} key={id} className="link">
-                  <InRoomCard room={room.room} admin={room.isAdmin} />
-                </Link>
-              ))
+            ? rooms.map((room, id) => {
+                let isAdmin = room.participants.find((i) => i.user.id === userId).isAdmin;
+                return (
+                  <Link to={`/rooms/${room.id}`} key={id} className="link">
+                    <InRoomCard room={room} admin={isAdmin} />
+                  </Link>
+                );
+              })
             : "Loading..."}
+          {/* add an empty card at the end to create a new room */}
           <div className="inrooms-card" onClick={handleModal}>
             <div className="inrooms-card__add">
               <button className="btn-text-only">

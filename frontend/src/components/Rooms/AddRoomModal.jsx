@@ -27,6 +27,9 @@ const AddRoom = (props) => {
 
   /* lifecyle -------------------------------------------------------------- */
 
+  /**
+   * Fetch at each steps the availables assets according to the present step.
+   */
   useEffect(() => {
     const request = axios.CancelToken.source();
 
@@ -46,16 +49,23 @@ const AddRoom = (props) => {
     }
 
     return () => request.cancel();
+    // eslint-disable-next-line
   }, [step]);
 
   /* form handle ----------------------------------------------------------- */
 
+  /**
+   * Update the step number.
+   */
   const handleSteps = () => {
     if (step !== 1) {
       setModalInput({ ...modalInput, step: step - 1 });
     }
   };
 
+  /**
+   * Handle the differents input for the story editing.
+   */
   const handleStorySelect = (id, title, description, maxPlayer) => {
     setModalInput((prevValue) => ({
       ...prevValue,
@@ -67,6 +77,9 @@ const AddRoom = (props) => {
     }));
   };
 
+  /**
+   * Check if the user has edited some of the original story's informations.
+   */
   const handleCustomDetails = () => {
     setModalInput({
       ...modalInput,
@@ -81,13 +94,24 @@ const AddRoom = (props) => {
     });
   };
 
+  /**
+   * Handle the selection of one or multiple friends to a room.
+   */
   const handleAddFriends = (id, nickname) => {
-    if (invitations.some((invitation) => invitation.id == id)) {
+    // Case 1: contact already selected.
+    if (invitations.some((invitation) => invitation.id === id)) {
       let newInvitations = invitations.filter((invitation) => invitation.id !== id);
       setModalInput((prevValue) => ({ ...prevValue, invitations: newInvitations }));
-    } else if (invitations.length >= maxParticipants) {
+    }
+    // Case 2: contact limit reached.
+    else if (invitations.length >= maxParticipants - 1) {
+      // TODO : Change notification system to UI
+      // TODO : Show number of seat available
+      // TODO : Add pick a nickname
       alert("maximun number of participants reached");
-    } else {
+    }
+    // Case 3: contact added to the invitation list
+    else {
       let newInvitations = [...invitations, { id: id, nickname: nickname }];
       setModalInput((prevValue) => ({ ...prevValue, invitations: newInvitations }));
     }
@@ -96,6 +120,7 @@ const AddRoom = (props) => {
   const formSteps = () => {
     switch (step) {
       case 1:
+        // story selection.
         return (
           <div className="addroom__stories">
             {stories
@@ -123,6 +148,7 @@ const AddRoom = (props) => {
           </div>
         );
       case 2:
+        // Story details editing.
         return (
           <>
             <div className="addroom__input">
@@ -172,6 +198,7 @@ const AddRoom = (props) => {
           </>
         );
       case 3:
+        // Friends invitation step
         return (
           <>
             <div className="addroom__invitations">
@@ -235,8 +262,8 @@ const AddRoom = (props) => {
           <h5>Story: {story.title} </h5>
         </div>
       </div>
+      {/* Call each different steps to populate the modal */}
       {formSteps()}
-      {/* <pre>{JSON.stringify(modalInput, null, 2)}</pre> */}
     </dialog>
   );
 };

@@ -1,0 +1,120 @@
+@use "../abstracts/" as *;
+
+.game-engine__center-container {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  padding: 1rem;
+  gap: 1rem;
+
+  background-color: setcolor(background-color, 400);
+  border-radius: $corner;
+}
+
+.ge-center__messages {
+  &__container {
+    @include scrollbar-light;
+
+    min-height: 100%;
+    overflow-y: auto;
+
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 0.5rem;
+
+    padding-right: 1rem;
+
+    .my-message {
+      align-self: flex-end;
+      text-align: right;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+
+      .chat-user-infos {
+        margin-top: 4px;
+      }
+    }
+
+    .chat-user-infos {
+      color: setcolor(text-dk, 400);
+    }
+    .chat-user-name {
+      color: setcolor(secondary, 300);
+      margin-top: 10px;
+    }
+  }
+}
+.ge-center__input {
+  &__container {
+    border-bottom: 1.2rem solid rgba(255, 0, 170, 0);
+    position: relative;
+
+    .triggers {
+      color: setcolor(text-wh, 500);
+      font-size: 0.9rem;
+      font-weight: 500;
+      width: 40rem;
+      position: absolute;
+      bottom: 3rem;
+      padding: 1rem;
+      background: rgb(254, 255, 245);
+      border-radius: $corner;
+
+      > * {
+        display: flex;
+        gap: 1rem;
+        margin-top: 5px;
+        border-bottom: 1px solid setcolor(text-dk, 400);
+        > * {
+          flex: 1;
+        }
+      }
+    }
+  }
+
+  &__submit {
+    position: absolute;
+    background-color: setcolor(background-color, 300);
+    padding: 2px;
+    border-radius: $corner;
+
+    top: 0.6rem;
+    z-index: 2;
+    right: 0.4rem;
+  }
+}
+
+.ge-center__messages {
+  &__log {
+    background-color: setcolor(background-color, 500);
+    color: setcolor(error, 500);
+
+    padding: 5px 20px;
+    width: 100%;
+
+    border-radius: $corner * 2.5;
+  }
+
+  &__message {
+    background-color: setcolor(background-color, 200);
+    padding: 5px 15px;
+
+    border-radius: $corner * 2.5;
+
+    &.my-message {
+      background-color: setcolor(alert, 500);
+      color: setcolor(text-wh, 200);
+    }
+    &.message-img {
+      width: 25rem;
+      padding: 0.5rem;
+      margin-bottom: 0.5rem;
+
+      img {
+        @include image-cover;
+      }
+    }
+  }
+}

@@ -2,6 +2,9 @@
 
 .sidebar {
     padding-right: 2rem;
+    display: flex;
+    flex-direction: column;
+
     ul {
         color: setcolor(text-dk, 300);
 

@@ -3,7 +3,7 @@
  */
 /* global ------------------------------------------------------------------ */
 import React, { useState, useContext, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import AuthContext from "@context/AuthContext";
 
@@ -19,11 +19,20 @@ const QuickCards = () => {
   const { authTokens } = useContext(AuthContext);
   const [rooms, setRooms] = useState();
   let location = useLocation();
+  let navigate = useNavigate();
 
+  const changeLocation = (e) => {
+    navigate(e, { replace: true });
+    window.location.reload();
+  };
+
+  /**
+   * Using the location.key, the list is updated even if we just created a room.
+   */
   useEffect(
     function fetchQuickRooms() {
       const request = axios.CancelToken.source();
-      const fetch = async () => {
+      const apiConnect = async () => {
         await axios({
           url: URL,
           method: "GET",
@@ -34,18 +43,23 @@ const QuickCards = () => {
           .catch((e) => console.log("error", e));
       };
 
-      fetch();
-
+      apiConnect();
       return () => request.cancel();
     },
-    [location]
+    // eslint-disable-next-line
+    [location.key]
   );
 
   return (
     <>
       {rooms
         ? rooms.map((room, id) => (
-            <Link to={`/rooms/${room.id}`} key={id} className="link">
+            <Link
+              to={`/rooms/${room.id}`}
+              onClick={() => changeLocation(`/rooms/${room.id}`)}
+              key={id}
+              className="link"
+            >
               <QuickCard room={room} />
             </Link>
           ))

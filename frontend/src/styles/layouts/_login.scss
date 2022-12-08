@@ -21,6 +21,14 @@
         @include flex-column-center;
         gap: 0.6rem;
     }
+
+    .error {
+        color: setcolor(error, 500);
+
+        &::after {
+            content: "\00a0";
+        }
+    }
 }
 
 .connect {
@@ -36,6 +44,7 @@
     &__input {
         @include flex-column-center;
 
+        gap: 0.34em;
         border-bottom-right-radius: $corner;
         border-bottom-left-radius: $corner;
         flex: 2;
@@ -59,7 +68,8 @@
                 "username username"
                 "password confirmation"
                 "email email"
-                "checkbox checkbox";
+                "checkbox checkbox"
+                "error error";
 
             > * {
                 width: 100%;
@@ -81,7 +91,7 @@
                     grid-area: checkbox;
                 }
                 &:nth-child(6) {
-                    display: none;
+                    grid-area: error;
                 }
             }
         }

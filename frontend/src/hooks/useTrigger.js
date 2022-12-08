@@ -1,22 +1,7 @@
-//// check if a trigger is being written
-//// if a trigger -> fetch all available trigger (wo filter)
-//// register all available triggers in a state
-//// stop trigger when " " is entered
-//// register trigger in a state
-//// filter through depedencies in order to get only available triggers
-
-// you can search by origin or by the name of the trigger
-// set basic trigger = whisper, etc..."@"
-// can be also the dice launch
-// don't forget to create a tutorial of the key gameplay elements (onboarding)
-
 import axios from "axios";
 import { useState } from "react";
-// import useAutocomplete from "@hooks/useAutocomplete";
 
-const useTrigger = (token, roomId) => {
-  // const [autocompletion, displayAutocomplete] = useAutocomplete();
-
+const useTrigger = (token, roomId, isAdmin) => {
   const [availableTriggers, setAvailableTriggers] = useState(null);
   const [triggerCandidates, setTriggerCandidates] = useState(null);
   const [trigger, setTrigger] = useState(null);
@@ -32,10 +17,9 @@ const useTrigger = (token, roomId) => {
       const possibleTrigger = message.slice(message.indexOf("/") + 1);
 
       setTriggerCandidates(() => {
-        const triggers = availableTriggers?.filter((commands) =>
-          commands["trigger"].startsWith(possibleTrigger)
+        let triggers = availableTriggers?.filter((commands) =>
+          commands["trigger"].toLowerCase().startsWith(possibleTrigger.toLowerCase())
         );
-        // displayAutocomplete(message, triggers);
         return triggers;
       });
 
@@ -47,7 +31,6 @@ const useTrigger = (token, roomId) => {
         setTrigger(triggerCandidates[0]);
       } else if (lastCharacter === "/") {
         setTriggerCandidates(availableTriggers);
-        // displayAutocomplete(message, triggerCandidates);
       }
     } else {
       setTriggerCandidates(null);
@@ -55,8 +38,8 @@ const useTrigger = (token, roomId) => {
     }
   };
 
-  const fetchInitialTriggers = () => {
-    axios({
+  const fetchInitialTriggers = async () => {
+    await axios({
       url: `http://127.0.0.1:8000/api/triggers?room_id=${roomId}`,
       method: "GET",
       headers: {
@@ -64,12 +47,21 @@ const useTrigger = (token, roomId) => {
         Authorization: `Bearer ${token}`,
       },
     }).then((response) => {
-      setTriggerCandidates(response.data[0]);
-      setAvailableTriggers(response.data[0]);
+      if (!isAdmin) {
+        setTriggerCandidates(response.data[0].filter((command) => command["tab"] === "Action"));
+        setAvailableTriggers(response.data[0].filter((command) => command["tab"] === "Action"));
+      } else {
+        setTriggerCandidates(response.data[0]);
+        setAvailableTriggers(response.data[0]);
+      }
     });
   };
 
-  return [checkTrigger, triggerCandidates, trigger]; // autocompletion
+  const reset = () => {
+    setAvailableTriggers(() => "");
+  };
+
+  return [checkTrigger, triggerCandidates, trigger, reset];
 };
 
 export default useTrigger;
