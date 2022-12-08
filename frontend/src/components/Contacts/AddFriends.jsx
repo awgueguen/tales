@@ -1,7 +1,15 @@
+/**
+ * TODO -> switch contact exist / already friend check with useEffect[input]
+ * and do lazy loading (if a result does match, store it in matchresult and do not refetch while the search query does not diverge from the matchresult)
+ */
+
+
 import React, { useContext, useState, useEffect } from "react";
 /* context & components ---------------------------------------------------- */
 import AuthContext from "@context/AuthContext";
 import axios from "axios";
+/* services ---------------------------------------------------------------- */
+import { addContact, checkContactExists} from "@services/contacts/contacts.services";
 
 const AddFriends = ({ input, handleChange, contactList, add }) => {
   let { authTokens } = useContext(AuthContext);
@@ -9,6 +17,8 @@ const AddFriends = ({ input, handleChange, contactList, add }) => {
   const URL = "http://127.0.0.1:8000/api/contacts/add/";
   const [error, setError] = useState();
   const [valid, setValid] = useState();
+  const [contactExist, setContactExist] = useState(false)
+  const [newContact, setNewContact] = useState(false)
   const message = {
     alreadyFriends: "You are already friends with this user",
     notFound: "User can not be found",
@@ -27,33 +37,57 @@ const AddFriends = ({ input, handleChange, contactList, add }) => {
     return friends?.some(({ username }) => username.toLowerCase() === input.toLowerCase());
   };
 
-  const checkContactExistence = async () => {
-    const request = await axios({
-      method: "GET",
-      url: `${URL}?receiver=${input}`,
-      headers: { Authorization: "Bearer " + authTokens.access },
-    }).catch((error) => error.response);
-    console.log('friendrequest response', request)
-    return request.statusText !== "Not Found";
-  };
+  useEffect(()=> {
+    checkContactExists(authTokens.access, input)
+      .then((response) => {
+        console.log(response, "contactCheck")
+        setContactExist(response.statusTest !== "Not Found")
+      })
+      .catch((error) => console.log(error));
+  }, [authTokens.access, input])
+  
+  // const checkContactExistence = async () => {
+  //   // const request = await axios({
+  //   //   method: "GET",
+  //   //   url: `${URL}?receiver=${input}`,
+  //   //   headers: { Authorization: "Bearer " + authTokens.access },
+  //   // }).catch((error) => error.response);
+  //   // console.log('friendrequest response', request)
+  //   // return request.statusText !== "Not Found";
+  //   checkContactExists(authTokens.access, input)
+  //     .then((response) => {
+  //       console.log(response, "contactCheck")
+  //       setContactExist(response.statusTest !== "Not Found")
+  //     })
+  //     .catch((error) => console.log(error));
+  // };
 
   const addFriendToContact = async (input) => {
-    const request = await axios({
-      method: "POST",
-      url: URL,
-      headers: { Authorization: "Bearer " + authTokens.access },
-      data: { receiver: input },
-    }).catch((error) => error);
+    // const request = await axios({
+    //   method: "POST",
+    //   url: URL,
+    //   headers: { Authorization: "Bearer " + authTokens.access },
+    //   data: { receiver: input },
+    // }).catch((error) => error);
 
-    return request.statusText === "Created";
+    // return request.statusText === "Created";
+    let hello;
+    const test = await addContact(authTokens.access, {"receiver": input})
+      .then((response) => {
+        console.log(response, "contactadd")
+        setNewContact(response.statusText === "Created")
+        hello = response.statusText === "Created"
+      })
+      .catch((error) => console.log(error));
+    return hello;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (add) {
-      let contact_exist = await checkContactExistence();
+      // let contact_exist = await checkContactExistence();
       let contact_in_list = compareFriends();
-      if (contact_exist && !contact_in_list) {
+      if (contactExist && !contact_in_list) {
         const request = await addFriendToContact(input);
         if (request) {
           setValid("Invitiation sent !");
