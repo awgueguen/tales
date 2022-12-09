@@ -74,3 +74,6 @@ Mise en place des test unitaires :
 
 Need to do a script with bash ->
 maybe that script is the base one that triggers the windows one when needed ?
+
+Installer une norme pour les commits / plus globalement pour le repo, tu voulais utiliser les merge request, ça peut être intéressant de s'y pencher et de se forcer à adapter cette methodo
+
