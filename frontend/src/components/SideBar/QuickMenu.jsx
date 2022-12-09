@@ -10,7 +10,7 @@ import AuthContext from "@context/AuthContext";
 import QuickCard from "./QuickCard";
 
 /* services ---------------------------------------------------------------- */
-import {getRooms} from "@services/rooms/rooms.services"
+import {getQuickAccesRooms} from "@services/rooms/rooms.services"
 
 /* ------------------------------------------------------------------------- */
 /* render                                                                    */
@@ -32,7 +32,7 @@ const QuickCards = () => {
    * Using the location.key, the list is updated even if we just created a room.
    */
   useEffect(() => {
-    getRooms(authTokens.access)
+    getQuickAccesRooms(authTokens.access)
       .then((response) => setRooms(response))
       .catch((error) => console.log(error))
   

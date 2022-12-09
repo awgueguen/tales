@@ -8,15 +8,18 @@ import AuthContext from "@context/AuthContext";
 import axios from "axios";
 
 /* components -------------------------------------------------------------- */
-
 import PublicRooms from "@components/Rooms/PublicRooms";
 import InRooms from "@components/Rooms/InRooms";
+
+/* services ---------------------------------------------------------------- */
+import { getUserRooms } from "@services/rooms/rooms.services";
+import { createRoom } from "@services/rooms/rooms.services";
 
 const Rooms = (props) => {
   /* global ---------------------------------------------------------------- */
   const { authTokens, userId } = useContext(AuthContext);
   const URL_CREATE = "http://127.0.0.1:8000/api/room/create/";
-  const URL_ROOMS = "http://localhost:8000/api/room/homepage";
+  // const URL_ROOMS = "http://localhost:8000/api/room/homepage";
 
   /* states ---------------------------------------------------------------- */
   const [roomsIn, setRoomsIn] = useState([]);
@@ -26,37 +29,55 @@ const Rooms = (props) => {
   /* lifecycle ------------------------------------------------------------- */
 
   useEffect(function fetchRooms() {
-    const request = axios.CancelToken.source();
+    // const request = axios.CancelToken.source();
 
-    const connectAPI = async (url) => {
-      await axios({
-        url,
-        method: "GET",
-        headers: { Authorization: `Bearer ${authTokens.access}` },
-        cancelToken: request.token,
-      })
-        .then((response) => {
-          setRoomsIn([]);
-          setRoomsPublic([]);
+    getUserRooms(authTokens.access)
+      .then((response) => {
+        setRoomsIn([]);
+        setRoomsPublic([]);
 
-          response.data.forEach((room) => {
-            if (room.participants.some((e) => e.user.id === userId)) {
-              setRoomsIn((prevValue) => [...prevValue, room]);
-            } else if (room.isPublic) {
-              setRoomsPublic((prevValue) => [...prevValue, room]);
-            }
-          });
-        })
-        .catch((e) => {
-          if (e.response.status === 500) {
-            console.log("Not Connected");
+        response.forEach((room) => {
+          if (room.participants.some((e) => e.user.id === userId)) {
+            setRoomsIn((prevValue) => [...prevValue, room]);
+          } else if (room.isPublic) {
+            setRoomsPublic((prevValue) => [...prevValue, room]);
           }
         });
-    };
+      })
+      .catch((error) => {
+        if (error.response.status === 500) {
+          console.log("Not Connected");
+        }
+      })
+    // const connectAPI = async (url) => {
+    //   await axios({
+    //     url,
+    //     method: "GET",
+    //     headers: { Authorization: `Bearer ${authTokens.access}` },
+    //     cancelToken: request.token,
+    //   })
+    //     .then((response) => {
+    //       setRoomsIn([]);
+    //       setRoomsPublic([]);
 
-    connectAPI(URL_ROOMS);
+    //       response.data.forEach((room) => {
+    //         if (room.participants.some((e) => e.user.id === userId)) {
+    //           setRoomsIn((prevValue) => [...prevValue, room]);
+    //         } else if (room.isPublic) {
+    //           setRoomsPublic((prevValue) => [...prevValue, room]);
+    //         }
+    //       });
+    //     })
+    //     .catch((e) => {
+    //       if (e.response.status === 500) {
+    //         console.log("Not Connected");
+    //       }
+    //     });
+    // };
 
-    return () => request.cancel();
+    // connectAPI(URL_ROOMS);
+
+    // return () => request.cancel();
     // eslint-disable-next-line
   }, []);
 
@@ -104,17 +125,23 @@ const Rooms = (props) => {
     const data = { room: { ...modalInput, story: modalInput.story.id } };
     delete data.room.step;
 
-    axios({
-      url: URL_CREATE,
-      method: "POST",
-      data: { ...data },
-      headers: { Authorization: `Bearer ${authTokens.access}` },
-    })
+    createRoom(authTokens.access, data)
       .then((response) => {
         navigate(`../rooms/${response.data}`, { state: { alreadyUser: true }, replace: true });
       })
-      .catch((e) => console.log("error", e));
-  };
+      .catch((error) => console.log(error));
+    }
+  //   axios({
+  //     url: URL_CREATE,
+  //     method: "POST",
+  //     data: { ...data },
+  //     headers: { Authorization: `Bearer ${authTokens.access}` },
+  //   })
+  //     .then((response) => {
+  //       navigate(`../rooms/${response.data}`, { state: { alreadyUser: true }, replace: true });
+  //     })
+  //     .catch((e) => console.log("error", e));
+  // };
 
   /* display --------------------------------------------------------------- */
 

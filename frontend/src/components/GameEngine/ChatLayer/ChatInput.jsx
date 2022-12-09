@@ -8,7 +8,7 @@ const ChatInput = (props) => {
       {triggerCandidates ? (
         <div className="triggers">
           {triggerCandidates?.map((candidate, index) => (
-            <div>
+            <div key={index}>
               <div className="triggers_tab">{candidate.tab}</div>
               <div className="triggers_name">{candidate.name ? candidate.name : candidate.title}</div>
               <div className="triggers_trigger">/{candidate.trigger}</div>

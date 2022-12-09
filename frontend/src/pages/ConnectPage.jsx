@@ -4,7 +4,6 @@
 /* global ------------------------------------------------------------------ */
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 /* context & components ---------------------------------------------------- */
 import AuthContext from "@context/AuthContext";
 import Login from "@components/ConnectPage/Login";
@@ -169,12 +168,10 @@ const ConnectPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const request = axios.CancelToken.source();
 
     if (username) {
       navigate("/");
     }
-    return request.cancel();
     // eslint-disable-next-line
   }, []);
 

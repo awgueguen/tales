@@ -59,3 +59,18 @@ admin
 
 
 transformer les id en slug ?
+
+
+ajouter une page particulière quand un utilisateur se connecte pour la première fois (suggerer une room, un personnage, voire faire une démo)
+
+est-ce que ça a un sens de mettre la tickbox dans une autre table ?
+-> transformer la table tickbox en un champ dans User (à quel point c'est chiant? ) 
+
+Voir avec Alex s'il utilise un linter/formatter, si oui lequel pour se mettre au diapason.
+
+
+Mise en place des test unitaires : 
+(recheck si l'app a été faite avec create-react-app) à priori oui vu la présence de react-scripts dans package.json
+
+Need to do a script with bash ->
+maybe that script is the base one that triggers the windows one when needed ?

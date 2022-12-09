@@ -6,7 +6,6 @@ import AuthContext from "@context/AuthContext";
 /* hooks ------------------------------------------------------------------- */
 import useChat from "@hooks/useChat";
 import useTrigger from "@hooks/useTrigger";
-import axios from "axios";
 
 /* components -------------------------------------------------------------- */
 // import PlayersLayer from "@components/GameEngine/PlayersLayer";
@@ -14,6 +13,9 @@ import ChatLayer from "@components/GameEngine/ChatLayer";
 import InfosLayer from "@components/GameEngine/InfosLayer";
 import EventLayer from "@components/GameEngine/EventLayer";
 
+/* services ---------------------------------------------------------------- */
+import {submitTriggers} from '@services/triggers/triggers.services.js';
+import {getRoomParticipants} from '@services/roomparts/roomparts.services.js';
 /* render ------------------------------------------------------------------ */
 
 const GameEngine = () => {
@@ -25,9 +27,6 @@ const GameEngine = () => {
   const { userId, authTokens } = useContext(AuthContext);
   const { roomId } = useParams();
 
-  const URL_PARTICIPANTS = `http://127.0.0.1:8000/api/roompart/list/${roomId}`;
-  const URL_TRIGGERS = "http://127.0.0.1:8000/api/triggers/submit/";
-
   /* lifecycle ------------------------------------------------------------- */
   const { messages, sendMessage } = useChat(roomId, userDetail.roompart.nickname); // ?
   const [lastEvent, setLastEvent] = useState();
@@ -35,33 +34,27 @@ const GameEngine = () => {
   const [triggerMessages, setTriggerMessages] = useState();
 
   useEffect(() => {
-    const request = axios.CancelToken.source();
-    const fetchAllParticipants = async () => {
-      await axios({
-        url: URL_PARTICIPANTS,
-        method: "GET",
-        headers: { Authorization: `Bearer ${authTokens.access}` },
-        cancelToken: request.token,
+    
+    getRoomParticipants(authTokens.access, roomId)
+      .then((response) => {
+        const roomParticipant = response
+          .find((user) => user.user === userId);
+        setMyCharacter(roomParticipant.character);
+        setUserDetail({ "roompart": {
+          "nickname": roomParticipant.nickname,
+          "isAdmin": roomParticipant.isAdmin 
+        }});
       })
-        .then((response) => {
-          const roomParticipant = response.data.find((user) => user.user === userId);
+      .catch((error) => console.log(error));
 
-          // setParticipants(response.data);
-          setMyCharacter(roomParticipant.character);
-          setUserDetail({ roompart: { nickname: roomParticipant.nickname, isAdmin: roomParticipant.isAdmin } });
-        })
-        .catch((e) => console.log("error", e));
-    };
-
-    fetchAllParticipants();
-    // eslint-disable-next-line
-  }, []);
+  }, [authTokens.access, roomId, userId]);
 
   useEffect(() => {
     setChatMessages(messages.filter((message) => !message.isTriggered));
     setTriggerMessages(messages.filter((message) => message.isTriggered));
     // eslint-disable-next-line
   }, [messages.length]);
+  // pourquoi length et pas messages ?
 
   useEffect(() => {
     if (triggerMessages) {
@@ -100,12 +93,15 @@ const GameEngine = () => {
 
   const submitTrigger = () => {
     if (trigger) {
-      axios({
-        url: URL_TRIGGERS,
-        method: "POST",
-        headers: { Authorization: `Bearer ${authTokens.access}` },
-        data: { ...trigger, roomId },
-      });
+      // axios({
+      //   url: URL_TRIGGERS,
+      //   method: "POST",
+      //   headers: { Authorization: `Bearer ${authTokens.access}` },
+      //   data: { ...trigger, roomId },
+      // });
+      submitTriggers(authTokens.access, {...trigger, roomId})
+        .then((response) => console.log('trigger submitted', response))
+        .catch((error) => console.log('error submitting trigger', error))
     }
   };
 
