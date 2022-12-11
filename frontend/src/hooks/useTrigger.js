@@ -1,5 +1,9 @@
-import axios from "axios";
+// pourquoi triggerCandidates est aussi rempli avec le fetch ?
+
+// import axios from "axios";
 import { useState } from "react";
+
+import {getRoomTriggers} from '@services/triggers/triggers.services';
 
 const useTrigger = (token, roomId, isAdmin) => {
   const [availableTriggers, setAvailableTriggers] = useState(null);
@@ -39,22 +43,32 @@ const useTrigger = (token, roomId, isAdmin) => {
   };
 
   const fetchInitialTriggers = async () => {
-    await axios({
-      url: `http://127.0.0.1:8000/api/triggers?room_id=${roomId}`,
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    }).then((response) => {
-      if (!isAdmin) {
-        setTriggerCandidates(response.data[0].filter((command) => command["tab"] === "Action"));
-        setAvailableTriggers(response.data[0].filter((command) => command["tab"] === "Action"));
-      } else {
-        setTriggerCandidates(response.data[0]);
-        setAvailableTriggers(response.data[0]);
-      }
-    });
+    getRoomTriggers(token, roomId)
+      .then((response) => {
+        if (!isAdmin) {
+          setTriggerCandidates(response[0].filter((command) => command["tab"] === "Action"));
+          setAvailableTriggers(response[0].filter((command) => command["tab"] === "Action"));
+        } else {
+          setTriggerCandidates(response[0]);
+          setAvailableTriggers(response[0]);
+        }})
+      .catch((error)=> console.log(error))
+    // await axios({
+    //   url: `http://127.0.0.1:8000/api/triggers?room_id=${roomId}`,
+    //   method: "GET",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //     Authorization: `Bearer ${token}`,
+    //   },
+    // }).then((response) => {
+    //   if (!isAdmin) {
+    //     setTriggerCandidates(response.data[0].filter((command) => command["tab"] === "Action"));
+    //     setAvailableTriggers(response.data[0].filter((command) => command["tab"] === "Action"));
+    //   } else {
+    //     setTriggerCandidates(response.data[0]);
+    //     setAvailableTriggers(response.data[0]);
+    //   }
+    // });
   };
 
   const reset = () => {

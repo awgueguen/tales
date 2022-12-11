@@ -8,3 +8,7 @@
 
 [jest-documentation](https://jestjs.io/docs/expect#content)
 [jest-official-tuto](https://jestjs.io/docs/tutorial-react)
+
+[preact](https://preactjs.com/) framework react like? pour se défaire de facebook le vilain / plus sérieusement plus léger
+
+[export of gitlab_graph tool](https://github.com/chromatixau/gitlab-network-graph)

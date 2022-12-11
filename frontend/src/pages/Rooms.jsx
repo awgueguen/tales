@@ -5,7 +5,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthContext from "@context/AuthContext";
-import axios from "axios";
+// import axios from "axios";
 
 /* components -------------------------------------------------------------- */
 import PublicRooms from "@components/Rooms/PublicRooms";
@@ -18,7 +18,7 @@ import { createRoom } from "@services/rooms/rooms.services";
 const Rooms = (props) => {
   /* global ---------------------------------------------------------------- */
   const { authTokens, userId } = useContext(AuthContext);
-  const URL_CREATE = "http://127.0.0.1:8000/api/room/create/";
+  // const URL_CREATE = "http://127.0.0.1:8000/api/room/create/";
   // const URL_ROOMS = "http://localhost:8000/api/room/homepage";
 
   /* states ---------------------------------------------------------------- */
