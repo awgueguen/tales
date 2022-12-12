@@ -1,9 +1,8 @@
-// import axios from "axios";
 import { useEffect, useRef, useState, useContext } from "react";
 import socketIOClient from "socket.io-client";
 import AuthContext from "@context/AuthContext";
 
-import { getRoomMessages } from '@services/messages/messages.services.js';
+import { getRoomMessages, postMessage } from '@services/messages/messages.services.js';
 
 const EMIT_EVENT = "my_room_event";
 const LISTENER_EVENT = "my_response";
@@ -11,7 +10,12 @@ const ENDPOINT = "http://localhost:8000";
 
 
 const useChat = (roomId, nickname) => {
+
   const { authTokens, userId } = useContext(AuthContext);
+  const [messages, setMessages] = useState([]);
+  const socketRef = useRef();
+  const init = useRef(true);
+
   const dateTranslator = (inputDate = false) => {
     let date = inputDate
       ? new Date(inputDate).toUTCString().split("").slice(0, -4)
@@ -22,11 +26,7 @@ const useChat = (roomId, nickname) => {
     }
     return date.join("");
   };
-  const [messages, setMessages] = useState([]);
-  const socketRef = useRef();
-  const init = useRef(true);
-  // const [loadedMessage, setLoadedMessage] = useState()
-
+  
   useEffect(() => {
     if (init.current === true) {
       init.current = false;
@@ -49,23 +49,9 @@ const useChat = (roomId, nickname) => {
       setMessages((messages) => [incomingMessage, ...messages]);
     });
 
-    // const request = axios.CancelToken.source();
-    // const fetch = async (method, url, changeState) => {
-    //   await axios({
-    //     url: url,
-    //     method: method,
-    //     headers: { Authorization: `Bearer ${authTokens.access}` },
-    //     cancelToken: request.token,
-    //   })
-    //     .then((response) => {
-    //       changeState(response);
-    //     })
-    //     .catch((e) => console.log("error", e));
-    // };
-    // const url = `http://127.0.0.1:8000/api/room-${roomId}/messages`;
     getRoomMessages(authTokens.access, roomId)
       .then((response) => {
-        for (let message of response.data.messages) {
+        for (let message of response.messages) {
           const incomingMessage = {
             data: message.messageContent,
             date: dateTranslator(message.createdAt),
@@ -79,19 +65,13 @@ const useChat = (roomId, nickname) => {
         }
       })
       .catch((error) => console.log(error))
-    // const changeMessage = (response) => {
-      
-    // };
-    // fetch("GET", url, changeMessage);
     return () => {
       socketRef.current.disconnect();
-      // request.cancel();
     };
     // eslint-disable-next-line
+  }, [roomId, nickname, userId]);
 
-  }, [roomId, nickname, userId, authTokens.access]);
-
-  const sendMessage = (messageBody, nickname, isAdmin) => {
+  const sendMessage = async (messageBody, nickname, isAdmin) => {
     socketRef.current.emit(EMIT_EVENT, {
       data: messageBody,
       user_id: userId,
@@ -107,24 +87,8 @@ const useChat = (roomId, nickname) => {
       room: roomId,
       messageContent: messageBody,
     };
-  //   const isSuccesfullyPosted = (response) => {};
-  //   const fetch = async (method, url, changeState, data) => {
-  //     await axios({
-  //       url: url,
-  //       method: method,
-  //       data: data,
-  //       headers: { Authorization: `Bearer ${authTokens.access}` },
-  //     })
-  //       .then((response) => {
-  //         changeState(response);
-  //       })
-  //       .catch((e) => console.log("error", e));
-  //   };
-  //   const url = `http://127.0.0.1:8000/api/room-${roomId}/messages/`;
-  //   fetch("POST", url, isSuccesfullyPosted, data);
-  // };
-  postMessage(authTokens.acces, body)
-    .then((response) => { })
+  postMessage(authTokens.access, body)
+    .then((response) => { console.log(response) })
     .catch((error) => console.log(error))
   }
   return [ messages, sendMessage ];

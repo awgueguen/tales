@@ -6,6 +6,11 @@ import AuthContext from "@context/AuthContext";
 /* components -------------------------------------------------------------- */
 import CharacterCard from "@components/GameEngine/CharacterCard";
 
+/* services ---------------------------------------------------------------- */
+import { getRoomParticipants } from "@services/roomparts/roomparts.services";
+import { getCharacters } from "@services/characters/characters.services";
+import { getRoomById } from "@services/roomparts/roomparts.services";
+
 const RoomAccess = () => {
   /* states ---------------------------------------------------------------- */
   const [loading, setLoading] = useState(true);

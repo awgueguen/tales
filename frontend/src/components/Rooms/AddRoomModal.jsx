@@ -3,9 +3,7 @@
  * SERVICES ADDED
  */
 /* global ------------------------------------------------------------------ */
-import React, { useState, useEffect, useContext } from "react";
-import AuthContext from "@context/AuthContext";
-
+import useRoomCreation from "@hooks/useRoomCreation";
 /* components -------------------------------------------------------------- */
 import FriendCard from "@components/Contacts/FriendCard";
 import NoLeftSeatModal from "./NoLeftSeatModal";
@@ -15,92 +13,11 @@ import CloseIcon from "@mui/icons-material/Close";
 import AddReactionOutlinedIcon from "@mui/icons-material/AddReactionOutlined";
 
 /* services -------------------------------------------------------------- */
-import { getContacts } from '@services/contacts/contacts.services';
-import { getStories } from '@services/stories/stories.services';
+// import { getContacts } from '@services/contacts/contacts.services';
+// import { getStories } from '@services/stories/stories.services';
 
-const AddRoom = (props) => {
-  const { modalInput, handleChange, handleSubmit, setModalInput, handleModal } = props;
-  const { step, story, description, title, maxParticipants, isPublic, invitations } = modalInput;
-  const { authTokens } = useContext(AuthContext);
-  const [stories, setStories] = useState();
-  const [contacts, setContacts] = useState();
-  const [leftSeats, setLeftSeats] = useState();
-  /* lifecyle -------------------------------------------------------------- */
+const AddRoom = ({handleModal}) => {
 
-
-  useEffect(() => {
-    setLeftSeats(parseInt(maxParticipants, 10) - 1)
-  }, [maxParticipants])
-  /**
-   * Fetch at each steps the availables assets according to the present step.
-   */
-  useEffect(() => {
-    if (step === 1) {
-
-      getStories(authTokens.access)
-      .then((response) => setStories(response))
-      .catch((error) => console.log(error))
-
-    } else if (step === 3) {
-
-      getContacts(authTokens.access)
-        .then((response) => setContacts(response))
-        .catch((error) => console.log(error))
-    }
-
-    // return () => request.cancel();
-  }, [step, authTokens.access]);
-
-  /* form handle ----------------------------------------------------------- */
-
-  /**
-   * Update the step number.
-   */
-  const handleSteps = () => {
-    if (step !== 1) {
-      setModalInput({ ...modalInput, step: step - 1 });
-    }
-  };
-
-  /**
-   * Handle the differents input for the story editing.
-   */
-  const handleStorySelect = (id, title, description, maxPlayer) => {
-    setModalInput((prevValue) => ({
-      ...prevValue,
-      story: { 
-        id: id,
-        title: title,
-        description: description,
-        maxPlayers: maxPlayer
-      },
-      title: "",
-      description: "",
-      maxParticipants: "",
-      step: 2,
-    }));
-  };
-
-  /**
-   * Check if the user has edited some of the original story's informations.
-   */
-  const handleCustomDetails = () => {
-    setModalInput({
-      ...modalInput,
-      title: title ? title : story.title,
-      description: description ? description : story.description,
-      maxParticipants: maxParticipants
-        ? isNaN(maxParticipants)
-          ? story.maxPlayers
-          : maxParticipants
-        : story.maxPlayers,
-      step: 3,
-    });
-  };
-
-  /**
-   * Handle the selection of one or multiple friends to a room.
-   */
   const handleLeftSeatModal = (e, modalName) => {
     const modal = document.querySelector(`.${modalName}-modal__container`);
     if (!e){
@@ -116,29 +33,30 @@ const AddRoom = (props) => {
       }
     }
   };
-  const handleAddFriends = (id, nickname) => {
-    // Case 1: contact already selected.
-    if (invitations.some((invitation) => invitation.id === id)) {
-      let newInvitations = invitations.filter((invitation) => invitation.id !== id);
-      setModalInput((prevValue) => ({ ...prevValue, invitations: newInvitations }));
-      setLeftSeats(leftSeats + 1);
-    }
-    // Case 2: contact limit reached.
-    else if (invitations.length >= maxParticipants - 1) {
-      // TODO : Change notification system to UI
-      // TODO : Show number of seat available (DONE with poor UI)
-      // TODO : Add pick a nickname
-      // alert("maximun number of participants reached");
-      handleLeftSeatModal(false, "no-left-seat")
-    }
-    // Case 3: contact added to the invitation list
-    else {
-      let newInvitations = [...invitations, { id: id, nickname: nickname }];
-      setModalInput((prevValue) => ({
-        ...prevValue,
-        invitations: newInvitations
-      }));
-      setLeftSeats(leftSeats - 1);
+  const [
+    createRoomStates,
+    setModalInput,
+    handleAddFriends,
+    handleStorySelect,
+    handleCustomDetails,
+    handleModalChange,
+    handleModalSubmit
+  ] = useRoomCreation(handleLeftSeatModal);
+
+  const {stories, contacts, leftSeats, modalInput} = createRoomStates;
+  const { step, story, description, title, maxParticipants, isPublic, invitations } = modalInput;
+
+  /* lifecyle -------------------------------------------------------------- */
+
+
+  /* form handle ----------------------------------------------------------- */
+
+  /**
+   * Update the step number.
+   */
+  const handleBackwardStep = () => {
+    if (step !== 1) {
+      setModalInput({ ...modalInput, step: step - 1 });
     }
   };
 
@@ -184,7 +102,7 @@ const AddRoom = (props) => {
                   type="text"
                   placeholder={"Default title: " + story.title}
                   className="input-default"
-                  onChange={handleChange}
+                  onChange={handleModalChange}
                 />
                 <span className="icon__edit"></span>
               </div>
@@ -195,7 +113,7 @@ const AddRoom = (props) => {
                   type="number"
                   placeholder={"Default max players: " + story.maxPlayers + " (number)"}
                   className="input-default"
-                  onChange={handleChange}
+                  onChange={handleModalChange}
                 />
                 <span className="icon__edit"></span>
               </div>
@@ -206,13 +124,13 @@ const AddRoom = (props) => {
                   name="description"
                   placeholder={"Default description: " + story.description}
                   className="input-default"
-                  onChange={handleChange}
+                  onChange={handleModalChange}
                 />
                 <span className="icon__edit"></span>
               </div>
 
               <label className="input-checkbox">
-                <input value={isPublic} name="isPublic" type="checkbox" onChange={handleChange} />
+                <input value={isPublic} name="isPublic" type="checkbox" onChange={handleModalChange} />
                 Do you want to make the room public ?
               </label>
             </div>
@@ -264,7 +182,7 @@ const AddRoom = (props) => {
             </div>
             <NoLeftSeatModal handleModal={handleLeftSeatModal}/>
 
-            <button className="btn-primary" onClick={handleSubmit}>
+            <button className="btn-primary" onClick={handleModalSubmit}>
               CREATE ROOM
             </button>
           </>
@@ -279,7 +197,7 @@ const AddRoom = (props) => {
     <dialog className="addroom__container">
       <div>
         <div className="addroom__header">
-          <button className={`btn-back ${step === 1 ? "inactive" : ""}`} onClick={handleSteps}>
+          <button className={`btn-back ${step === 1 ? "inactive" : ""}`} onClick={handleBackwardStep}>
             <KeyboardBackspaceIcon />
           </button>
           <div className={`addroom__progression step-${step === 1 ? "one" : step === 2 ? "two" : "three"}`}></div>

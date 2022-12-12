@@ -28,7 +28,7 @@ const GameEngine = () => {
   const { roomId } = useParams();
 
   /* lifecycle ------------------------------------------------------------- */
-  const { messages, sendMessage } = useChat(roomId, userDetail.roompart.nickname); // ?
+  const [ messages, sendMessage ] = useChat(roomId, userDetail.roompart.nickname); // ?
   const [lastEvent, setLastEvent] = useState();
   const [chatMessages, setChatMessages] = useState();
   const [triggerMessages, setTriggerMessages] = useState();

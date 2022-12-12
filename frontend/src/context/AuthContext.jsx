@@ -2,11 +2,12 @@
  * * CLEAN CODE
  */
 /* gobal ------------------------------------------------------------------- */
-import axios from "axios";
 import jwt_decode from "jwt-decode";
 import { createContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
+/* Services ------------------------------------------------------------- */
+import { loginUser as loginService, registerUser as registerService, refreshToken as refreshService } from "@services/auth/auth.services.js"; 
 /* ------------------------------------------------------------------------- */
 /* context                                                                   */
 /* ------------------------------------------------------------------------- */
@@ -22,9 +23,6 @@ export default AuthContext;
 export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
   let [loading, setLoading] = useState(true);
-
-  const URL_REGISTER = "http://127.0.0.1:8000/api/register/";
-  const URL_LOGIN = "http://127.0.0.1:8000/token/";
 
   /* life cycle methods ---------------------------------------------------- */
 
@@ -63,18 +61,10 @@ export const AuthProvider = ({ children }) => {
 
   let registerUser = async ({ username, password, email, rgpd }) => {
     let error = {};
-
-    await axios({
-      url: URL_REGISTER,
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      data: { username, password, email, rgpd },
-    })
+    registerService({username, password, email, rgpd})
       .then((_) => loginUser({ username, password }))
       .catch((e) => {
-        error = e.response.data;
+        error = e.response;
       });
 
     return error;
@@ -84,16 +74,8 @@ export const AuthProvider = ({ children }) => {
 
   let loginUser = async ({ username, password }) => {
     let error = false;
-
     if (username && password) {
-      await axios({
-        url: URL_LOGIN,
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        data: { username, password },
-      })
+      loginService({username, password})
         .then((response) => {
           if (response.status === 200) {
             let resTokens = response.data;
@@ -114,14 +96,14 @@ export const AuthProvider = ({ children }) => {
             navigate("/");
           }
         })
-        .catch((e) => (error = true));
+        .catch((e) => {console.log(e, "nxamr"); (error = true)});
     }
 
     return error;
   };
 
   /* logout method --------------------------------------------------------- */
-
+    // est-ce qu'on clear le token à un moment ?
   let logoutUser = () => {
     setAuthTokens(null);
     setUsername(null);
@@ -135,14 +117,7 @@ export const AuthProvider = ({ children }) => {
 
   let updateToken = async () => {
     if (authTokens) {
-      await axios({
-        url: "http://127.0.0.1:8000/token/refresh/",
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        data: { refresh: authTokens?.refresh },
-      })
+      refreshService({refresh: authTokens?.refresh})
         .then((response) => {
           if (response.status === 200) {
             let resTokens = response.data;

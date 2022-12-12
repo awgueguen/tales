@@ -1,4 +1,4 @@
-import {privateInstance} from "@services/axios.instance";
+import {instance} from "@services/axios.instance";
 
 const API_URL = process.env.REACT_APP_API_ENDPOINT;
 
@@ -9,11 +9,11 @@ const STORIES_URL = {
 };
 
 export const getStories = async (token) => {
-    const response = await privateInstance(token).get(STORIES_URL.plain)
+    const response = await instance(token).get(STORIES_URL.plain)
     return response.data
 }
 
 export const getUserStories = async (user_id, token) => {
-    const response = await privateInstance(token).get(URL.by_user_id(user_id))
+    const response = await instance(token).get(URL.by_user_id(user_id))
     return response.data
 }

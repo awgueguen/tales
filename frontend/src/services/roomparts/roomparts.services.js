@@ -1,4 +1,4 @@
-import { privateInstance } from "@services/axios.instance";
+import { instance } from "@services/axios.instance";
 
 const API_URL = process.env.REACT_APP_API_ENDPOINT;
 
@@ -9,6 +9,6 @@ const ROOMPART_URL = {
 
 export const getRoomParticipants = async ( token, roomId ) => {
     // `http://127.0.0.1:8000/api/roompart/list/${roomId}`
-    const response = await privateInstance(token).get(ROOMPART_URL.by_room(roomId))
+    const response = await instance(token).get(ROOMPART_URL.by_room(roomId))
     return response.data
 };

@@ -9,7 +9,7 @@ import { Link } from "react-router-dom";
 import InRoomCard from "./InRoomCard";
 import AddRoomModal from "./AddRoomModal";
 
-const InRooms = ({ userId, rooms, handleModal, ...props }) => {
+const InRooms = ({ userId, rooms, handleModal }) => {
   return (
     <>
       <h4>MY ROOMS</h4>
@@ -33,7 +33,7 @@ const InRooms = ({ userId, rooms, handleModal, ...props }) => {
               </button>
             </div>
           </div>
-          <AddRoomModal handleModal={handleModal} {...props} />
+          <AddRoomModal handleModal={handleModal} />
         </div>
       </div>
     </>

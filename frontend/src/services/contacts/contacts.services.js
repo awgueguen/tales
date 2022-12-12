@@ -1,4 +1,4 @@
-import {privateInstance} from "@services/axios.instance";
+import {instance} from "@services/axios.instance";
 
 const API_URL = process.env.REACT_APP_API_ENDPOINT;
 
@@ -10,18 +10,18 @@ const CONTACTS_URL = {
 
 export const getContacts = async ( token ) => {
     // http://localhost:8000/api/contacts/
-    const response = await privateInstance(token).get(CONTACTS_URL.plain)
+    const response = await instance(token).get(CONTACTS_URL.plain)
     return response.data
 }
 
 export const addContact = async (token, body) => {
 // http://127.0.0.1:8000/api/contacts/add/
-    const response = await privateInstance(token).post(CONTACTS_URL.add, body)
+    const response = await instance(token).post(CONTACTS_URL.add, body)
     return response
 }
 
 export const checkContactExists = async (token, input) => {
     // `http://localhost:8000/api/contacts/add/?receiver=${input}`
-    const response = await privateInstance(token).get(CONTACTS_URL.check(input))
+    const response = await instance(token).get(CONTACTS_URL.check(input))
     return response
 }
