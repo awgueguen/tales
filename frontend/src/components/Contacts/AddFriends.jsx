@@ -16,100 +16,53 @@
  import AuthContext from "@context/AuthContext";
 //  import axios from "axios";
  /* services ---------------------------------------------------------------- */
- import { addContact, checkContactExists} from "@services/contacts/contacts.services";
+ import { addContact} from "@services/contacts/contacts.services";
  
- const AddFriends = ({ input, handleChange, contactList, add }) => {
+ const AddFriends = ({ input, handleChange, contactList, add, resetInput }) => {
    let { authTokens } = useContext(AuthContext);
  
   //  const URL = "http://127.0.0.1:8000/api/contacts/add/";
-   const [error, setError] = useState();
-   const [valid, setValid] = useState();
-   const [contactExist, setContactExist] = useState(false)
-   const [rerenderForced, setRerenderForced] = useState(0)
-   const message = {
+   const [message, setMessage] = useState({error:"", valid: ""});
+   const errorMessage = {
      alreadyFriends: "You are already friends with this user",
      notFound: "User can not be found",
-     error: "An error has occured",
+     unknownError: "An unknown error has occured",
    };
  
    /* lifecycle ------------------------------------------------------------- */
    useEffect(() => {
-     setError("");
-     setValid("");
+     setMessage({error:"", valid: ""});
    }, [input]);
    /* methods --------------------------------------------------------------- */
  
-   const compareFriends = () => {
-     const friends = contactList;
-     return friends?.some(({ username }) => username.toLowerCase() === input.toLowerCase());
+   const compareFriends = ( input ) => {
+    // TODO -> refaire en comparant aussi nickname etc..
+    console.log(input, contactList, "dans compareFriends")
+     return contactList?.some(({ username }) => username.toLowerCase() === input.toLowerCase());
    };
  
-   useEffect(()=> {
-    console.log("fetch to check");
-    if (rerenderForced === 0) return;
-     checkContactExists(authTokens.access, input)
-       .then((response) => {
-         console.log(response, "contactCheck")
-         setContactExist(response.statusTest !== "Not Found")
-       })
-       .catch((error) => console.log(error));
-       //eslint-disable-next-line
-   }, [authTokens.access, rerenderForced, setRerenderForced])
-   
-   // const checkContactExistence = async () => {
-   //   // const request = await axios({
-   //   //   method: "GET",
-   //   //   url: `${URL}?receiver=${input}`,
-   //   //   headers: { Authorization: "Bearer " + authTokens.access },
-   //   // }).catch((error) => error.response);
-   //   // console.log('friendrequest response', request)
-   //   // return request.statusText !== "Not Found";
-   //   checkContactExists(authTokens.access, input)
-   //     .then((response) => {
-   //       console.log(response, "contactCheck")
-   //       setContactExist(response.statusTest !== "Not Found")
-   //     })
-   //     .catch((error) => console.log(error));
-   // };
- 
-   const addFriendToContact = async (input) => {
-     // const request = await axios({
-     //   method: "POST",
-     //   url: URL,
-     //   headers: { Authorization: "Bearer " + authTokens.access },
-     //   data: { receiver: input },
-     // }).catch((error) => error);
- 
-     // return request.statusText === "Created";
-     console.log('try to add');
-     let hello;
-     addContact(authTokens.access, {"receiver": input})
-       .then((response) => {
-         console.log(response, "contactadd")
-         hello = response.statusText === "Created"
-       })
-       .catch((error) => console.log(error));
-     return hello;
-   };
- 
-   const handleSubmit = async (e) => {
+   const handleSubmit = (e) => {
      e.preventDefault();
-     setRerenderForced(rerenderForced + 1)
      if (add) {
-       // let contact_exist = await checkContactExistence();
-       let contact_in_list = compareFriends();
-       if (contactExist && !contact_in_list) {
-         const request = await addFriendToContact(input);
-         if (request) {
-           setValid("Invitiation sent !");
-         } else {
-           setError(message.error);
-         }
-       } else if (compareFriends(input) === true) {
-         setError(message.alreadyFriends);
-       } else {
-         setError(message.notFound);
+       if (compareFriends(input) ) {
+        setMessage({error: errorMessage.alreadyFriends});
+        return;
        }
+      addContact(authTokens.access, {"receiver": input})
+        .then((response) => {
+          console.log(response, "contactadd");
+          setMessage({error: "", valid: "Invitiation sent !"});
+          resetInput();
+         })
+        .catch((error) => {
+          if (error?.response?.data === "UserNotFound") {
+            setMessage({valid: "", error: errorMessage.notFound});
+          }
+          else {
+            setMessage({valid: "", error: errorMessage.unknownError});
+          console.log(error, 'error dans catch addContact');
+        }
+        });
      }
    };
  
@@ -125,9 +78,9 @@
          <ul onClick={handleSubmit}>
            <li className="contacts__add">
              {input.length > 14 ? input.substring(0, 14) + "..." : input}{" "}
-             <span className={`icon__add-friend ${error ? "error" : valid ? "valid" : ""}`}></span>
+             <span className={`icon__add-friend ${message.error ? "error" : message.valid ? "valid" : ""}`}></span>
            </li>
-           <span className={valid || error ? "contacts__add-label" : ""}>{valid ? valid : error}</span>
+           <span className={message.valid || message.error ? "contacts__add-label" : ""}>{message.valid ? message.valid : message.error}</span>
          </ul>
        )}
      </>

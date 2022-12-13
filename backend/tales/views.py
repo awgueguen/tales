@@ -355,9 +355,10 @@ def api_roomparticipants(request, room_id=None):
 @ authentication_classes([JWTAuthentication])
 @ permission_classes([permissions.IsAuthenticated])
 def get_messages(request, room_id):
+    # TODO -> add try except closures to appropriately handle errors
     if request.method == 'GET':
         messages = models.Message.objects.filter(
-            room=room_id, deleted=False)  # .values(*wanted_values)
+            room=room_id, deleted=False)
         response = serializers.MessageSerializer(messages, many=True).data
         return Response({'messages': response}, status=status.HTTP_200_OK)
 
@@ -368,7 +369,11 @@ def get_messages(request, room_id):
         sender = serializers.MyUserSerializer(user).data
         room = serializers.RoomSerializer(room).data
         ser = serializers.PostedMessageSerializer(
-            data={'sender': sender['id'], 'room': room['id'], 'messageContent': messageContent})
+            data={
+                'sender': sender['id'],
+                'room': room['id'],
+                'messageContent': messageContent
+                })
         if ser.is_valid():
             ser.save()
             return Response({'message': ser.data}, status=status.HTTP_201_CREATED)
@@ -422,21 +427,25 @@ def get_contacts(request):
 @ authentication_classes([JWTAuthentication])
 @ permission_classes([permissions.IsAuthenticated])
 def add_contact(request):
-    if request.method == 'GET':
-        receiver = request.GET.get("receiver")
 
-        try:
-            receiver = models.MyUser.objects.get(username__iexact=receiver)
-            return Response(status=status.HTTP_200_OK)
-        except models.MyUser.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+    if request.method == 'GET':
+        return
+    #     receiver = request.GET.get("receiver")
+
+    #     try:
+    #         receiver = models.MyUser.objects.get(username__iexact=receiver)
+    #         return Response(status=status.HTTP_200_OK)
+    #     except models.MyUser.DoesNotExist:
+    #         return Response(status=status.HTTP_404_NOT_FOUND)
 
     if request.method == 'POST':
-        sender = request.user
         receiver = request.data.get("receiver")
+        sender = models.MyUser.objects.get(username=request.user).id
 
-        sender = models.MyUser.objects.get(username=sender).id
-        receiver = models.MyUser.objects.get(username__iexact=receiver).id
+        try:
+            receiver = models.MyUser.objects.get(username__iexact=receiver).id
+        except models.MyUser.DoesNotExist:
+            return Response(data="UserNotFound", status=status.HTTP_404_NOT_FOUND)
 
         serializer = serializers.ContactSerializer(
             data={'sender': sender, 'receiver': receiver, 'approved': True})

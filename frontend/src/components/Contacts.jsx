@@ -18,12 +18,20 @@ const DisplayFriends = ({ contacts, handleToogle }) => {
   let { authTokens } = useContext(AuthContext);
 
   /* states ---------------------------------------------------------------- */
-  const [add, toogleAdd] = useState(false);
+  const [add, toggleAdd] = useState(false);
   const [contactList, setContactList] = useState([]);
   const [input, setInput] = useState("");
 
+  const resetInput = () => {
+    toggleAdd(false);
+    setInput("");
+    getContacts(authTokens.access)
+    .then((response) => setContactList(response))
+    .catch((error) => console.log(error));
+
+  }
   const handleChange = (e) => {
-    toogleAdd(!contactList.filter((user) => user.nickname.startsWith(e.target.value.toLocaleLowerCase())).length > 0);
+    toggleAdd(!contactList.filter((user) => user.nickname.startsWith(e.target.value.toLocaleLowerCase())).length > 0);
     setInput(e.target.value);
   };
 
@@ -48,7 +56,13 @@ const DisplayFriends = ({ contacts, handleToogle }) => {
         </button>
       </div>
       <div>
-        <AddFriends handleChange={handleChange} input={input} contactList={contactList} add={add} />
+        <AddFriends 
+          handleChange={handleChange}
+          input={input}
+          contactList={contactList}
+          add={add} 
+          resetInput={resetInput}
+        />
       </div>
       <div className="contacts__display">
         <ul>
