@@ -1,11 +1,9 @@
 import {instance} from "@services/axios.instance";
 
-const API_URL = process.env.REACT_APP_API_ENDPOINT;
-
 const CONTACTS_URL = {
-    plain : `${API_URL}/api/contacts/`,
-    add : `${API_URL}/api/contacts/add/`,
-    check : (input) => `${API_URL}/api/contacts/add/?receiver=${input}`
+    plain : `api/contacts/`,
+    add : `api/contacts/add/`,
+    check : (input) => `api/contacts/add/?receiver=${input}`
 };
 
 export const getContacts = async ( token ) => {

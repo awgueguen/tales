@@ -48,7 +48,6 @@ INSTALLED_APPS = [
 
     'rest_framework_simplejwt.token_blacklist',
     'tales',
-
     "rest_framework",
     'websocket',
 
@@ -227,5 +226,4 @@ CORS_ALLOW_METHODS = [
 # import dj_database_url
 # STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-# # ça ça mparait à chier mais à suivre
 # DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)

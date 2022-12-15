@@ -1,12 +1,10 @@
 import {instance} from '@services/axios.instance';
 
-const API_URL = process.env.REACT_APP_API_ENDPOINT;
-
 const ROOMS_URL = {
-    plain : "http://localhost:8000/api/room/homepage",
-    by_room_id : (roomId) => `${API_URL}/api/room-${roomId}`,
-    create : `${API_URL}/api/room/create/`,
-    quick_acces : `${API_URL}/api/room/quick_access`,
+    plain : "api/room/homepage",
+    by_room_id : (roomId) => `api/room-${roomId}`,
+    create : `api/room/create/`,
+    quick_acces : `api/room/quick_access`,
 };
 
 export const getQuickAccesRooms = async (token) => {

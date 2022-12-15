@@ -1,10 +1,8 @@
 import { instance } from "@services/axios.instance";
 
-const API_URL = process.env.REACT_APP_API_ENDPOINT;
-
 const TRIGGERS_URL = {
-    add : `${API_URL}/api/triggers/submit/`,
-    by_room: (roomId) => `${API_URL}/api/triggers?room_id=${roomId}`,
+    add : `api/triggers/submit/`,
+    by_room: (roomId) => `api/triggers?room_id=${roomId}`,
 };
 
 export const submitTriggers = async ( token, body ) => {

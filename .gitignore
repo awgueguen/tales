@@ -35,5 +35,7 @@ package-lock.json
 password.txt
 # faker
 
-documentation/features_dd
+documentation/features_dd.md
+documentation/benchmark-host.md
+documentation/test-documentation.md
 frontend/.env.prod

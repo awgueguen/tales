@@ -12,6 +12,9 @@ import RoomAccess from "./utils/RoomAccess";
 import Rooms from "@pages/Rooms";
 import GameEngine from "@pages/GameEngine";
 
+/* temporary -------------------------------------------------------------- */
+import Profile from '@components/Profile/EditProfile';
+
 const App = () => {
   return (
     <>
@@ -21,6 +24,7 @@ const App = () => {
             <Routes>
               <Route path="/" element={<PrivateRoute />}>
                 <Route path="/" element={<Dashboard />}>
+                <Route path='/profileTest' element={<Profile />} />
                   <Route path="/" element={<Rooms />} />
                   <Route path="/" element={<RoomAccess />}>
                     <Route path="/rooms/:roomId" element={<GameEngine />} />

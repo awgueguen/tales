@@ -27,7 +27,9 @@ urlpatterns = [
     # USER                                                                    #
     # ----------------------------------------------------------------------- #
     path('register/', views.register_user),
-
+    path('profile/edit/', views.edit_profile),
+    path('profile/', views.get_profile),
+    # path('profile/friends/', views.get_contacts_profiles),
     # ----------------------------------------------------------------------- #
     # CONTACTS                                                                #
     # ----------------------------------------------------------------------- #

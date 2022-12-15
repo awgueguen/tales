@@ -12,3 +12,7 @@
 [preact](https://preactjs.com/) framework react like? pour se défaire de facebook le vilain / plus sérieusement plus léger
 
 [export of gitlab_graph tool](https://github.com/chromatixau/gitlab-network-graph)
+
+
+[tracking users](https://medium.com/@atulmishra_69567/tracking-user-login-activity-in-django-rest-framework-jwt-authentication-32e0194e77d0) (https://stackoverflow.com/questions/57286735/how-to-check-if-the-current-user-is-logged-in-django-rest-framework-how-to-noti)
+(https://github.com/jazzband/django-axes)

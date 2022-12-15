@@ -1,10 +1,8 @@
 import {instance} from '@services/axios.instance'
 
-const API_URL = process.env.REACT_APP_API_ENDPOINT;
-
 const MESSAGES_URL = {
-    by_room_id : (roomId) => `${API_URL}/api/room-${roomId}/messages/`,
-    create : (roomId) => `${API_URL}/api/room-${roomId}/messages/`,
+    by_room_id : (roomId) => `api/room-${roomId}/messages/`,
+    create : (roomId) => `api/room-${roomId}/messages/`,
 };
 
 export const getRoomMessages = async (token, roomId) => {

@@ -12,18 +12,23 @@ ___
 *use random parameters to settle a room*
 
  - (STORY) **spam watcher** (prio zero)
-*watch for spams and add a mute effect, mute button for MJs
+*watch for spams and add a mute effect, mute button for MJs*
 
  - (STORY) **usage watcher** (prio high)
 *watch for user activity to change login status*
 
- - (STORY) **login status** (prio high)
-*add a visual indicator to show user activity
+ - (STORY) **login status** (prio high) (weight: fucking casskouy)
+*add a visual indicator to show user activity*
 [online, busy(handled by user), offline, away(handle by usage watcher)] 
+ - 15/12 : En faisant quelques recherches, il semble plus compliqué que prévu d'avoir un statut précis d'un utilisateur autre que nous même. Soit on recrée une table qui track les users et qui va à chaque requête envoyée par celui-ci (autre que le refresh token par exemple) mettre à jour l'état de connexion. Alors on suivrait l'activité d'un utilisateur puisque les fetchs ne sont à priori refait qu'en changeant de page et donc en étant actif. Solution un peu alambiquée mais qui serait plutôt précise.
+ Soit on ajoute 'juste' un last_logout field qu'on devrait alimenter nous même à la cession du token, et on compare last_logout last_login pour savoir si l'utilisateur est à priori connecté. Beaucoup plus simple mais moins précis, on n'aurait d'ailleurs pas de distinction entre le away et le online. On peut décider de partir là dessus et ajouter la possibilité de mettre en statut busy, tant qu'un user est busy on ne fait pas les checks précédents, sinon on met juste 
+ `is_active = last_logout > last_login`
 
  - (STORY) **kick/mute/whisp within rooms** (prio medium)
 *allow a user (only MJ in a first step) to kick/mute/whisp a user in its room
 
+ - (STORY) **remove a friend** (prio medium)
+*allow a user to remove a contact from its friend list*
 ___
  - (EPIC) **contacts / rooms acceptance** : (prio medium)
 *add notification system and UI to allow players to accept or decline invivtations*
@@ -35,7 +40,7 @@ ___
 	(see [side note]() on features for a detailed list of ideas)
 *review trigger system and allow interracting with the chat using assets*
 
- - (EPIC) **ASSETS MGMT** (prio medium) (high imo but UI is really heavy..)
+ - (EPIC) **ASSETS MGMT** (prio medium) (high imo but UI might be really heavy..)
 *backoffice with proper UIthat will allow players to manage assets*
   back routes to create stories, characters, entities from models
   back routes to create models that will be available for the user
@@ -76,9 +81,11 @@ Est-ce que c'est une fausse bonne idée je sais pas mais ça vaut le coup de se 
   here we can just hard code a template that we would use for everyone
   OR if we are a little bit crazy, we can start with a form to require people play style and adapt according to it
 
- - (EPIC) **PROFILE MANAGEMENT (prio medium high)
-*allow user to handle its profile*
-  little ui to edit personal details
+ - (EPIC) **PROFILE MANAGEMENT** (prio medium high)
+*allow user to handle its profile and see friends profiles*
+  little ui to show profiles : 
+  - for self, show and edit
+  - for friends, show and access status ()
   might be included in / same UI as Asset management
 
  - (EPIC) **ROOMS DETAILS** (prio high : only for users detail part)
@@ -92,10 +99,21 @@ Est-ce que c'est une fausse bonne idée je sais pas mais ça vaut le coup de se 
 ___
 
 # ISSUES
- * 
+ * A user is not logged out after a long disconnexion of the service.
 ___
 
 # FUNCTIONAL CHANGES
+
+### Load every usefull information on a user connexion ?
+
+ - get contacts on connexion, refetch if add friend or accept friends invite
+ - get privateRooms on connexion, refetch if add room or accept room invite
+ - get assets on connexion, refetch if add asset or edit assets
+ - get list(contact where receiver=user && approved=false) and put a notif
+ - get list(room where roompart in (list(roompart where roompart=user && aproved=false)) and put a notif
+ - whisper system should be handle appart with socket as for the msg and be fetched on every socketIO msg that are from 'whisper' strategy for instance
+
+
 ___
 
 # STRUCTURAL CHANGES

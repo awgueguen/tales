@@ -1,9 +1,7 @@
 import { instance } from "@services/axios.instance";
 
-const API_URL = process.env.REACT_APP_API_ENDPOINT;
-
 const CHARACTERS_URL = {
-    plain : `${API_URL}/api/characters/`,
+    plain : `api/characters/`,
 };
 
 export const getCharacters = async ( token ) => {

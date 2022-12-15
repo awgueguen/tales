@@ -10,6 +10,8 @@ from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.views import TokenObtainPairView
 
+from django.contrib.auth import user_logged_in
+
 from tales import serializers
 from tales import models
 
@@ -37,6 +39,39 @@ def register_user(request):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+# --------------------------------------------------------------------------- #
+# PROFILE                                                                     #
+# --------------------------------------------------------------------------- #
+
+@api_view(['POST', 'PUT'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([permissions.IsAuthenticated])
+def edit_profile(request):
+    # TODO -> handle images properly
+    if request.method == 'PUT':
+        
+        user = models.MyUser.objects.get(username=request.user)
+        serializer = serializers.MyUserSerializer(user, data=request.data)
+        print('serializer de l edit', serializer)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors,
+                            status=status.HTTP_400_BAD_REQUEST)
+
+    if request.method == 'POST':
+        return
+
+@api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([permissions.IsAuthenticated])
+def get_profile(request):
+
+    user = models.MyUser.objects.get(username=request.user)
+    serializer = serializers.MyUserSerializer(user)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+    
 
 # --------------------------------------------------------------------------- #
 # GAMEPLAY                                                                    #
@@ -412,6 +447,10 @@ def stories_api(request):
 @ authentication_classes([JWTAuthentication])
 @ permission_classes([permissions.IsAuthenticated])
 def get_contacts(request):
+    # TODO -> Check ce qu'il se passe si on n'a pas d'amis
+    # last_login should be recorded in auth_user table
+    # add is_active condition whereas for now everyone is active
+
     user = request.user
     contact_list = models.Contact.objects.filter(
         Q(sender__username=user) | Q(receiver__username=user), approved=True)

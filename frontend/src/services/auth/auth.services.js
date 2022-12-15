@@ -1,11 +1,9 @@
 import { instance } from '@services/axios.instance';
 
-const API_URL = process.env.REACT_APP_API_ENDPOINT;
-
 const AUTH_URL = {
-    register : `${API_URL}/api/register/`,
-    login : `${API_URL}/token/`,
-    refresh: `${API_URL}/token/refresh/`,
+    register : `api/register/`,
+    login : `token/`,
+    refresh: `token/refresh/`,
 };
 
 

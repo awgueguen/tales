@@ -1,7 +1,9 @@
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from tales import models
-
+# tracking
+from django.contrib.auth import authenticate, user_logged_in
+from datetime import datetime
 
 # --------------------------------------------------------------------------- #
 # GENERIC SERIALIZERS                                                         #
@@ -34,7 +36,6 @@ class MyUserSerializer(serializers.ModelSerializer):
         model = models.MyUser
         fields = ['last_login', 'username', 'first_name', 'last_name',
                   'email', 'nickname',  'profile_pic', 'id']
-
 
 class EntityInstanceSerializer(serializers.ModelSerializer):
     class Meta:
@@ -184,6 +185,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['username'] = user.username
         token['profile_pic'] = f"/media/{str(user.profile_pic)}"
         token['nickname'] = user.nickname
+        # # token['last_login'] = datetime.strftime(datetime.now(), '%m/%d/%y %H:%M:%S')
         return token
 
 
@@ -226,7 +228,7 @@ class ContactUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.MyUser
-        fields = ['username', 'nickname', 'id', 'profile_pic']
+        fields = ['last_login', 'is_active', 'username', 'nickname', 'id', 'profile_pic']
 
 
 # --------------------------------------------------------------------------- #

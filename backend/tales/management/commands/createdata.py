@@ -136,7 +136,8 @@ class Command(BaseCommand):
         user_input = int(input(">>> How many users: ") or "20")
         # user & tickbox ---------------------------------------------------- #
         loadbar(0, user_input)
-        f = open("./tales/password.txt",
+        print(Path(__file__).resolve())
+        f = open(os.path.join(APP_URL, 'backend', 'tales', "password.txt"),
                  "w+", encoding="utf-8")
         for i in range(user_input):
             login = fake.unique.user_name()

@@ -6,6 +6,26 @@ from django.core.exceptions import ValidationError
 
 
 # --------------------------------------------------------------------------- #
+# TRACKING                                                   #
+# 
+# class UserLoginActivity(models.Model):
+#     SUCCESS = 'S'
+#     FAILED = 'F'
+#     LOGIN_STATUS = (
+#         (SUCCESS, 'Success'),
+#         (FAILED, 'Failed')
+#     )
+#     login_IP = models.GenericIPAddressField(null=True, blank=True)
+#     login_datetime = models.DateTimeField(auto_now=True)
+#     # use FK for this
+#     login_username = models.CharField(max_length=40, null=True, blank=True)
+#     status = models.CharField(max_length=1, default=SUCCESS, choices=LOGIN_STATUS, null=True, blank=True)
+#     user_agent_info = models.CharField(max_length=255)
+
+#     class Meta:
+#         verbose_name = 'user_login_activity'
+#         verbose_name_plural = 'user_login_activities'
+# --------------------------------------------------------------------------- #
 # CHARACTERS INFORMATIONS                                                     #
 # --------------------------------------------------------------------------- #
 
@@ -321,6 +341,8 @@ class Room(models.Model):
 
 class RoomParticipant(models.Model):
     """Model: Room Participant"""
+
+    # TODO -> add accepted booleanField to go for acceptance logic
     room = models.ForeignKey(
         Room, on_delete=models.CASCADE, related_name="participants")
     user = models.ForeignKey(

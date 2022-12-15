@@ -1,11 +1,9 @@
 import {instance} from "@services/axios.instance";
 
-const API_URL = process.env.REACT_APP_API_ENDPOINT;
-
 const STORIES_URL = {
-    plain : `${API_URL}/api/assets/stories/`,
-    by_user_id : (user_id) => `${API_URL}/api/assets/stories/${user_id}`,
-    by_room_id : (room_id) => `${API_URL}/api/assets/stories/${room_id}`
+    plain : `api/assets/stories/`,
+    by_user_id : (user_id) => `api/assets/stories/${user_id}`,
+    by_room_id : (room_id) => `api/assets/stories/${room_id}`
 };
 
 export const getStories = async (token) => {
