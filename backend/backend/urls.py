@@ -17,5 +17,5 @@ urlpatterns = [
     path('socketio/', include('websocket.urls')),
     # TOKEN ----------------------------------------------------------------- #
     path('token/', views.MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('token/refresh/', views.MyTokenRefreshView.as_view(), name='token_refresh'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

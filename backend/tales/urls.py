@@ -35,5 +35,5 @@ urlpatterns = [
     # ----------------------------------------------------------------------- #
     path('contacts/', views.get_contacts),
     path('contacts/add/', views.add_contact),
-
+    path('contacts/remove/', views.remove_contact),
 ]

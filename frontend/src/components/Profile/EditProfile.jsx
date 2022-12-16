@@ -1,13 +1,12 @@
 import {useState, useEffect, useContext} from 'react';
 import AuthContext from "@context/AuthContext";
 import Input from '@components/Profile/Input';
-import jwt_decode from "jwt-decode";
 
 /* services ----------------------------- */
 import { editProfile, getUserProfile, 
     // getContactProfiles 
 } from '@services/users/users.services';
-import  { getContacts } from "@services/contacts/contacts.services"
+import  { getContacts, removeContact } from "@services/contacts/contacts.services"
 const EditProfile = (props) => {
     /**
      * TODO -> change image edition, eventually reuse some component that Alex would have done ?
@@ -22,10 +21,9 @@ const EditProfile = (props) => {
         'nickname',
         'profile_pic',
     ];
+
     const {authTokens} = useContext(AuthContext);
-    // const last_login = jwt_decode(authTokens.access).last_login
-    // const proper_date = Date.parse(last_login + ' GMT')
-    // console.log(authTokens, last_login, proper_date)
+
     useEffect(() => {
         getUserProfile(authTokens.access)
           .then((response) => {
@@ -34,13 +32,17 @@ const EditProfile = (props) => {
           .catch((error) => console.log(error));
           getContacts(authTokens.access)
           .then((response) => {
-            console.log("response dans then", response);
             setFriends(response);
           })
           .catch((error) => console.log(error));
     }, [authTokens.access]);
 
-
+    const removeFriend = (e, username) => {
+      e.preventDefault()
+      removeContact(authTokens.access, {receiver: username})
+        .then((response) => console.log(response))
+        .catch((error) => console.log(error))
+    }
     const [modalInput, setModalInput] = useState();
 
     const handleSubmit = (e) => {
@@ -60,6 +62,7 @@ const EditProfile = (props) => {
         })
     }
     return(
+      <>
       <form>
         { modalInput && fields.map((field, index) => {
           return (
@@ -71,8 +74,19 @@ const EditProfile = (props) => {
             />
           )
         })}
-        <button onClick={handleSubmit}/>
+        <button onClick={handleSubmit}>SAVE CHANGES</button>
       </form>
+      {friends && friends.map((friend, index) => {
+        return(
+          <div key={index}>
+            <p>{friend.username}</p>
+            <p>{friend.nickname}</p>
+            <p>{friend.last_activity}</p>
+            <p onClick={(e) => removeFriend(e, friend.username)}> X </p>
+          </div>
+        )
+      })}
+      </>
     )
 }
 

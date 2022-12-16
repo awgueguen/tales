@@ -11,7 +11,7 @@ import Header from "@components/Header";
 import SideBar from "@components/SideBar";
 
 const Dashboard = () => {
-  // c'est toogle* jcrois bg :c
+  // c'est toggle* jcrois bg :c
   const [contacts, toogleContacts] = useState(false);
   const [gameMode, setGameMode] = useState();
   const location = useLocation();

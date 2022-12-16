@@ -7,7 +7,12 @@ import { createContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 /* Services ------------------------------------------------------------- */
-import { loginUser as loginService, registerUser as registerService, refreshToken as refreshService } from "@services/auth/auth.services.js"; 
+import { 
+  loginUser as loginService,
+  registerUser as registerService,
+  refreshToken as refreshService
+  } from "@services/auth/auth.services"; 
+import { editProfile } from '@services/users/users.services';
 /* ------------------------------------------------------------------------- */
 /* context                                                                   */
 /* ------------------------------------------------------------------------- */
@@ -52,6 +57,9 @@ export const AuthProvider = ({ children }) => {
     let interval = setInterval(() => {
       if (authTokens) {
         updateToken();
+        editProfile(authTokens.access, {'put_activity' : authTokens.last_activity})
+          .then((response) => console.log(response))
+          .catch((error) => console.log(error));
       }
     }, timer);
 
@@ -96,7 +104,7 @@ export const AuthProvider = ({ children }) => {
             navigate("/");
           }
         })
-        .catch((e) => {console.log(e, "nxamr"); (error = true)});
+        .catch((e) => {console.log(e); (error = true)});
     }
 
     return error;

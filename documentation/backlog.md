@@ -24,6 +24,10 @@ ___
  Soit on ajoute 'juste' un last_logout field qu'on devrait alimenter nous même à la cession du token, et on compare last_logout last_login pour savoir si l'utilisateur est à priori connecté. Beaucoup plus simple mais moins précis, on n'aurait d'ailleurs pas de distinction entre le away et le online. On peut décider de partir là dessus et ajouter la possibilité de mettre en statut busy, tant qu'un user est busy on ne fait pas les checks précédents, sinon on met juste 
  `is_active = last_logout > last_login`
 
+  ### 
+ Je récupère last_refresh (quand le token est refresh) que je mets dans authTokens.access (on pourra dans le context le mettre dans le localstorage mais pas sûr que ce soit pertinent) et last_login quand le token est généré. 
+ On pourra estimer que l'utilisateur n'est plus connecté si last_refresh a plus de 10 minutes (deux cycles sans refresh ..)
+
  - (STORY) **kick/mute/whisp within rooms** (prio medium)
 *allow a user (only MJ in a first step) to kick/mute/whisp a user in its room
 

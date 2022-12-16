@@ -14,14 +14,12 @@
  import React, { useContext, useState, useEffect } from "react";
  /* context & components ---------------------------------------------------- */
  import AuthContext from "@context/AuthContext";
-//  import axios from "axios";
  /* services ---------------------------------------------------------------- */
  import { addContact} from "@services/contacts/contacts.services";
  
  const AddFriends = ({ input, handleChange, contactList, add, resetInput }) => {
    let { authTokens } = useContext(AuthContext);
  
-  //  const URL = "http://127.0.0.1:8000/api/contacts/add/";
    const [message, setMessage] = useState({error:"", valid: ""});
    const errorMessage = {
      alreadyFriends: "You are already friends with this user",

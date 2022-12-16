@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenRefreshSerializer
+
 from tales import models
 # tracking
 from django.contrib.auth import authenticate, user_logged_in
@@ -34,8 +35,7 @@ class CharacterSerializer(serializers.ModelSerializer):
 class MyUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.MyUser
-        fields = ['last_login', 'username', 'first_name', 'last_name',
-                  'email', 'nickname',  'profile_pic', 'id']
+        fields = ['last_login', 'last_activity', 'username', 'first_name', 'last_name', 'email', 'nickname',  'profile_pic', 'id', ]
 
 class EntityInstanceSerializer(serializers.ModelSerializer):
     class Meta:
@@ -142,6 +142,10 @@ class ParticipantPutSerializer(serializers.ModelSerializer):
         model = models.RoomParticipant
         fields = ["nickname", "character"]
 
+class UpdateActivitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.MyUser
+        fields = ['last_activity']
 
 class SerializerRoomsHomepage(serializers.ModelSerializer):
     # Use by SerializerRoomsGE
@@ -179,14 +183,19 @@ class SerializerRoomsGE(serializers.ModelSerializer):
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
-    @classmethod
+    # @classmethod
     def get_token(cls, user):
         token = super().get_token(user)
         token['username'] = user.username
         token['profile_pic'] = f"/media/{str(user.profile_pic)}"
         token['nickname'] = user.nickname
-        # # token['last_login'] = datetime.strftime(datetime.now(), '%m/%d/%y %H:%M:%S')
         return token
+    
+class CustomTokenRefreshSerializer(TokenRefreshSerializer):
+    def validate(self, attrs):
+        data = super(CustomTokenRefreshSerializer, self).validate(attrs)
+        data.update({'last_activity': datetime.strftime(datetime.now(), '%m/%d/%y %H:%M:%S')})
+        return data
 
 
 # --------------------------------------------------------------------------- #
@@ -224,11 +233,17 @@ class ContactSerializer(serializers.ModelSerializer):
         fields = ['sender', 'receiver', 'approved']
 
 
+class RemoveContactSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.Contact
+        fields = ['deletedAt', "deletedBy"]
+
 class ContactUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.MyUser
-        fields = ['last_login', 'is_active', 'username', 'nickname', 'id', 'profile_pic']
+        fields = ['last_login', 'last_activity', 'is_active', 'username', 'nickname', 'id', 'profile_pic']
 
 
 # --------------------------------------------------------------------------- #

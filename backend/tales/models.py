@@ -102,6 +102,7 @@ class MyUser(AbstractUser):
         upload_to='profile_pics')
     birthdate = models.DateTimeField(blank=True, null=True)
     last_edit = models.DateTimeField(auto_now=True, blank=True)
+    last_activity = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         ordering = ['-date_joined']
@@ -124,6 +125,9 @@ class Contact(models.Model):
     sentAt = models.DateTimeField(auto_now_add=True, editable=False)
     approvedAt = models.DateTimeField(blank=True, null=True)
     refusedAt = models.DateTimeField(blank=True, null=True)
+    deletedAt = models.DateTimeField(blank=True, null=True)
+    deletedBy = models.ForeignKey(
+        MyUser, on_delete=models.SET_NULL, null=True, blank=True, related_name='deleter')
 
     class Meta:
         ordering = ['sender', "approved"]

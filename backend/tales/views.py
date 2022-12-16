@@ -8,7 +8,7 @@ from rest_framework.decorators import api_view, permission_classes, authenticati
 from rest_framework.response import Response
 from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from django.contrib.auth import user_logged_in
 
@@ -16,7 +16,7 @@ from tales import serializers
 from tales import models
 
 import json
-
+from datetime import datetime
 
 # --------------------------------------------------------------------------- #
 # REGISTER & TOKEN                                                            #
@@ -28,6 +28,8 @@ class MyTokenObtainPairView(TokenObtainPairView):
     # throttle_classes = [UserRateThrottle, AnonRateThrottle]
     serializer_class = serializers.MyTokenObtainPairSerializer
 
+class MyTokenRefreshView(TokenRefreshView):
+    serializer_class = serializers.CustomTokenRefreshSerializer
 # register ------------------------------------------------------------------ #
 
 
@@ -49,16 +51,32 @@ def register_user(request):
 def edit_profile(request):
     # TODO -> handle images properly
     if request.method == 'PUT':
-        
+
         user = models.MyUser.objects.get(username=request.user)
-        serializer = serializers.MyUserSerializer(user, data=request.data)
-        print('serializer de l edit', serializer)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        else:
-            return Response(serializer.errors,
-                            status=status.HTTP_400_BAD_REQUEST)
+        try:
+            print(request.data)
+            last_activity = request.data['put_activity']
+            
+            if type(last_activity) == str:
+                last_activity = datetime.strptime(last_activity, '%m/%d/%y %H:%M:%S')
+            serializer = serializers.UpdateActivitySerializer(user, data={"last_activity" : last_activity})
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            else:
+                return Response(serializer.errors,
+                                status=status.HTTP_400_BAD_REQUEST)
+
+        except KeyError:
+            user = models.MyUser.objects.get(username=request.user)
+            serializer = serializers.MyUserSerializer(user, data=request.data)
+            print('serializer de l edit', serializer)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            else:
+                return Response(serializer.errors,
+                                status=status.HTTP_400_BAD_REQUEST)
 
     if request.method == 'POST':
         return
@@ -462,20 +480,10 @@ def get_contacts(request):
     return Response(data=res.data, status=status.HTTP_200_OK)
 
 
-@ api_view(['GET', 'POST'])
+@ api_view(['POST'])
 @ authentication_classes([JWTAuthentication])
 @ permission_classes([permissions.IsAuthenticated])
 def add_contact(request):
-
-    if request.method == 'GET':
-        return
-    #     receiver = request.GET.get("receiver")
-
-    #     try:
-    #         receiver = models.MyUser.objects.get(username__iexact=receiver)
-    #         return Response(status=status.HTTP_200_OK)
-    #     except models.MyUser.DoesNotExist:
-    #         return Response(status=status.HTTP_404_NOT_FOUND)
 
     if request.method == 'POST':
         receiver = request.data.get("receiver")
@@ -494,3 +502,38 @@ def add_contact(request):
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@ api_view(['PUT'])
+@ authentication_classes([JWTAuthentication])
+@ permission_classes([permissions.IsAuthenticated])
+def remove_contact(request):
+
+    if request.method == 'PUT':
+    
+        sender = models.MyUser.objects.get(username=request.user).id
+        receiver = models.MyUser.objects.get(username=request.data['receiver']).id
+
+        try:
+            contact = models.Contact.objects.get(
+                (Q(sender__id=sender) & Q(receiver__id=receiver))
+                | (Q(receiver__id=sender) & Q(sender__id=receiver)))
+        # it should never append
+        except models.MyUser.DoesNotExist:
+            return Response(data="UserNotFound", status=status.HTTP_404_NOT_FOUND)
+        except models.Contact.DoesNotExist:
+            return Response(data="Something unhandled happend", status=status.HTTP_404_NOT_FOUND)
+        ser_data = {
+            "deletedBy" : sender,
+            "sender": sender,
+            "receiver" : receiver
+        }
+        # serializer = serializers.RemoveContactSerializer(contact, ser_data)
+        serializer = serializers.ContactSerializer(contact, ser_data)
+        
+        print(serializer)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors,
+                            status=status.HTTP_400_BAD_REQUEST)
