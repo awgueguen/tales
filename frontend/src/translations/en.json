@@ -1,0 +1,73 @@
+{
+    "common" : {
+        "buttons" : {
+            "form" : {
+                "submit" : "submit",
+                "cancel" : "cancel",
+                "submitted" : "submitted",
+                "canceled" : "canceled",
+                "validation_message" : "Your request was succesfully handled"
+            },
+            "inner_text": {
+                "send_something" : "Send {{something}}", 
+                "search" : "Search",
+                "more_something" : "More {{something}}",
+                "roll_a_dice" : "Roll a dice",
+                "validate" : "Validate",
+                "mark_read" : "Mark {{type}} as read",
+                "accept_request" : "Accept {request_type}} request",
+                "decline_request" : "Decline {{request_type}} request",
+                "show_me" : "Show_me",
+                "move_event_forward" : "Pass {{event}}",
+                " " : ""
+            }
+        },
+        "navbar" : {
+            "Rooms" : {
+                "quick_acces" : "Quick access",
+                " " : ""
+            }
+        },
+        "Errors" : {
+            "login": {
+                "password": "password",
+                "password_not_match" : "password does not match username",
+                "mail": "mail",
+                "username" : "username",
+                "credentials": "credentials"
+            },
+            "register": {
+                "empty_field" : "This field can not be empty",
+                "min_length" : "This field must be have at least {{min}} characters",
+                "max_length" : "This field is limited to {{max}} characters",
+                "email_format" : "This mail format is not recognized",
+                "password_strengh" : "This password isn't secured enough",
+                "password_includes" : "Password can't include {{exception}}",
+                "unique_field" : "An account is already associated to this {{field}}",
+                "no_error" : "",
+                "tickbox" : "Please accept the conditions of usage"
+            },
+            "add_contact" : {
+                "empty" : "This field can not be empty",
+                "numerical" : "Friend field should only contain alphanumerical characters",
+                "not_found" : "No User was found with this query",
+                "unknown" : "An unexpected error has occured, please try again",
+                "no_error" : ""
+            }
+        },
+        "Dashboard" : {
+
+        },
+        "Rooms" : {
+            "create_room" : {
+
+            }
+        },
+        "Characters" : {
+
+        },
+        "Authantication" : {
+
+        }
+    }
+}

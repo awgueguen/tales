@@ -14,6 +14,7 @@ import GameEngine from "@pages/GameEngine";
 
 /* temporary -------------------------------------------------------------- */
 import Profile from '@components/Profile/EditProfile';
+// import './i18n';
 
 const App = () => {
   return (

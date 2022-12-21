@@ -1,0 +1,73 @@
+{
+    "common" : {
+        "buttons" : {
+            "form" : {
+                "submit" : "envoyer",
+                "cancel" : "annuler",
+                "submitted" : "envoyé!",
+                "canceled" : "annulé!",
+                "validation_message" : "Votre requête a bien été prise en compte"
+            },
+            "inner_text": {
+                "send_something" : "Envoyer {{something}}", 
+                "search" : "Rechercher",
+                "more_something" : "Plus {{something}}",
+                "roll_a_dice" : "Jeter un dé",
+                "validate" : "Valider",
+                "mark_read" : "Marquer {{type}} comme lu",
+                "accept_request" : "Accepter la demande {request_type}}",
+                "decline_request" : "Refuser la demande {{request_type}}",
+                "show_me" : "Montrez-moi",
+                "move_event_forward" : "Passer {{event}}",
+                " " : ""
+            }
+        },
+        "navbar" : {
+            "Rooms" : {
+                "quick_acces" : "Accès rapide",
+                " " : ""
+            }
+        },
+        "Errors" : {
+            "login": {
+                "password": "mot de passe",
+                "password_not_match" : "la pair mot de pass / username est incorrecte",
+                "mail": "email",
+                "username" : "username",
+                "credentials": "identifiants"
+            },
+            "register": {
+                "empty_field" : "Ce champ ne peut être vide",
+                "min_length" : "Ce champ doit contenir au moins {{min}} caractères",
+                "max_length" : "Ce champ est limité à {{max}} caractères",
+                "email_format" : "Le format du mail est invalide",
+                "password_strengh" : "Ce mot de passe n'est pas assez fort",
+                "password_includes" : "Le mot de passe ne peut contenir {{exception}}",
+                "unique_field" : "Un compte est déjà associé à {{field}}",
+                "no_error" : "",
+                "tickbox" : "Veuillez accepter les conditions d'utilisations"
+            },
+            "add_contact" : {
+                "empty" : "Ce champ ne peut être vide",
+                "numerical" : "Ce champ ne devrait contenir que des caractères alphanumériques",
+                "not_found" : "Aucun utilisateur répondant à ces critères",
+                "unknown" : "Une erreur innatendue s'est produite, veuillez réessayer",
+                "no_error" : ""
+            }
+        },
+        "Dashboard" : {
+
+        },
+        "Rooms" : {
+            "create_room" : {
+                
+            }
+        },
+        "Characters" : {
+
+        },
+        "Authantication" : {
+
+        }
+    }
+}

@@ -225,13 +225,23 @@ class TickboxSerializer(serializers.ModelSerializer):
 # --------------------------------------------------------------------------- #
 # contacts serializers                                                        #
 # --------------------------------------------------------------------------- #
+class AcceptContactSerializer(serializers.ModelSerializer):
 
+    class Meta:
+        model = models.Contact
+        fields=['approved']
+        
 class ContactSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Contact
         fields = ['sender', 'receiver', 'approved']
 
+class ContactDatesSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.Contact
+        fields = ['sender', 'sentAt']
 
 class RemoveContactSerializer(serializers.ModelSerializer):
 
@@ -244,6 +254,13 @@ class ContactUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.MyUser
         fields = ['last_login', 'last_activity', 'is_active', 'username', 'nickname', 'id', 'profile_pic']
+
+class WaitingContactsUserSerializer(serializers.ModelSerializer):
+    sender = ContactDatesSerializer(read_only=True)
+
+    class Meta:
+        model = models.MyUser
+        fields = ['last_login', 'last_activity', 'is_active', 'username', 'nickname', 'id', 'profile_pic', 'sender']
 
 
 # --------------------------------------------------------------------------- #

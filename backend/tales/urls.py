@@ -34,6 +34,11 @@ urlpatterns = [
     # CONTACTS                                                                #
     # ----------------------------------------------------------------------- #
     path('contacts/', views.get_contacts),
+    
+    path('contacts/sent/', views.get_sent_invitation),
+    path('contacts/waiting/', views.get_non_approved_contacts),
     path('contacts/add/', views.add_contact),
+    path('contacts/accept/', views.accept_contact),
     path('contacts/remove/', views.remove_contact),
+    
 ]

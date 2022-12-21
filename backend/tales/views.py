@@ -474,8 +474,45 @@ def get_contacts(request):
         Q(sender__username=user) | Q(receiver__username=user), approved=True)
     sender = contact_list.values_list('sender', flat=True)
     receiver = contact_list.values_list('receiver__id', flat=True)
+    contact_serialized = serializers.ContactSerializer(contact_list)
+    print(contact_serialized)
     contact_list = models.MyUser.objects.filter(
         Q(id__in=sender) | Q(id__in=receiver), ~Q(username=user))
+    res = serializers.ContactUserSerializer(contact_list, many=True)
+    return Response(data=res.data, status=status.HTTP_200_OK)
+
+
+@ api_view(['GET'])
+@ authentication_classes([JWTAuthentication])
+@ permission_classes([permissions.IsAuthenticated])
+def get_sent_invitation(request):
+
+    user = request.user
+    contact_list = models.Contact.objects.filter(
+        Q(sender__username=user), approved=False)
+    senders = contact_list.values_list('sender__id', flat=True)
+    print("\n\n", senders, 'senders\n\n')
+    contact_list = models.MyUser.objects.filter(
+        Q(id__in=senders))
+    print("\n\n", contact_list, 'senders\n\n')
+    res = serializers.WaitingContactsUserSerializer(contact_list, many=True)
+    return Response(data=res.data, status=status.HTTP_200_OK)
+
+
+@ api_view(['GET'])
+@ authentication_classes([JWTAuthentication])
+@ permission_classes([permissions.IsAuthenticated])
+def get_non_approved_contacts(request):
+
+    user = request.user
+    contact_list = models.Contact.objects.filter(
+        Q(receiver__username=user), approved=False)
+    print(contact_list, "contact_list")
+    receives = contact_list.values_list('sender__id', flat=True)
+    print("\n\n", receives, 'receiver\n\n')
+    contact_list = models.MyUser.objects.filter(
+        Q(id__in=receives))
+    print("\n\n", contact_list, 'receiver\n\n')
     res = serializers.ContactUserSerializer(contact_list, many=True)
     return Response(data=res.data, status=status.HTTP_200_OK)
 
@@ -486,6 +523,7 @@ def get_contacts(request):
 def add_contact(request):
 
     if request.method == 'POST':
+
         receiver = request.data.get("receiver")
         sender = models.MyUser.objects.get(username=request.user).id
 
@@ -493,9 +531,19 @@ def add_contact(request):
             receiver = models.MyUser.objects.get(username__iexact=receiver).id
         except models.MyUser.DoesNotExist:
             return Response(data="UserNotFound", status=status.HTTP_404_NOT_FOUND)
-
-        serializer = serializers.ContactSerializer(
-            data={'sender': sender, 'receiver': receiver, 'approved': True})
+        try:
+            contact_exist = models.Contact.objects.get(
+              (Q(receiver__id=sender) & Q(sender__id=receiver)), approved=False)
+            print(contact_exist, 'receiver already sent an invitation')
+            serializer = serializers.ContactSerializer(contact_exist, data = {
+                "sender" : sender,
+                "receiver" : receiver,
+                "approved": True
+                })
+        except KeyError:
+            print('sending new invitation')
+            serializer = serializers.ContactSerializer(
+                data={'sender': sender, 'receiver': receiver, 'approved': False})
 
         if serializer.is_valid():
             serializer.save()
@@ -511,15 +559,16 @@ def remove_contact(request):
     if request.method == 'PUT':
     
         sender = models.MyUser.objects.get(username=request.user).id
-        receiver = models.MyUser.objects.get(username=request.data['receiver']).id
+        try:
+            receiver = models.MyUser.objects.get(username=request.data['receiver']).id
+        except models.MyUser.DoesNotExist:
+            return Response(data="UserNotFound", status=status.HTTP_404_NOT_FOUND)
 
         try:
             contact = models.Contact.objects.get(
                 (Q(sender__id=sender) & Q(receiver__id=receiver))
                 | (Q(receiver__id=sender) & Q(sender__id=receiver)))
         # it should never append
-        except models.MyUser.DoesNotExist:
-            return Response(data="UserNotFound", status=status.HTTP_404_NOT_FOUND)
         except models.Contact.DoesNotExist:
             return Response(data="Something unhandled happend", status=status.HTTP_404_NOT_FOUND)
         ser_data = {
@@ -527,11 +576,37 @@ def remove_contact(request):
             "sender": sender,
             "receiver" : receiver
         }
-        # serializer = serializers.RemoveContactSerializer(contact, ser_data)
         serializer = serializers.ContactSerializer(contact, ser_data)
         
-        print(serializer)
         if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors,
+                            status=status.HTTP_400_BAD_REQUEST)
+
+@ api_view(['PUT'])
+@ authentication_classes([JWTAuthentication])
+@ permission_classes([permissions.IsAuthenticated])
+def accept_contact(request):
+
+    if request.method == 'PUT':
+    
+        user = models.MyUser.objects.get(username=request.user).id
+        new_friend = models.MyUser.objects.get(username=request.data['new_friend']).id
+        try:
+            contact = models.Contact.objects.get(
+                (Q(sender__id=user) & Q(receiver__id=new_friend))
+                | (Q(receiver__id=user) & Q(sender__id=new_friend)), approved=False)
+        except models.Contact.DoesNotExist:
+            return Response(data="UserNotFound", status=status.HTTP_404_NOT_FOUND)
+
+        print(contact, 'contact')
+        serializer = serializers.AcceptContactSerializer(
+            contact, data={ "approved": True })
+        
+        if serializer.is_valid():
+            print(serializer, 'serializer valid')
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:

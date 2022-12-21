@@ -16,9 +16,11 @@ ___
 
  - (STORY) **usage watcher** (prio high)
 *watch for user activity to change login status*
+**Status**: Workaround, this will do
 
  - (STORY) **login status** (prio high) (weight: fucking casskouy)
 *add a visual indicator to show user activity*
+**STATUS** : Logic should work, need to add UI to Contact component(s)
 [online, busy(handled by user), offline, away(handle by usage watcher)] 
  - 15/12 : En faisant quelques recherches, il semble plus compliqué que prévu d'avoir un statut précis d'un utilisateur autre que nous même. Soit on recrée une table qui track les users et qui va à chaque requête envoyée par celui-ci (autre que le refresh token par exemple) mettre à jour l'état de connexion. Alors on suivrait l'activité d'un utilisateur puisque les fetchs ne sont à priori refait qu'en changeant de page et donc en étant actif. Solution un peu alambiquée mais qui serait plutôt précise.
  Soit on ajoute 'juste' un last_logout field qu'on devrait alimenter nous même à la cession du token, et on compare last_logout last_login pour savoir si l'utilisateur est à priori connecté. Beaucoup plus simple mais moins précis, on n'aurait d'ailleurs pas de distinction entre le away et le online. On peut décider de partir là dessus et ajouter la possibilité de mettre en statut busy, tant qu'un user est busy on ne fait pas les checks précédents, sinon on met juste 
@@ -29,7 +31,7 @@ ___
  On pourra estimer que l'utilisateur n'est plus connecté si last_refresh a plus de 10 minutes (deux cycles sans refresh ..)
 
  - (STORY) **kick/mute/whisp within rooms** (prio medium)
-*allow a user (only MJ in a first step) to kick/mute/whisp a user in its room
+*allow a user (only MJ in a first step) to kick/mute/whisp a user in its room*
 
  - (STORY) **remove a friend** (prio medium)
 *allow a user to remove a contact from its friend list*
@@ -40,8 +42,11 @@ ___
   if decline, resend a notif 'DECLINE' to emitter and add in table but with decline, that would work as a BLACK LIST
     If a user has declined an invitation (room or contact), he can't be re-invited, but he can join by himself the room, or try to add contact.
 
+ - (EPIC) **Traduction** (prio medium)
+ *Intégrer i18n bibliotèque assez propre pour faire des traductions*
+
  - (EPIC) **triggers** (prio high)
-	(see [side note]() on features for a detailed list of ideas)
+	(see [side note](features_dd.md) on features for a detailed list of ideas)
 *review trigger system and allow interracting with the chat using assets*
 
  - (EPIC) **ASSETS MGMT** (prio medium) (high imo but UI might be really heavy..)
