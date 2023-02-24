@@ -31,7 +31,11 @@ ___
  On pourra estimer que l'utilisateur n'est plus connecté si last_refresh a plus de 10 minutes (deux cycles sans refresh ..)
 
  - (STORY) **kick/mute/whisp within rooms** (prio medium)
-*allow a user (only MJ in a first step) to kick/mute/whisp a user in its room*
+*allow a user (only DM in a first step) to kick/mute/whisp a user in its room*
+
+ - (STORY) **Add intro message for rooms (or story)** (prio very low)
+*allow room creator (DM) to create an intro message, might be for conditions/rp intro/introductions to players.. w-e*
+Little modal that would pop each time a player enter in a room.
 
  - (STORY) **remove a friend** (prio medium)
 *allow a user to remove a contact from its friend list*

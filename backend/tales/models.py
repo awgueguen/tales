@@ -7,7 +7,7 @@ from django.core.exceptions import ValidationError
 
 # --------------------------------------------------------------------------- #
 # TRACKING                                                   #
-# 
+#
 # class UserLoginActivity(models.Model):
 #     SUCCESS = 'S'
 #     FAILED = 'F'
@@ -346,7 +346,7 @@ class Room(models.Model):
 class RoomParticipant(models.Model):
     """Model: Room Participant"""
 
-    # TODO -> add accepted booleanField to go for acceptance logic
+    # TODO -> add accepted booleanField for acceptance logic
     room = models.ForeignKey(
         Room, on_delete=models.CASCADE, related_name="participants")
     user = models.ForeignKey(

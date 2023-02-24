@@ -485,7 +485,7 @@ def get_contacts(request):
 @ api_view(['GET'])
 @ authentication_classes([JWTAuthentication])
 @ permission_classes([permissions.IsAuthenticated])
-def get_sent_invitation(request):
+def get_sent_invitations(request):
 
     user = request.user
     contact_list = models.Contact.objects.filter(
@@ -502,7 +502,7 @@ def get_sent_invitation(request):
 @ api_view(['GET'])
 @ authentication_classes([JWTAuthentication])
 @ permission_classes([permissions.IsAuthenticated])
-def get_non_approved_contacts(request):
+def get_received_invitations(request):
 
     user = request.user
     contact_list = models.Contact.objects.filter(

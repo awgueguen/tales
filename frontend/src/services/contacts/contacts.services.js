@@ -5,13 +5,16 @@ const CONTACTS_URL = {
     add : `api/contacts/add/`,
     remove: `api/contacts/remove/`,
     sent_ : `api/contacts/sent/`,
-    wait_ : `api/contacts/waiting/`,
+    receive_ : `api/contacts/receive/`,
     accept : `api/contacts/accept/`,
 };
 
 export const getContacts = async ( token ) => {
     // http://localhost:8000/api/contacts/
-    // TODO ADD status logic in here (fdrom EditProfile)
+    /**
+     * TODO -> ADD status logic in here (from EditProfile)
+     * transform last_login into a status in the response
+     * */ 
     const response = await instance(token).get(CONTACTS_URL.plain)
     return response.data
 }
@@ -23,7 +26,7 @@ export const getSentContacts = async ( token ) => {
 }
 
 export const getWaitingContacts = async ( token ) => {
-    // http://localhost:8000/api/contacts/waiting/
+    // http://localhost:8000/api/contacts/receive/
     const response = await instance(token).get(CONTACTS_URL.wait_)
     return response.data
 }
