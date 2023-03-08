@@ -5,6 +5,7 @@ Co-authors: [Alexis Gueguen](https://github.com/awgueguen) | [Théo Sanchez](htt
 This project was made using:
 
 [![python max version](https://img.shields.io/badge/Python-3.10.8-green.svg)](https://shields.io/)
+[![react version](https://img.shields.io/badge/react-11.9.0-lightblue.svg)](https://shields.io/)
 [![npm version](https://img.shields.io/badge/npm-8.19.2-blue.svg)](https://shields.io/)
 [![postgres version](https://img.shields.io/badge/PostgreSQL-14.2-yellow.svg)](https://shields.io/)
 [![sass version](https://img.shields.io/badge/sass-1.52-pink.svg)](https://shields.io/)
