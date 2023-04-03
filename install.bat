@@ -31,25 +31,25 @@ set /p py=Python usual terminal cmd (e.g. py, python310, python):
 
 CLS
 ECHO -----------------------------------------------------------------
-@REM ECHO [92mPostgreSQL Installation...[0m 
-@REM ECHO.
-@REM ECHO After connecting to postgres shell use the following cmd:
-@REM ECHO [93m$ postgres=# ^DROP DATABASE dcdb; ^(Optional^)[0m ^> reset dcdb database
-@REM ECHO [93m$ postgres=# ^CREATE DATABASE dcdb; [0m ^> create the app db.
-@REM ECHO [93m$ postgres=# ^\q [0m                    ^> resume the rest of the script.
-@REM ECHO.
+ECHO [92mPostgreSQL Installation...[0m 
+ECHO.
+ECHO After connecting to postgres shell use the following cmd:
+ECHO [93m$ postgres=# ^DROP DATABASE dcdb; ^(Optional^)[0m ^> reset dcdb database
+ECHO [93m$ postgres=# ^CREATE DATABASE dcdb; [0m ^> create the app db.
+ECHO [93m$ postgres=# ^\q [0m                    ^> resume the rest of the script.
+ECHO.
 
-@REM :: Avoid to have the user having to start postgres
-@REM set /p input=postgres username: 
-@REM :: /c > run command and then terminante
-@REM :: /k > run command and then return to the CMD prompt
-@REM cmd /c "psql -U %input%"
+:: Avoid to have the user having to start postgres
+set /p input=postgres username: 
+:: /c > run command and then terminante
+:: /k > run command and then return to the CMD prompt
+cmd /c "psql -U %input%"
 
-@REM CLS
-@REM ECHO -----------------------------------------------------------------
+CLS
+ECHO -----------------------------------------------------------------
 ECHO [92mVENV ^& PIP Installation...[0m 
 ECHO.
-timeout /t 3 >nul
+timeout /t 1 >nul
 
 :: cd\ return to root dir
 :: /d > change drive, example, if in C:, you can : CD /D E: 
@@ -85,43 +85,51 @@ goto :monitoring
 
 :end
 
-timeout /t 3 >nul
+timeout /t 1 >nul
+
 CLS
 ECHO -----------------------------------------------------------------
 :: setup everything in Django
 ECHO [92mDJANGOrest Installation...[0m 
 ECHO.
-timeout /t 3 >nul
+timeout /t 1 >nul
+
 
 cmd /c "env\Scripts\activate & %py% tales\management\getrandomskey.py"
 ECHO [93mDjango secret key generated in ^.env[0m 
 cmd /c "env\Scripts\activate & %py% manage.py makemigrations tales & %py% manage.py migrate"
 ECHO [93mDjango Migrations complete.[0m 
 
-timeout /t 3 >nul
+timeout /t 1 >nul
+
 CLS
 ECHO -----------------------------------------------------------------
 :: add env creation & createdata
 ECHO [92mTales database population...[0m 
 ECHO.
-timeout /t 3 >nul
+timeout /t 1 >nul
 
 cmd /c "env\Scripts\activate & %py% manage.py createdata"
+ECHO.
 ECHO [93mDB population done using faker[0m 
+ECHO For more informations, please check faker.readthedocs.io
 
 timeout /t 3 >nul
+
 CLS
 ECHO -----------------------------------------------------------------
 ECHO [92mNPM Installation...[0m 
 ECHO.
-timeout /t 3 >nul
+timeout /t 1 >nul
+
 
 CD /D ../frontend
 
 cmd /c "npm i"
 ECHO [93mNPM dependencies installed.[0m 
 
-timeout /t 3 >nul
+timeout /t 1 >nul
+
 CLS
 ECHO.
 ECHO -----------------------------------------------------------------
